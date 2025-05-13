@@ -28,7 +28,7 @@
   </nav> -->
 
   <header
-    class="w-full h-[420px] bg-zinc-900 bg-cover bg-center relative"
+    class="w-full h-80 md:h-[420px] bg-zinc-900 bg-cover bg-center relative"
     :style="{ backgroundImage: `url(${background})` }"
   >
     <div class="w-full h-full bg-black/50 backdrop-blur-sm absolute z-0"></div>
@@ -40,10 +40,10 @@
       />
       <h1 class="text-4x1 mt-4 font-bold text-white">{{ title }}</h1>
       <span class="text-white font-medium"
-        >Rua de casa, Cajaziuras 11, Salvador - BA</span
+        >Rua de casa, Cajazeiras 11, Salvador - BA</span
       >
       <div class="px-4 py-1 rounded-lg mt-5" id="date-span">
-        <span class="text-white">seg à domingo - 18:00 às 22:00</span>
+        <span class="text-white">Seg à domingo - 18:00 às 22:00</span>
       </div>
     </div>
     <div class="flex items-center lg:order-2 absolute right-5 top-5 z-50">

@@ -1,7 +1,10 @@
 <template>
   <div
-    class="rounded-[8px] p-2 shadow-md flex flex-col justify-between bg-gray-200 dark:bg-gray-700 gap-4"
+    class="rounded-[8px] p-2 shadow flex flex-col justify-between bg-gray-50 dark:bg-gray-700 gap-4 relative"
   >
+    <div class="absolute top-4 right-4">
+      <IconFavorite :product="product" />
+    </div>
     <!-- Imagem do produto ou fallback -->
     <router-link :to="'/produto/' + product.slug">
       <div
@@ -33,7 +36,7 @@
 
       <router-link
         :to="'/produto/' + product.slug"
-        class="bg-gray-900 px-3 py-1 rounded-md shadow-lg shadow-gray-400 cursor-pointer hover:bg-gray-950"
+        class="bg-gray-900 px-3 py-1 rounded-md shadow-md dark:shadow-gray-800 shadow-gray-400 cursor-pointer hover:bg-gray-950"
       >
         <i class="fa fa-cart-plus text-white"></i>
       </router-link>
@@ -42,6 +45,7 @@
 </template>
 
 <script setup>
+import IconFavorite from "./icons/IconFavorite.vue";
 import Rating from "./Rating.vue";
 
 const props = defineProps({

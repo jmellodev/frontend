@@ -1,7 +1,7 @@
 <template>
   <AppLayout>
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <h2 class="font-manrope font-bold text-2xl md:text-3xl text-black mb-8">
+    <div class="mx-auto max-w-7xl px-2 lg:px-8">
+      <h2 class="font-manrope font-bold text-2xl md:text-3xl dark:text-gray-100 mb-8">
         Novidades
       </h2>
 
@@ -9,7 +9,7 @@
         <ProductListSkeleton />
       </div>
 
-      <div v-else class="grid grid-cols-2 xl:grid-cols-4 gap-8">
+      <div v-else class="grid grid-cols-2 xl:grid-cols-4 gap-2">
         <ProductCard v-for="product in products" :key="product.id" :product="product" />
       </div>
     </div>

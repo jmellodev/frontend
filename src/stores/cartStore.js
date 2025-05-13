@@ -65,11 +65,6 @@ export const useCartStore = defineStore('cart', () => {
     }, 0)
   })
 
-  // Quantidade de itens no carrinho
-  const itemCount = computed(() => {
-    return items.value.reduce((count, item) => count + item.quantity, 0)
-  })
-
   watch(items, (newItems) => {
     localStorage.setItem('cart_items', JSON.stringify(newItems))
   }, { deep: true })
@@ -80,6 +75,5 @@ export const useCartStore = defineStore('cart', () => {
     removeItem,
     clearCart,
     total,
-    itemCount
   }
 })

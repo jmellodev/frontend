@@ -5,8 +5,9 @@
     v-if="isHeaderVisible"
     :background="background"
   />
+  <Topnav :title="topNavTitle" v-if="topNavVisible" />
 
-  <main class="p-4 h-auto pt-20 m-auto">
+  <main class="py-4 px-0 h-auto pb-16 md:pb-0 pt-20 m-auto">
     <slot />
   </main>
 
@@ -17,6 +18,7 @@
 import Header from "@/components/Header.vue";
 import MenuMobile from "@/components/MenuMobile.vue";
 import Sidebar from "@/components/Sidebar.vue";
+import Topnav from "@/components/Topnav.vue";
 
 defineProps({
   isHeaderVisible: {
@@ -26,6 +28,14 @@ defineProps({
   title: {
     type: String,
     default: "Pizzaria da Nonna",
+  },
+  topNavVisible: {
+    type: Boolean,
+    default: false,
+  },
+  topNavTitle: {
+    type: String,
+    default: "Topnav",
   },
   showBackButton: {
     type: Boolean,

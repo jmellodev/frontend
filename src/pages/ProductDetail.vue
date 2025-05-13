@@ -1,11 +1,11 @@
 <template>
   <AppLayout
-    :is-header-visible="true"
+    :is-header-visible="false"
     :mobile-menu-visible="true"
-    :title="product?.name"
-    :show-back-button="true"
     :cart-count="cartCount"
     :background="product?.img"
+    top-nav-visible="true"
+    :top-nav-title="product?.name"
   >
     <div class="p-4 max-w-2xl mx-auto">
       <!-- Loading Spinner -->
