@@ -1,17 +1,14 @@
 <template>
-  <Header
-    :title="title"
-    :showBackButton="showBackButton"
-    v-if="isHeaderVisible"
-    :background="background"
-  />
-  <Topnav :title="topNavTitle" v-if="topNavVisible" />
+  <div class="starting:opacity-0 transition-all duration-1000">
+    <Header :title="title" :background="background" />
+    <Topnav :title="topNavTitle" :showBackButton="showBackButton" />
 
-  <main class="py-4 px-0 h-auto pb-16 md:pb-0 pt-20 m-auto">
-    <slot />
-  </main>
+    <main class="py-4 px-0 h-auto pb-16 md:pb-0 pt-20 m-auto">
+      <slot />
+    </main>
 
-  <MenuMobile v-if="mobileMenuVisible" />
+    <MenuMobile v-if="mobileMenuVisible" />
+  </div>
 </template>
 
 <script setup>
@@ -35,11 +32,11 @@ defineProps({
   },
   topNavTitle: {
     type: String,
-    default: "Topnav",
+    default: "Pizzaria da Nonna",
   },
   showBackButton: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   mobileMenuVisible: {
     type: Boolean,

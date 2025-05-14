@@ -28,7 +28,7 @@
   </nav> -->
 
   <header
-    class="w-full h-80 md:h-[420px] bg-zinc-900 bg-cover bg-center relative"
+    class="w-full h-80 md:h-[420px] bg-zinc-900 bg-cover bg-center relative hidden md:flex"
     :style="{ backgroundImage: `url(${background})` }"
   >
     <div class="w-full h-full bg-black/50 backdrop-blur-sm absolute z-0"></div>

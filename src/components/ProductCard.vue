@@ -8,7 +8,7 @@
     <!-- Imagem do produto ou fallback -->
     <router-link :to="'/produto/' + product.slug">
       <div
-        class="h-32 rounded-md bg-cover bg-center shadow-md hover:shadow-lg object-contain hover:scale-110 hover:-rotate-2 duration-200"
+        class="h-32 rounded-md bg-cover bg-center shadow-md hover:shadow-lg object-contain"
         :style="{ backgroundImage: product.img ? `url(${product.img})` : 'none' }"
         :class="{ 'bg-emerald-500 dark:bg-amber-400': !product.img }"
       ></div>

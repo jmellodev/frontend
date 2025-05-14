@@ -1,10 +1,6 @@
 <template>
   <AppLayout :is-header-visible="false" :top-nav-visible="true" top-nav-title="Carrinho">
     <div class="container mx-auto p-4">
-      <h2 class="text-2xl font-semibold mb-4 dark:text-gray-200">
-        Meu Carrinho ({{ itemCount }})
-      </h2>
-
       <div v-if="itemCount === 0" class="text-gray-500 dark:text-gray-400">
         Seu carrinho está vazio. Adicione deliciosos itens ao seu pedido!
       </div>
