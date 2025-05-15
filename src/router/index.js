@@ -5,6 +5,7 @@ import ProductDetail from '@/pages/ProductDetail.vue'
 import Favorites from '@/pages/Favorites.vue'
 import Profile from '@/pages/Profile.vue'
 import Checkout from '@/pages/Checkout.vue'
+import BuildPizza from '@/pages/BuildPizza.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/checkout',
       name: 'checkout',
       component: Checkout,
+    },
+    {
+      path: '/monte-sua-pizza',
+      name: 'buildPiza',
+      component: BuildPizza,
     },
   ],
 })
