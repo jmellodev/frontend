@@ -1,6 +1,11 @@
 {
   "name": "Pizzaria da Nonna",
   "short_name": "Nonna Pizza",
+  "description": "Pizzaria da Nonna",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "/assets/image/old_nonna.png",
@@ -18,9 +23,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#f44336",
-  "theme_color": "#f44336"
+  ]
 }
