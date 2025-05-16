@@ -90,12 +90,41 @@
               class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
               >Ponto de Referência:</label
             >
-            <textarea
+            <input
               id="reference"
               v-model="customerData.reference"
               class="input"
-            ></textarea>
+            ></input>
           </div>
+          <div class="mb-4">
+            <label
+              for="neighborhood"
+              class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
+              >Bairro:</label
+            >
+            <input
+              id="neighborhood"
+              v-model="customerData.neighborhood"
+              class="input"
+            ></input>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label 
+            for="deliveryType" 
+            class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
+          >
+            Tipo de Entrega/Retirada:
+          </label>
+          <select
+            id="deliveryType"
+            v-model="customerData.deliveryType"
+            class="input w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          >
+            <option value="Entrega">Delivery (Entrega)</option>
+            <option value="Retirada">Retirada no local</option>
+            </select>
         </div>
 
         <h3 class="font-semibold mb-4 mt-6 dark:text-gray-100">Pagamento</h3>
@@ -178,12 +207,15 @@ const cartStore = useCartStore();
 const cartTotal = computed(() => cartStore.total);
 
 const CUSTOMER_DATA_LOCAL_STORAGE_KEY = "customer_data";
+const DEFAULT_DELIVERY_FEE = 5.00;
 
 const customerData = ref({
   name: "",
   phone: "",
+  deliveryType: "Entrega",
   address: "",
   reference: "",
+  neighborhood: "",
 });
 const hasCustomerData = computed(() =>
   Object.values(customerData.value).some((value) => value !== "")
@@ -194,6 +226,7 @@ const paymentMethod = ref("pix");
 const needChange = ref("no");
 const changeAmount = ref(0);
 const orderNumber = ref("");
+const tax = 5;
 
 onMounted(() => {
   const storedData = localStorage.getItem(CUSTOMER_DATA_LOCAL_STORAGE_KEY);
@@ -215,41 +248,101 @@ function saveCustomerDataLocally() {
   );
 }
 
+// Assumindo que você tem DEFAULT_DELIVERY_FEE definido no escopo do seu script setup
+// const DEFAULT_DELIVERY_FEE = 5.00; // Exemplo
+
 async function submitOrder() {
   if (cartStore.items.length === 0) {
     alert("Seu carrinho está vazio. Adicione itens para finalizar o pedido.");
     return;
   }
 
+  // Determinar a taxa de entrega baseada no tipo de entrega
+  const currentDeliveryFee = customerData.value.deliveryType === 'Retirada' 
+                            ? 0 
+                            : DEFAULT_DELIVERY_FEE; // Use sua taxa padrão aqui
+
+  const subtotalPedido = cartTotal.value; // Subtotal dos itens do carrinho
+  const totalPedido = subtotalPedido + currentDeliveryFee;
+
   const orderDetails = {
     orderNumber: generateOrderNumber(),
-    customer: { ...customerData.value },
+    customer: { ...customerData.value }, // Inclui deliveryType
     items: cartStore.items,
-    total: cartTotal.value,
+    subtotal: subtotalPedido,
+    tax: currentDeliveryFee, // Taxa de entrega calculada
+    total: totalPedido,      // Total com taxa de entrega
     paymentMethod: paymentMethod.value,
+    deliveryType: customerData.value.deliveryType, // Adicionado para clareza
     needChange: needChange.value === "yes" ? true : false,
     changeAmount:
       paymentMethod.value === "cash" && needChange.value === "yes"
         ? changeAmount.value
         : null,
     orderDate: new Date().toISOString(),
-    status: "pending", // Status inicial do pedido
+    status: "pending",
   };
 
   console.log("Dados do Pedido:", orderDetails);
 
-  // Simulação de envio para o backend (você precisará implementar a lógica real)
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula um delay de envio
+  const cartItems = cartStore.items
+    .map((item) => {
+      let itemString = `${item.quantity}x ${item.name}${item.size ? ` (${item.size})` : ''} - R$ ${item.subtotal.toFixed(2).replace('.', ',')}`;
+      if (item.extras && item.extras.length > 0) {
+        const extrasString = item.extras
+          .map(e => `${e.name} - R$ ${e.price.toFixed(2).replace('.', ',')}`)
+          .join(' | ');
+        itemString += `\nAdicionais: ${extrasString}`;
+      }
+      return itemString;
+    })
+    .join("\n");
+
+  // Ajustar informações de entrega na mensagem
+  let deliverySpecificInfo = [`Tipo: ${orderDetails.deliveryType}`];
+  if (orderDetails.deliveryType === 'Entrega') {
+    deliverySpecificInfo.push(`Tempo de entrega: 40 a 50min`); // Ou sua lógica de tempo de entrega
+  }
+  // Para retirada, você pode adicionar um horário de retirada ou instruções. Ex:
+  // else if (orderDetails.deliveryType === 'Retirada') {
+  //   deliverySpecificInfo.push(`Pronto para retirada em: 20-30min`);
+  // }
+
+
+  const message =
+    `NOVO PEDIDO: #${orderDetails.orderNumber}\n\n` +
+    `DADOS DO PEDIDO:\n` +
+    `${cartItems}\n\n` +
+    `DADOS DA ENTREGA:\n` +
+    `${deliverySpecificInfo.join('\n')}\n` + // Linhas de tipo e tempo de entrega
+    `Cliente: ${customerData.value.name}\n` +
+    `Telefone: ${customerData.value.phone}\n` +
+    // Endereço só faz sentido para Delivery
+    (orderDetails.deliveryType === 'Entrega' ? `Endereço: ${customerData.value.address}\n` : '') +
+    (orderDetails.deliveryType === 'Entrega' && customerData.value.reference ? `Ponto de referência: ${customerData.value.reference}\n` : (orderDetails.deliveryType === 'Entrega' ? `Ponto de referência: nenhum\n` : '')) +
+    (orderDetails.deliveryType === 'Entrega' && customerData.value.neighborhood ? `Bairro: ${customerData.value.neighborhood}\n` : '') +
+    `\n` + // Espaço extra antes dos dados de pagamento, mesmo se bairro não for mostrado
+    `DADOS DO PAGAMENTO:\n` +
+    `Método de pagamento: ${orderDetails.paymentMethod ? orderDetails.paymentMethod.toUpperCase() : 'N/A'}\n` +
+    `Subtotal: R$ ${orderDetails.subtotal.toFixed(2).replace('.', ',')}\n` +
+    (orderDetails.deliveryType === 'entrega' ? `Taxa de entrega: R$ ${orderDetails.tax.toFixed(2).replace('.', ',')}\n` : '') + // Só mostra taxa se for delivery
+    `Total: R$ ${orderDetails.total.toFixed(2).replace('.', ',')}`;
+
+  const phone = "5571992477638";
+  const encoded = encodeURIComponent(message);
+
+  window.open(`https://wa.me/${phone}?text=${encoded}`);
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   orderNumber.value = orderDetails.orderNumber;
-  saveCustomerDataLocally();
-  cartStore.clearCart(); // Limpar o carrinho após o pedido
-  editingCustomerData.value = false; // Voltar para a visualização dos dados após o pedido
+  saveCustomerDataLocally(); // Certifique-se que salve customerData.deliveryType também
+  cartStore.clearCart();
+  editingCustomerData.value = false;
 
-  // Redirecionar para a home após alguns segundos
   setTimeout(() => {
     orderNumber.value = "";
-    router.push("/"); // Redireciona para a rota '/' (home)
-  }, 3000); // Ajuste o tempo conforme necessário
+    router.push("/");
+  }, 3000);
 }
 </script>
