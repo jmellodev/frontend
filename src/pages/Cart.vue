@@ -114,21 +114,16 @@ const removeFromCart = (item) => {
 };
 
 const updateQuantity = (item, quantity) => {
-  // Certifique-se de que a quantidade seja pelo menos 1
   if (quantity >= 1) {
-    // Encontre o índice do item correto no carrinho
-    const index = cartStore.items.value.findIndex(
+    const index = cartStore.items.findIndex(
       (i) =>
         i.id === item.id && i.size === item.size && areExtrasEqual(i.extras, item.extras)
     );
 
     if (index !== -1) {
-      // Crie uma cópia do array para manter a reatividade
-      const updatedItems = [...cartStore.items.value];
-      // Atualize a quantidade do item na cópia
+      const updatedItems = [...cartStore.items];
       updatedItems[index].quantity = quantity;
-      // Atribua a cópia atualizada de volta ao ref
-      cartStore.items.value = updatedItems;
+      cartStore.items = updatedItems;
     } else {
       console.warn("Item não encontrado no carrinho para atualização:", item);
     }

@@ -129,7 +129,7 @@
           <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
             Tipo de Entrega/Retirada:
           </label>
-          <div class="mt-2 space-y-2 md:space-y-0 space-x-6 flex items-center">
+          <div class="space-x-4 flex items-center">
             <div>
               <input
                 type="radio"

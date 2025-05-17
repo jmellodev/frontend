@@ -4,6 +4,7 @@
     <Topnav :title="topNavTitle" :showBackButton="showBackButton" />
 
     <main class="py-4 px-0 h-auto pb-16 md:pb-0 pt-20 m-auto">
+      <Sidebar />
       <slot />
     </main>
 
