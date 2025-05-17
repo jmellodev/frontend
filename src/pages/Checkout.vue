@@ -90,55 +90,117 @@
               class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
               >Ponto de Referência:</label
             >
-            <input
-              id="reference"
-              v-model="customerData.reference"
-              class="input"
-            ></input>
+            <input id="reference" v-model="customerData.reference" class="input" />
           </div>
+
           <div class="mb-4">
             <label
               for="neighborhood"
               class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
               >Bairro:</label
             >
-            <input
-              id="neighborhood"
-              v-model="customerData.neighborhood"
-              class="input"
-            ></input>
+            <input id="neighborhood" v-model="customerData.neighborhood" class="input" />
+          </div>
+
+          <div class="flex justify-end gap-2">
+            <button
+              type="button"
+              @click="editingCustomerData = false"
+              class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md shadow-md"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              @click="
+                () => {
+                  editingCustomerData = false;
+                  saveCustomerDataLocally();
+                }
+              "
+              class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md shadow-md"
+            >
+              Salvar
+            </button>
           </div>
         </div>
 
         <div class="mb-4">
-          <label 
-            for="deliveryType" 
-            class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-          >
+          <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
             Tipo de Entrega/Retirada:
           </label>
-          <select
-            id="deliveryType"
-            v-model="customerData.deliveryType"
-            class="input w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="Entrega">Delivery (Entrega)</option>
-            <option value="Retirada">Retirada no local</option>
-            </select>
+          <div class="mt-2 space-y-2 md:space-y-0 space-x-6 flex items-center">
+            <div>
+              <input
+                type="radio"
+                id="deliveryTypeDelivery"
+                name="deliveryTypeOptions"
+                value="Entrega"
+                v-model="customerData.deliveryType"
+                class="form-radio hidden"
+              />
+              <label
+                for="deliveryTypeDelivery"
+                :class="[
+                  'cursor-pointer px-4 py-2 rounded border text-sm font-medium transition',
+                  customerData.deliveryType === 'Entrega'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
+                ]"
+              >
+                🚚 Entrega
+              </label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                id="deliveryTypeRetirada"
+                name="deliveryTypeOptions"
+                value="Retirada"
+                v-model="customerData.deliveryType"
+                class="form-radio hidden"
+              />
+              <label
+                for="deliveryTypeRetirada"
+                :class="[
+                  'cursor-pointer px-4 py-2 rounded border text-sm font-medium transition',
+                  customerData.deliveryType === 'Retirada'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
+                ]"
+              >
+                🏠 Retirada
+              </label>
+            </div>
+          </div>
         </div>
 
         <h3 class="font-semibold mb-4 mt-6 dark:text-gray-100">Pagamento</h3>
-        <div class="mb-4">
+        <div class="flex gap-4 mb-6">
           <label
-            for="paymentMethod"
-            class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-            >Forma de Pagamento:</label
+            v-for="method in paymentOptions"
+            :key="method.value"
+            class="relative cursor-pointer"
           >
-          <select id="paymentMethod" v-model="paymentMethod" required class="input">
-            <option value="pix">Pix</option>
-            <option value="card">Cartão</option>
-            <option value="cash">Dinheiro</option>
-          </select>
+            <input
+              type="radio"
+              name="paymentMethod"
+              :value="method.value"
+              v-model="paymentMethod"
+              class="hidden"
+            />
+            <div
+              :class="[
+                'w-28 h-24 flex flex-col items-center justify-center border rounded-lg shadow transition',
+                paymentMethod === method.value
+                  ? 'bg-green-500 text-white border-green-600'
+                  : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
+              ]"
+            >
+              <div class="text-2xl">{{ method.icon }}</div>
+              <div class="mt-2 text-sm font-medium">{{ method.label }}</div>
+            </div>
+          </label>
         </div>
 
         <div v-if="paymentMethod === 'cash'" class="mb-4">
@@ -196,20 +258,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, reactive } from "vue";
 import { useCartStore } from "@/stores/cartStore";
 import AppLayout from "@/layouts/AppLayout.vue";
-import { useRouter } from "vue-router"; // Importe o useRouter
+import { useRouter } from "vue-router";
 
-const router = useRouter(); // Inicialize o router
-
+const router = useRouter();
 const cartStore = useCartStore();
 const cartTotal = computed(() => cartStore.total);
-
 const CUSTOMER_DATA_LOCAL_STORAGE_KEY = "customer_data";
-const DEFAULT_DELIVERY_FEE = 5.00;
+const DEFAULT_DELIVERY_FEE = 5.0;
 
-const customerData = ref({
+const customerData = reactive({
   name: "",
   phone: "",
   deliveryType: "Entrega",
@@ -217,39 +277,39 @@ const customerData = ref({
   reference: "",
   neighborhood: "",
 });
-const hasCustomerData = computed(() =>
-  Object.values(customerData.value).some((value) => value !== "")
-);
-const editingCustomerData = ref(false);
 
+const hasCustomerData = computed(() =>
+  Object.values(customerData).some((value) => value !== "")
+);
+
+const editingCustomerData = ref(false);
 const paymentMethod = ref("pix");
 const needChange = ref("no");
 const changeAmount = ref(0);
 const orderNumber = ref("");
-const tax = 5;
+
+const paymentOptions = [
+  { value: "pix", label: "Pix", icon: "💳" },
+  { value: "card", label: "Cartão", icon: "🪪" },
+  { value: "cash", label: "Dinheiro", icon: "💵" },
+];
+
+function generateOrderNumber() {
+  const timestamp = Date.now().toString(36).slice(-5);
+  const randomChars = Math.random().toString(36).substring(2, 7);
+  return `${timestamp.toUpperCase()}${randomChars.toUpperCase()}`;
+}
 
 onMounted(() => {
   const storedData = localStorage.getItem(CUSTOMER_DATA_LOCAL_STORAGE_KEY);
   if (storedData) {
-    customerData.value = JSON.parse(storedData);
+    Object.assign(customerData, JSON.parse(storedData));
   }
 });
 
-function generateOrderNumber() {
-  const timestamp = Date.now().toString(36).slice(-5); // Pega os últimos 5 caracteres
-  const randomChars = Math.random().toString(36).substring(2, 7); // Pega 5 caracteres aleatórios
-  return `${timestamp.toUpperCase()}${randomChars.toUpperCase()}`; // Combina e converte para maiúsculo
-}
-
 function saveCustomerDataLocally() {
-  localStorage.setItem(
-    CUSTOMER_DATA_LOCAL_STORAGE_KEY,
-    JSON.stringify(customerData.value)
-  );
+  localStorage.setItem(CUSTOMER_DATA_LOCAL_STORAGE_KEY, JSON.stringify(customerData));
 }
-
-// Assumindo que você tem DEFAULT_DELIVERY_FEE definido no escopo do seu script setup
-// const DEFAULT_DELIVERY_FEE = 5.00; // Exemplo
 
 async function submitOrder() {
   if (cartStore.items.length === 0) {
@@ -257,24 +317,22 @@ async function submitOrder() {
     return;
   }
 
-  // Determinar a taxa de entrega baseada no tipo de entrega
-  const currentDeliveryFee = customerData.value.deliveryType === 'Retirada' 
-                            ? 0 
-                            : DEFAULT_DELIVERY_FEE; // Use sua taxa padrão aqui
+  const currentDeliveryFee =
+    customerData.deliveryType === "Retirada" ? 0 : DEFAULT_DELIVERY_FEE;
 
-  const subtotalPedido = cartTotal.value; // Subtotal dos itens do carrinho
+  const subtotalPedido = cartTotal.value;
   const totalPedido = subtotalPedido + currentDeliveryFee;
 
   const orderDetails = {
     orderNumber: generateOrderNumber(),
-    customer: { ...customerData.value }, // Inclui deliveryType
+    customer: { ...customerData },
     items: cartStore.items,
     subtotal: subtotalPedido,
-    tax: currentDeliveryFee, // Taxa de entrega calculada
-    total: totalPedido,      // Total com taxa de entrega
+    tax: currentDeliveryFee,
+    total: totalPedido,
     paymentMethod: paymentMethod.value,
-    deliveryType: customerData.value.deliveryType, // Adicionado para clareza
-    needChange: needChange.value === "yes" ? true : false,
+    deliveryType: customerData.deliveryType,
+    needChange: needChange.value === "yes",
     changeAmount:
       paymentMethod.value === "cash" && needChange.value === "yes"
         ? changeAmount.value
@@ -283,60 +341,66 @@ async function submitOrder() {
     status: "pending",
   };
 
-  console.log("Dados do Pedido:", orderDetails);
-
   const cartItems = cartStore.items
     .map((item) => {
-      let itemString = `${item.quantity}x ${item.name}${item.size ? ` (${item.size})` : ''} - R$ ${item.subtotal.toFixed(2).replace('.', ',')}`;
+      let itemString = `${item.quantity}x ${item.name}${
+        item.size ? ` (${item.size})` : ""
+      } - R$ ${item.subtotal.toFixed(2).replace(".", ",")}`;
       if (item.extras && item.extras.length > 0) {
         const extrasString = item.extras
-          .map(e => `${e.name} - R$ ${e.price.toFixed(2).replace('.', ',')}`)
-          .join(' | ');
+          .map((e) => `${e.name} - R$ ${e.price.toFixed(2).replace(".", ",")}`)
+          .join(" | ");
         itemString += `\nAdicionais: ${extrasString}`;
       }
       return itemString;
     })
     .join("\n");
 
-  // Ajustar informações de entrega na mensagem
   let deliverySpecificInfo = [`Tipo: ${orderDetails.deliveryType}`];
-  if (orderDetails.deliveryType === 'Entrega') {
-    deliverySpecificInfo.push(`Tempo de entrega: 40 a 50min`); // Ou sua lógica de tempo de entrega
+  if (orderDetails.deliveryType === "Entrega") {
+    deliverySpecificInfo.push(`Tempo de entrega: 40 a 50min`);
+  } else {
+    deliverySpecificInfo.push(`Pronto para retirada em: 20-30min`);
   }
-  // Para retirada, você pode adicionar um horário de retirada ou instruções. Ex:
-  // else if (orderDetails.deliveryType === 'Retirada') {
-  //   deliverySpecificInfo.push(`Pronto para retirada em: 20-30min`);
-  // }
-
 
   const message =
     `NOVO PEDIDO: #${orderDetails.orderNumber}\n\n` +
     `DADOS DO PEDIDO:\n` +
     `${cartItems}\n\n` +
     `DADOS DA ENTREGA:\n` +
-    `${deliverySpecificInfo.join('\n')}\n` + // Linhas de tipo e tempo de entrega
-    `Cliente: ${customerData.value.name}\n` +
-    `Telefone: ${customerData.value.phone}\n` +
-    // Endereço só faz sentido para Delivery
-    (orderDetails.deliveryType === 'Entrega' ? `Endereço: ${customerData.value.address}\n` : '') +
-    (orderDetails.deliveryType === 'Entrega' && customerData.value.reference ? `Ponto de referência: ${customerData.value.reference}\n` : (orderDetails.deliveryType === 'Entrega' ? `Ponto de referência: nenhum\n` : '')) +
-    (orderDetails.deliveryType === 'Entrega' && customerData.value.neighborhood ? `Bairro: ${customerData.value.neighborhood}\n` : '') +
-    `\n` + // Espaço extra antes dos dados de pagamento, mesmo se bairro não for mostrado
+    `${deliverySpecificInfo.join("\n")}\n` +
+    `Cliente: ${customerData.name}\n` +
+    `Telefone: ${customerData.phone}\n` +
+    (orderDetails.deliveryType === "Entrega"
+      ? `Endereço: ${customerData.address}\n`
+      : "") +
+    (orderDetails.deliveryType === "Entrega" && customerData.reference
+      ? `Ponto de referência: ${customerData.reference}\n`
+      : orderDetails.deliveryType === "Entrega"
+      ? `Ponto de referência: nenhum\n`
+      : "") +
+    (orderDetails.deliveryType === "Entrega" && customerData.neighborhood
+      ? `Bairro: ${customerData.neighborhood}\n`
+      : "") +
+    `\n` +
     `DADOS DO PAGAMENTO:\n` +
-    `Método de pagamento: ${orderDetails.paymentMethod ? orderDetails.paymentMethod.toUpperCase() : 'N/A'}\n` +
-    `Subtotal: R$ ${orderDetails.subtotal.toFixed(2).replace('.', ',')}\n` +
-    (orderDetails.deliveryType === 'entrega' ? `Taxa de entrega: R$ ${orderDetails.tax.toFixed(2).replace('.', ',')}\n` : '') + // Só mostra taxa se for delivery
-    `Total: R$ ${orderDetails.total.toFixed(2).replace('.', ',')}`;
+    `Método de pagamento: ${
+      orderDetails.paymentMethod ? orderDetails.paymentMethod.toUpperCase() : "N/A"
+    }\n` +
+    `Subtotal: R$ ${orderDetails.subtotal.toFixed(2).replace(".", ",")}\n` +
+    (orderDetails.deliveryType === "Entrega"
+      ? `Taxa de entrega: R$ ${orderDetails.tax.toFixed(2).replace(".", ",")}\n`
+      : "") +
+    `Total: R$ ${orderDetails.total.toFixed(2).replace(".", ",")}`;
 
   const phone = "5571992477638";
   const encoded = encodeURIComponent(message);
-
   window.open(`https://wa.me/${phone}?text=${encoded}`);
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   orderNumber.value = orderDetails.orderNumber;
-  saveCustomerDataLocally(); // Certifique-se que salve customerData.deliveryType também
+  saveCustomerDataLocally();
   cartStore.clearCart();
   editingCustomerData.value = false;
 
