@@ -11,7 +11,7 @@
         <img
           :src="product?.img"
           alt="Imagem do produto"
-          class="w-full h-56 object-cover mb-6 rounded-2xl shadow-lg"
+          class="w-full h-56 object-cover mb-6 rounded-2xl shadow-lg lg:hidden"
         />
 
         <div class="flex items-center justify-between mb-4">

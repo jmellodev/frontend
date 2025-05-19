@@ -1,6 +1,6 @@
 <template>
   <div
-    class="rounded-[8px] p-2 shadow flex flex-col justify-between bg-gray-50 dark:bg-gray-700 gap-4 relative"
+    class="rounded-[8px] p-2 shadow flex flex-col justify-between bg-white dark:bg-gray-800 gap-4 relative border border-gray-200 dark:border-gray-700"
   >
     <div class="absolute top-4 right-4">
       <IconFavorite :product="product" />
