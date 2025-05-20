@@ -36,7 +36,7 @@
       <img
         src="../assets/image/bg_header.jpg"
         alt="Pizzaria da Nonna"
-        class="w-32 h-32 rounded-full , shadow-lg hover:scale-110 duration-200"
+        class="w-32 h-32 rounded-full shadow-lg hover:scale-110 duration-200"
       />
       <h1 class="text-4x1 mt-4 font-bold text-white">{{ title }}</h1>
       <span class="text-white font-medium"

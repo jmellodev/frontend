@@ -11,7 +11,7 @@ export default function cssObfuscator() {
   function getHash(className) {
     if (!classMap[className]) {
       const hash = crypto.createHash('md5').update(className).digest('hex');
-      classMap[className] = '_' + hash.substring(0, 4);
+      classMap[className] = 'jm_' + hash.substring(0, 5);
     }
     return classMap[className];
   }
