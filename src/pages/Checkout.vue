@@ -50,7 +50,7 @@
           </div>
           <button
             @click="editingCustomerData = true"
-            class="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow focus:outline-none focus:shadow-outline"
+            class="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500"
           >
             Alterar meus dados
           </button>
@@ -304,7 +304,7 @@
             </div>
             <button
               type="submit"
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md mt-4 focus:outline-none focus:shadow-outline"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md mt-4 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500"
             >
               Finalizar Pedido
             </button>

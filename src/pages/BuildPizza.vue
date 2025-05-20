@@ -126,7 +126,7 @@
           :disabled="
             selectedSabores.length < 2 || selectedSabores.length > selectedMaxSabores
           "
-          class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg shadow-md mt-4 focus:outline-none focus:shadow-outline"
+          class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg shadow-md mt-4 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500"
         >
           Adicionar ao Carrinho
         </button>
@@ -237,11 +237,11 @@ const addToCart = () => {
 <style scoped lang="postcss">
 @reference "tailwindcss";
 .input {
-  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline;
+  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500;
 }
 
 .input-sm {
-  @apply shadow appearance-none border rounded py-2 px-3 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline;
+  @apply shadow appearance-none border rounded py-2 px-3 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500;
   width: 100px;
 }
 </style>
