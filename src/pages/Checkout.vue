@@ -5,11 +5,11 @@
     :is-header-visible="false"
   >
     <div
-      class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 gap-4 -mt-20"
+      class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 gap-4 lg:-mt-20"
     >
       <ol
         aria-label="Breadcrumb"
-        class="col-span-8 px-1 flex text-xs space-x-2 items-center text-gray-500 min-w-0 gap-2 whitespace-nowrap"
+        class="lg:col-span-8 md:col-span-2 px-1 flex text-xs space-x-2 items-center text-gray-500 min-w-0 gap-2 whitespace-nowrap"
       >
         <li class="text-xs/loose">
           <a
@@ -22,7 +22,7 @@
         <i class="fa fa-chevron-right text-gray-400"></i>
         <span class="text-green-600">Finalizar pedido</span>
       </ol>
-      <div class="col-span-2">
+      <div class="lg:col-span-2">
         <div
           v-if="hasCustomerData && !editingCustomerData"
           class="p-4 border border-gray-300 rounded-md mb-4 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
