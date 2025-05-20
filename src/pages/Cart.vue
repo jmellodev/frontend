@@ -9,7 +9,7 @@
         <div
           v-for="item in cartItems"
           :key="generateCartItemId(item)"
-          class="flex items-center border rounded-md shadow-sm p-4 dark:bg-gray-800 dark:border-gray-700"
+          class="flex items-center border rounded-md p-4 dark:bg-gray-800 dark:border-gray-700 border-gray-300"
         >
           <router-link :to="'/produto/' + item.slug" class="w-24 h-24 mr-4">
             <div
@@ -26,16 +26,16 @@
             >
               {{ item.name || "Item sem nome" }}
             </router-link>
-            <div v-if="item.size" class="text-gray-600 dark:text-gray-400 text-sm">
-              Tamanho: {{ item.size }}
+            <div v-if="item.size" class="text-gray-500 dark:text-gray-400 text-sm">
+              Tam: {{ item.size }}
             </div>
             <div
               v-if="item.extras && item.extras.length > 0"
-              class="text-gray-600 dark:text-gray-400 text-sm"
+              class="text-gray-500 dark:text-gray-400 text-sm"
             >
               Extras: {{ item.extras.map((extra) => extra.name).join(", ") }}
             </div>
-            <p class="text-gray-600 dark:text-gray-400 text-sm">
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
               Preço Unitário:
               {{
                 $formatPrice(
@@ -51,11 +51,11 @@
                 Quantidade:
               </label>
               <div
-                class="flex items-center border rounded-md shadow-sm dark:border-gray-700"
+                class="flex items-center border rounded-full shadow-lg dark:border-gray-700 border-gray-300"
               >
                 <button
                   @click="decrementQuantity(item)"
-                  class="px-2 py-1 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none"
+                  class="px-2 py-1 text-gray-700 dark:text-gray-300 hover:bg-gray-300 rounded-l-full dark:hover:bg-gray-700 focus:outline-none"
                 >
                   <i class="fa fa-minus"></i>
                 </button>
@@ -64,7 +64,7 @@
                 }}</span>
                 <button
                   @click="incrementQuantity(item)"
-                  class="px-2 py-1 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none"
+                  class="px-2 py-1 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none rounded-r-full"
                 >
                   <i class="fa fa-plus"></i>
                 </button>
@@ -73,17 +73,25 @@
           </div>
           <button
             @click="removeFromCart(item)"
-            class="text-red-500 hover:text-red-700 focus:outline-none"
+            class="h-10 w-10 inline-flex items-center justify-center bg-transparent transition-all duration-300 cursor-pointer rounded-full hover:bg-red-500/20 text-red-500 relative group"
           >
             <i class="fa fa-trash"></i>
+
+            <span
+              class="text-xs text-red-500 absolute -bottom-4 hidden group-hover:flex transition-all duration-300"
+              ><small>Excluir</small></span
+            >
           </button>
         </div>
       </div>
 
-      <div v-if="itemCount > 0" class="mt-8 border-t pt-4 dark:border-gray-700">
+      <div
+        v-if="itemCount > 0"
+        class="mt-8 border-t pt-4 dark:border-gray-700 border-gray-300"
+      >
         <div class="flex justify-between items-center dark:text-gray-200">
-          <span class="font-semibold">Total do Pedido:</span>
-          <span class="text-xl font-bold">{{ $formatPrice(cartTotal) }}</span>
+          <span class="font-bold">Total do Pedido:</span>
+          <span class="text-xl font-semibold">{{ $formatPrice(cartTotal) }}</span>
         </div>
         <button
           class="bg-emerald-500 container hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-md shadow-md mt-4"

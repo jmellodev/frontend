@@ -4,12 +4,28 @@
     top-nav-title="Finalizar pedido"
     :is-header-visible="false"
   >
-    <div class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div></div>
-      <div>
+    <div
+      class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 gap-4 -mt-20"
+    >
+      <ol
+        aria-label="Breadcrumb"
+        class="col-span-8 px-1 flex text-xs space-x-2 items-center text-gray-500 min-w-0 gap-2 whitespace-nowrap"
+      >
+        <li class="text-xs/loose">
+          <a
+            href=""
+            class="flex items-center gap-2 align-middle text-base leading-none transition-all"
+          >
+            <i class="fa fa-home"></i> Home
+          </a>
+        </li>
+        <i class="fa fa-chevron-right text-gray-400"></i>
+        <span class="text-green-600">Finalizar pedido</span>
+      </ol>
+      <div class="col-span-2">
         <div
           v-if="hasCustomerData && !editingCustomerData"
-          class="p-4 border border-gray-300 shadow-md rounded-md mb-4 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+          class="p-4 border border-gray-300 rounded-md mb-4 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
         >
           <h3 class="font-semibold mb-2 dark:text-gray-100">Dados do Cliente</h3>
           <div>
@@ -39,7 +55,10 @@
             Alterar meus dados
           </button>
         </div>
-
+      </div>
+      <div
+        class="p-4 border border-gray-300 rounded-md mb-4 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+      >
         <form @submit.prevent="submitOrder">
           <div v-if="!hasCustomerData || editingCustomerData">
             <h3 class="font-semibold mb-4 dark:text-gray-100">Dados do Cliente</h3>
@@ -133,10 +152,50 @@
             </div>
           </div>
 
+          <h3 class="font-semibold mb-4 dark:text-gray-100 text-gray-700">
+            Resumo do pedido
+          </h3>
+          <div class="mb-6">
+            <div
+              v-for="item in cartItems"
+              class="flex items-center gap-4 text-gray-700 text-xs mb-2"
+            >
+              <img
+                :src="item.img"
+                :alt="item.name"
+                class="h-10 w-10 rounded-md object-cover shadow-md"
+              />
+              <span class="flex-3">{{ item.name }}</span>
+              <span class="flex-1">x{{ item.quantity }}</span>
+              <span>{{ $formatPrice(item.subtotal) }}</span>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label for="coupon" class="text-xs text-gray-700">Código do cupom</label>
+            <div class="relative">
+              <input
+                type="text"
+                name="coupon"
+                id="coupon"
+                class="block w-full rounded-md py-3 ps-4 pe-12 text-gray-800 text-sm focus:ring-transparent border-gray-200 dark:bg-gray-50"
+                placeholder="Digite o código"
+                autocomplete="off"
+              />
+              <button
+                class="absolute top-1/2 -translate-y-1/2 end-1 py-2 px-5 inline-block font-semibold tracking-wide border align-middle duration-500 text-sm text-center bg-gray-200 hover:bg-gray-300 border-gray-200 hover:border-gray-300 text-gray-900 rounded-md"
+              >
+                Aplicar cupom
+              </button>
+            </div>
+          </div>
+
+          <Divider />
+
           <div class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
+            <span class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-4">
               Tipo de Entrega/Retirada:
-            </label>
+            </span>
             <div class="space-x-4 flex items-center">
               <div>
                 <input
@@ -182,9 +241,9 @@
               </div>
             </div>
           </div>
-
-          <h3 class="font-semibold mb-4 mt-6 dark:text-gray-100">Pagamento</h3>
-          <div class="flex gap-2 mb-6">
+          <Divider />
+          <h3 class="font-semibold mb-4 dark:text-gray-100 text-gray-700">Pagamento</h3>
+          <div class="flex gap-2 mb-4">
             <label
               v-for="method in paymentOptions"
               :key="method.value"
@@ -237,11 +296,11 @@
               />
             </div>
           </div>
-
-          <div class="mt-8 border-t pt-4 dark:border-gray-700">
+          <Divider />
+          <div>
             <div class="flex justify-between items-center dark:text-gray-200">
               <span class="font-semibold">Total do Pedido:</span>
-              <span class="text-xl font-bold">{{ $formatPrice(cartTotal) }}</span>
+              <span class="font-bold">{{ $formatPrice(cartTotal) }}</span>
             </div>
             <button
               type="submit"
@@ -270,12 +329,15 @@ import { ref, computed, onMounted, reactive } from "vue";
 import { useCartStore } from "@/stores/cartStore";
 import AppLayout from "@/layouts/AppLayout.vue";
 import { useRouter } from "vue-router";
+import Divider from "@/components/Divider.vue";
 
 const router = useRouter();
 const cartStore = useCartStore();
 const cartTotal = computed(() => cartStore.total);
 const CUSTOMER_DATA_LOCAL_STORAGE_KEY = "customer_data";
 const DEFAULT_DELIVERY_FEE = 5.0;
+
+const cartItems = computed(() => cartStore.items);
 
 const customerData = reactive({
   name: "",

@@ -1,12 +1,12 @@
 <template>
-  <div class="flex items-baseline gap-1 text-amber-300 text-xs">
+  <div class="flex items-baseline gap-[2px] text-amber-300 text-[11px]">
     <template v-for="n in 5" :key="n">
       <i v-if="n <= fullStars" class="fas fa-star" />
       <i v-else-if="n === fullStars + 1 && hasHalfStar" class="fas fa-star-half-alt" />
       <i v-else class="far fa-star text-gray-400 dark:text-gray-500" />
     </template>
-    <span v-if="showTextRating" class="dark:text-gray-200 text-gray-500"
-      >| {{ Number(ratingText).toFixed(1) }}</span
+    <span v-if="showTextRating" class="dark:text-gray-200 text-gray-500">
+      ({{ Number(ratingText).toFixed(1) }})</span
     >
   </div>
 </template>
