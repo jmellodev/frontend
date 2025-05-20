@@ -79,30 +79,38 @@ export default function cssObfuscator() {
             const hash = classMap[className];
 
             // Padrões para substituir em JS/HTML.
-            // A prioridade aqui é ser preciso para não quebrar a aplicação.
-            // Considera strings, classes em templates literais, etc.
+            // FOQUE APENAS EM ATRIBUTOS HTML/JSX 'class' E 'className',
+            // E POSSÍVEIS STRINGS QUE CLARAMENTE REPRESENTAM CLASSE CSS.
             const patterns = [
-              // Atributos HTML class="my-class" ou class='my-class'
-              new RegExp(`class=["']([^"']*)?\\b${className}\\b([^"']*)?["']`, 'g'),
-              // Atributos Vue/React className="my-class" ou className='my-class'
-              new RegExp(`className=["']([^"']*)?\\b${className}\\b([^"']*)?["']`, 'g'),
-              // Classes em literais de template ou strings JS/TS: `.${my-class}` ou `my-class`
-              new RegExp(`\\b${className}\\b`, 'g'),
+              // 1. Atributos HTML class="my-class" ou class='my-class'
+              //    captura: class="qualquer-coisa my-class outra-coisa"
+              new RegExp(`(class=["'])([^"']*)?\\b${className}\\b([^"']*)(["'])`, 'g'),
+              // 2. Atributos Vue/React className="my-class" ou className='my-class'
+              //    captura: className="qualquer-coisa my-class outra-coisa"
+              new RegExp(`(className=["'])([^"']*)?\\b${className}\\b([^"']*)(["'])`, 'g'),
+              // 3. Classes em literais de template ou strings JS/TS,
+              //    MAS SOMENTE SE FOREM USADAS COMO SELETOR DE CLASSE (ex: '.my-class')
+              //    Esta é mais arriscada, use com cautela.
+              new RegExp(`(['"\`])\\.${className}(['"\`])`, 'g'), // ex: '.my-class'
+              // 4. Ou se for uma classe única em uma string que pode ser passada para classList.add, etc.
+              //    Ex: "my-class"
+              new RegExp(`(['"\`])(${className})(['"\`])`, 'g'),
             ];
 
             patterns.forEach(regex => {
-              // A substituição precisa ser mais cuidadosa para manter outras classes
-              // e o contexto do atributo ou string.
-              // Ex: class="class-a my-class class-b" -> class="class-a _abcd class-b"
-              content = content.replace(regex, (match, p1 = '', p2 = '') => {
-                // Se for um atributo class/className, reconstruir a string
-                if (match.includes('class=') || match.includes('className=')) {
-                  const originalClasses = `${p1}${className}${p2}`;
-                  const replacedClasses = originalClasses.replace(new RegExp(`\\b${className}\\b`), hash);
-                  return match.replace(originalClasses, replacedClasses);
+              content = content.replace(regex, (match, p1, p2 = '', p3 = '', p4) => {
+                // Para padrões 1 e 2 (atributos class/className)
+                if (p1.includes('class=') || p1.includes('className=')) {
+                  // Reconstruir a string do atributo, substituindo apenas a classe desejada
+                  const originalContent = `${p2}${className}${p3}`;
+                  const replacedContent = originalContent.replace(new RegExp(`\\b${className}\\b`), hash);
+                  return `${p1}${replacedContent}${p4}`;
                 }
-                // Para outras ocorrências genéricas (dentro de strings)
-                return match.replace(new RegExp(`\\b${className}\\b`), hash);
+                // Para padrões 3 e 4 (strings de classe)
+                if (p1 === "'" || p1 === '"' || p1 === '`') { // Delimitadores de string
+                  return `${p1}${hash}${p3}`;
+                }
+                return match; // Retorna o original se não for um caso de substituição esperado
               });
             });
           });
