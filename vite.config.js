@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [
     vue(),
     tailwindcss(),
-    cssObfuscator(),
+    // cssObfuscator(),
   ],
   resolve: {
     alias: {
