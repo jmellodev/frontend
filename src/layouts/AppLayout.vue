@@ -1,6 +1,6 @@
 <template>
   <div
-    class="startingA:opacity-0 transitionA-all durationA-1000 bg-gray-100 dark:bg-gray-700"
+    class="starting:opacity-0 transition-all duration-1000 bg-gray-100 dark:bg-gray-700"
   >
     <Header :title="title" :background="background" />
     <Topnav :title="topNavTitle" :showBackButton="showBackButton" />
