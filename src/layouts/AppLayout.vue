@@ -1,8 +1,7 @@
 <template>
-  <div
-    class="starting:opacity-0 transition-all duration-1000 bg-gray-100 dark:bg-gray-700"
-  >
-    <Header :title="title" :background="background" />
+  <div class="starting:opacity-0 transition-all duration-1000 bg-gray-100 dark:bg-gray-700">
+    <!-- <Header :title="title" :background="background" /> -->
+    <NewHader />
     <Topnav :title="topNavTitle" :showBackButton="showBackButton" />
 
     <main class="py-4 px-0 h-auto pb-16 md:pb-0 pt-20 m-auto">
@@ -16,6 +15,7 @@
 <script setup>
 import Header from "@/components/Header.vue";
 import MenuMobile from "@/components/MenuMobile.vue";
+import NewHader from "@/components/NewHader.vue";
 import Topnav from "@/components/Topnav.vue";
 
 defineProps({
