@@ -5,53 +5,38 @@
       <i class="fa fa-arrow-left text-gray-400 text-md"></i>
     </a>
     <div v-else>
-      <button @click="toggleMenu" class="md:hidden p-2 text-gray-600 relative">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
 
+      <button class="md:hidden p-2 text-gray-600 relative">
+        <i @click="toggleMobileMenu" class="h-4"
+          :class="['fas text-sm', isMobileMenuOpen ? 'fa-xmark' : 'fa-bars']"></i>
         <!-- Menu mobile -->
-        <Transition name="fade-slide">
-          <div class="">
-            <div v-if="open"
-              class="lg:hidden px-4 py-2 space-y-2 flex flex-col z-30 bg-white shadow-md rounded-md absolute top-0 left-0 w-64">
-              <!-- Ícone de fechar -->
-              <div class="flex justify-end">
-                <button @click="open = false" class="p-2 text-gray-600 hover:text-black">
-                  <i class="w-6 h-6 fa fa-xmark"></i>
-                </button>
-              </div>
-
-              <button @click="selectCategory(null)" :class="[
-                'block text-left w-full px-2 py-1 rounded-md font-medium',
-                selectedCategoryIds === null
-                  ? 'text-black font-bold bg-gray-200'
-                  : 'text-gray-600 hover:text-black hover:bg-gray-100',
-              ]">
-                Home
-              </button>
-
-              <div v-for="parent in parentCategories" :key="parent.id">
-                <div @click="selectCategory(parent.id, true)" class="font-semibold text-gray-800">
-                  <i :class="parent.icon"></i>
-                  {{ parent.name }}
-                </div>
-                <div class="ml-4 space-y-1">
-                  <button v-for="child in childCategories[parent.id]" :key="child.id"
-                    @click="selectCategory(child.id, true)" :class="[
-                      'block text-left w-full px-2 py-1 rounded-md',
-                      selectedCategoryIds?.includes(child.id)
-                        ? 'text-black font-bold bg-gray-200'
-                        : 'text-gray-600 hover:text-black hover:bg-gray-100',
-                    ]">
-                    {{ child.name }}
-                  </button>
-                </div>
-              </div>
-            </div>
+        <div
+          class="absolute group-hover:translate-x-2 transition-all duration-200 ease-in-out z-50 p-2 dark:bg-gray-700 rounded-md -top-2 -left-5 h-screen flex flex-col space-y-2"
+          :class="[isMobileMenuOpen ? 'translate-x-0  bg-white' : '-translate-x-full']">
+          <div class="flex-row-reverse flex  h-4 w-full">
+            <i @click="toggleMobileMenu" class="fas text-xl fa-xmark "></i>
           </div>
-        </Transition>
+
+
+          <ul class="flex flex-col space-y-2 w-max items-start">
+            <li @click="[selectCategory(null), isMobileMenuOpen = false]"
+              class="flex p-2 whitespace-nowrap hover:bg-gray-800/50">Vert todas</li>
+            <li v-for="parent in parentCategories" :key="parent.id"
+              class="flex flex-col p-2 whitespace-nowrap hover:bg-gray-800/50 items-start">
+              <span class="mb-2 font-medium"><i :class="parent.icon"></i>
+                {{ parent.name }}</span>
+              <ul v-if="childCategories[parent.id]?.length > 0" class="grid grid-cols-2 ml-2 gap-y-2 gap-x-3">
+                <li class="flex" v-for="child in childCategories[parent.id]" :key="child.id"
+                  @click="[selectCategory(child.id), isMobileMenuOpen = false]"><span><i :class="child.icon"></i> {{
+                    child.name }}</span></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
       </button>
+    </div>
+    <div v-if="isMobileMenuOpen" class="bg-black/50 backdrop-blur-sm w-screen h-screen z-20 top-0 left-0 absolute">
     </div>
     <span v-if="showBackButton" class="dark:text-white ml-4 truncate flex justify-center items-center title-font p-2">
       {{ title }}
@@ -70,6 +55,13 @@ import IconCart from "./icons/IconCart.vue";
 import ThemeToggle from "./ThemeToggle.vue";
 import { useCartStore } from "@/stores/cartStore";
 import { useCategories } from "@/composables/useCategories";
+
+const isMobileMenuOpen = ref(false);
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+  console.log(isMobileMenuOpen.value)
+};
 
 // Props
 const props = defineProps({
@@ -111,16 +103,5 @@ function goBack() {
 .title-font {
   font-family: "Lora", serif;
   font-style: italic;
-}
-
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.3s ease;
-}
-
-.fade-slide-enter-from,
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
 }
 </style>

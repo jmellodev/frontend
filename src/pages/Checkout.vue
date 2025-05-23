@@ -1,32 +1,19 @@
 <template>
-  <AppLayout
-    :top-nav-visible="true"
-    top-nav-title="Finalizar pedido"
-    :is-header-visible="false"
-  >
-    <div
-      class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 gap-4 lg:-mt-20"
-    >
-      <ol
-        aria-label="Breadcrumb"
-        class="lg:col-span-8 md:col-span-2 px-1 flex text-xs space-x-2 items-center text-gray-500 min-w-0 gap-2 whitespace-nowrap"
-      >
+  <AppLayout :top-nav-visible="true" top-nav-title="Finalizar pedido" :is-header-visible="false">
+    <div class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 gap-4 lg:-mt-20">
+      <ol aria-label="Breadcrumb"
+        class="lg:col-span-8 md:col-span-2 px-1 flex text-xs space-x-2 items-center text-gray-500 min-w-0 gap-2 whitespace-nowrap">
         <li class="text-xs/loose">
-          <a
-            href=""
-            class="flex items-center gap-2 align-middle text-base leading-none transition-all"
-          >
-            <i class="fa fa-home"></i> Home
+          <a href="" class="flex items-center gap-2 align-middle  leading-none transition-all">
+            <i class="fa fa-home"></i> Início
           </a>
         </li>
         <i class="fa fa-chevron-right text-gray-400"></i>
         <span class="text-green-600">Finalizar pedido</span>
       </ol>
       <div class="lg:col-span-2">
-        <div
-          v-if="hasCustomerData && !editingCustomerData"
-          class="p-4 border border-gray-300 rounded-md mb-4 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
-        >
+        <div v-if="hasCustomerData && !editingCustomerData"
+          class="p-4 border border-gray-300 rounded-md mb-4 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
           <h3 class="font-semibold mb-2 dark:text-gray-100">Dados do Cliente</h3>
           <div>
             <span class="font-semibold mr-2">Nome:</span>
@@ -40,113 +27,63 @@
             <span class="font-semibold mr-2">Endereço:</span>
             <span class="text-gray-500 dark:text-gray-400">{{
               customerData.address
-            }}</span>
+              }}</span>
           </div>
           <div>
             <span class="font-semibold mr-2">Ponto de referência:</span>
             <span class="text-gray-500 dark:text-gray-400">{{
               customerData.reference
-            }}</span>
+              }}</span>
           </div>
-          <button
-            @click="editingCustomerData = true"
-            class="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500"
-          >
+          <button @click="editingCustomerData = true"
+            class="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500">
             Alterar meus dados
           </button>
         </div>
       </div>
-      <div
-        class="p-4 border border-gray-300 rounded-md mb-4 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
-      >
+      <div class="p-4 border border-gray-300 rounded-md mb-4 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
         <form @submit.prevent="submitOrder">
           <div v-if="!hasCustomerData || editingCustomerData">
             <h3 class="font-semibold mb-4 dark:text-gray-100">Dados do Cliente</h3>
             <div class="mb-4">
-              <label
-                for="name"
-                class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-                >Nome:</label
-              >
-              <input
-                type="text"
-                id="name"
-                v-model="customerData.name"
-                required
-                class="input"
-              />
+              <label for="name" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Nome:</label>
+              <input type="text" id="name" v-model="customerData.name" required class="input" />
             </div>
 
             <div class="mb-4">
-              <label
-                for="phone"
-                class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-                >Telefone:</label
-              >
-              <input
-                type="tel"
-                id="phone"
-                v-model="customerData.phone"
-                required
-                class="input"
-              />
+              <label for="phone" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Telefone:</label>
+              <input type="tel" id="phone" v-model="customerData.phone" required class="input" />
             </div>
 
             <div class="mb-4">
-              <label
-                for="address"
-                class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-                >Endereço:</label
-              >
-              <input
-                type="text"
-                id="address"
-                v-model="customerData.address"
-                required
-                class="input"
-              />
+              <label for="address"
+                class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Endereço:</label>
+              <input type="text" id="address" v-model="customerData.address" required class="input" />
             </div>
 
             <div class="mb-4">
-              <label
-                for="reference"
-                class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-                >Ponto de Referência:</label
-              >
+              <label for="reference" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Ponto de
+                Referência:</label>
               <input id="reference" v-model="customerData.reference" class="input" />
             </div>
 
             <div class="mb-4">
-              <label
-                for="neighborhood"
-                class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-                >Bairro:</label
-              >
-              <input
-                id="neighborhood"
-                v-model="customerData.neighborhood"
-                class="input"
-              />
+              <label for="neighborhood"
+                class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Bairro:</label>
+              <input id="neighborhood" v-model="customerData.neighborhood" class="input" />
             </div>
 
             <div class="flex justify-end gap-2">
-              <button
-                type="button"
-                @click="editingCustomerData = false"
-                class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md shadow-md"
-              >
+              <button type="button" @click="editingCustomerData = false"
+                class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md shadow-md">
                 Cancelar
               </button>
-              <button
-                type="button"
-                @click="
-                  () => {
-                    editingCustomerData = false;
-                    saveCustomerDataLocally();
-                  }
-                "
-                class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md shadow-md"
-              >
+              <button type="button" @click="
+                () => {
+                  editingCustomerData = false;
+                  saveCustomerDataLocally();
+                }
+              " class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md shadow-md">
                 Salvar
               </button>
             </div>
@@ -156,15 +93,9 @@
             Resumo do pedido
           </h3>
           <div class="mb-6">
-            <div
-              v-for="item in cartItems"
-              class="flex items-center gap-4 text-gray-700 text-xs mb-2"
-            >
-              <img
-                :src="item.img"
-                :alt="item.name"
-                class="h-10 w-10 rounded-md object-cover shadow-md"
-              />
+            <div v-for="item in cartItems"
+              class="flex items-center gap-4 text-gray-700 dark:text-gray-300 text-xs mb-2">
+              <img :src="item.img" :alt="item.name" class="h-10 w-10 rounded-md object-cover shadow-md" />
               <span class="flex-3">{{ item.name }}</span>
               <span class="flex-1">x{{ item.quantity }}</span>
               <span>{{ $formatPrice(item.subtotal) }}</span>
@@ -174,17 +105,11 @@
           <div class="space-y-2">
             <label for="coupon" class="text-xs text-gray-700">Código do cupom</label>
             <div class="relative">
-              <input
-                type="text"
-                name="coupon"
-                id="coupon"
+              <input type="text" name="coupon" id="coupon"
                 class="block w-full rounded-md py-3 ps-4 pe-12 text-gray-800 text-sm focus:ring-transparent border-gray-200 dark:bg-gray-50"
-                placeholder="Digite o código"
-                autocomplete="off"
-              />
+                placeholder="Digite o código" autocomplete="off" />
               <button
-                class="absolute top-1/2 -translate-y-1/2 end-1 py-2 px-5 inline-block font-semibold tracking-wide border align-middle duration-500 text-sm text-center bg-gray-200 hover:bg-gray-300 border-gray-200 hover:border-gray-300 text-gray-900 rounded-md"
-              >
+                class="absolute top-1/2 -translate-y-1/2 end-1 py-2 px-5 inline-block font-semibold tracking-wide border align-middle duration-500 text-sm text-center bg-gray-200 hover:bg-gray-300 border-gray-200 hover:border-gray-300 text-gray-900 rounded-md">
                 Aplicar cupom
               </button>
             </div>
@@ -198,44 +123,26 @@
             </span>
             <div class="space-x-4 flex items-center">
               <div>
-                <input
-                  type="radio"
-                  id="deliveryTypeDelivery"
-                  name="deliveryTypeOptions"
-                  value="Entrega"
-                  v-model="customerData.deliveryType"
-                  class="form-radio hidden"
-                />
-                <label
-                  for="deliveryTypeDelivery"
-                  :class="[
-                    'cursor-pointer px-4 py-2 rounded border text-sm font-medium transition',
-                    customerData.deliveryType === 'Entrega'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
-                  ]"
-                >
+                <input type="radio" id="deliveryTypeDelivery" name="deliveryTypeOptions" value="Entrega"
+                  v-model="customerData.deliveryType" class="form-radio hidden" />
+                <label for="deliveryTypeDelivery" :class="[
+                  'cursor-pointer px-4 py-2 rounded border text-sm font-medium transition',
+                  customerData.deliveryType === 'Entrega'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
+                ]">
                   🚚 Entrega
                 </label>
               </div>
               <div>
-                <input
-                  type="radio"
-                  id="deliveryTypeRetirada"
-                  name="deliveryTypeOptions"
-                  value="Retirada"
-                  v-model="customerData.deliveryType"
-                  class="form-radio hidden"
-                />
-                <label
-                  for="deliveryTypeRetirada"
-                  :class="[
-                    'cursor-pointer px-4 py-2 rounded border text-sm font-medium transition',
-                    customerData.deliveryType === 'Retirada'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
-                  ]"
-                >
+                <input type="radio" id="deliveryTypeRetirada" name="deliveryTypeOptions" value="Retirada"
+                  v-model="customerData.deliveryType" class="form-radio hidden" />
+                <label for="deliveryTypeRetirada" :class="[
+                  'cursor-pointer px-4 py-2 rounded border text-sm font-medium transition',
+                  customerData.deliveryType === 'Retirada'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
+                ]">
                   🏠 Retirada
                 </label>
               </div>
@@ -244,26 +151,14 @@
           <Divider />
           <h3 class="font-semibold mb-4 dark:text-gray-100 text-gray-700">Pagamento</h3>
           <div class="flex gap-2 mb-4">
-            <label
-              v-for="method in paymentOptions"
-              :key="method.value"
-              class="relative cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="paymentMethod"
-                :value="method.value"
-                v-model="paymentMethod"
-                class="hidden"
-              />
-              <div
-                :class="[
-                  'flex px-4 py-2 space-x-2 items-center justify-center border rounded-md shadow-md transition',
-                  paymentMethod === method.value
-                    ? 'bg-green-600 text-white border-green-600'
-                    : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
-                ]"
-              >
+            <label v-for="method in paymentOptions" :key="method.value" class="relative cursor-pointer">
+              <input type="radio" name="paymentMethod" :value="method.value" v-model="paymentMethod" class="hidden" />
+              <div :class="[
+                'flex px-4 py-2 space-x-2 items-center justify-center border rounded-md shadow-md transition',
+                paymentMethod === method.value
+                  ? 'bg-green-600 text-white border-green-600'
+                  : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600',
+              ]">
                 <i :class="method.icon"></i>
                 <div class="text-sm font-medium">{{ method.label }}</div>
               </div>
@@ -271,9 +166,7 @@
           </div>
 
           <div v-if="paymentMethod === 'cash'" class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-              >Precisa de Troco?</label
-            >
+            <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Precisa de Troco?</label>
             <label>
               <input type="radio" value="yes" v-model="needChange" class="mr-2" /> Sim
             </label>
@@ -282,18 +175,9 @@
             </label>
 
             <div v-if="needChange === 'yes'" class="mt-4">
-              <label
-                for="changeAmount"
-                class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-                >Valor para Troco:</label
-              >
-              <input
-                type="number"
-                id="changeAmount"
-                v-model.number="changeAmount"
-                min="0"
-                class="input"
-              />
+              <label for="changeAmount" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Valor para
+                Troco:</label>
+              <input type="number" id="changeAmount" v-model.number="changeAmount" min="0" class="input" />
             </div>
           </div>
           <Divider />
@@ -302,20 +186,16 @@
               <span class="font-semibold">Total do Pedido:</span>
               <span class="font-bold">{{ $formatPrice(cartTotal) }}</span>
             </div>
-            <button
-              type="submit"
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md mt-4 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500"
-            >
+            <button type="submit"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md mt-4 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500">
               Finalizar Pedido
             </button>
           </div>
         </form>
       </div>
       <transition name="fade">
-        <div
-          v-if="orderNumber"
-          class="m-4 fixed flex justify-center items-center space-x-2 top-4 transform bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50 border-l-4 border-l-green-800"
-        >
+        <div v-if="orderNumber"
+          class="m-4 fixed flex justify-center items-center space-x-2 top-4 transform bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50 border-l-4 border-l-green-800">
           <i class="fa-regular fa-circle-check text-green-800" aria-hidden="true"></i>
           <span>Pedido realizado com sucesso! Número do Pedido: {{ orderNumber }}</span>
         </div>
@@ -413,9 +293,8 @@ async function submitOrder() {
 
   const cartItems = cartStore.items
     .map((item) => {
-      let itemString = `${item.quantity}x ${item.name}${
-        item.size ? ` (${item.size})` : ""
-      } - R$ ${item.subtotal.toFixed(2).replace(".", ",")}`;
+      let itemString = `${item.quantity}x ${item.name}${item.size ? ` (${item.size})` : ""
+        } - R$ ${item.subtotal.toFixed(2).replace(".", ",")}`;
       if (item.extras && item.extras.length > 0) {
         const extrasString = item.extras
           .map((e) => `${e.name} - R$ ${e.price.toFixed(2).replace(".", ",")}`)
@@ -447,15 +326,14 @@ async function submitOrder() {
     (orderDetails.deliveryType === "Entrega" && customerData.reference
       ? `Ponto de referência: ${customerData.reference}\n`
       : orderDetails.deliveryType === "Entrega"
-      ? `Ponto de referência: nenhum\n`
-      : "") +
+        ? `Ponto de referência: nenhum\n`
+        : "") +
     (orderDetails.deliveryType === "Entrega" && customerData.neighborhood
       ? `Bairro: ${customerData.neighborhood}\n`
       : "") +
     `\n` +
     `DADOS DO PAGAMENTO:\n` +
-    `Método de pagamento: ${
-      orderDetails.paymentMethod ? orderDetails.paymentMethod.toUpperCase() : "N/A"
+    `Método de pagamento: ${orderDetails.paymentMethod ? orderDetails.paymentMethod.toUpperCase() : "N/A"
     }\n` +
     `Subtotal: R$ ${orderDetails.subtotal.toFixed(2).replace(".", ",")}\n` +
     (orderDetails.deliveryType === "Entrega"

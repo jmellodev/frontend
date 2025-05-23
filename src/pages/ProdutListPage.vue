@@ -1,16 +1,9 @@
 <template>
   <AppLayout :show-back-button="false">
-    <MegaMenuTop
-      :selectedCategoryIds="selectedCategoryIds"
-      @categorySelected="filterByCategory"
-    />
+    <!-- <MegaMenuTop :selectedCategoryIds="selectedCategoryIds" @categorySelected="filterByCategory" /> -->
+    <NewHader :selectedCategoryIds="selectedCategoryIds" @categorySelected="filterByCategory" />
     <div class="mx-auto max-w-7xl px-2 lg:px-8">
-      <input
-        type="text"
-        v-model="searchTerm"
-        placeholder="Buscar produtos..."
-        class="w-full p-2 rounded border mb-2"
-      />
+      <input type="text" v-model="searchTerm" placeholder="Buscar produtos..." class="w-full p-2 rounded border mb-2" />
 
       <select v-model="sortOption" class="w-full p-2 rounded border mb-4">
         <option value="name_asc">Nome (A-Z)</option>
@@ -22,11 +15,7 @@
       <ProductListSkeleton v-if="loading" />
 
       <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mt-5">
-        <ProductCard
-          v-for="product in filteredProducts"
-          :key="product.id"
-          :product="product"
-        />
+        <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
       </div>
     </div>
   </AppLayout>
@@ -38,6 +27,7 @@ import ProductCard from "@/components/ProductCard.vue";
 import ProductListSkeleton from "@/components/skeletons/ProductListSkeleton.vue";
 import MegaMenuTop from "@/components/MegaMenuTop.vue";
 import { useProducts } from "@/composables/useProducts";
+import NewHader from "@/components/NewHader.vue";
 
 const {
   filteredProducts,
