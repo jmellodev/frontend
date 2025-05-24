@@ -4,8 +4,12 @@
       <ProductSkeleton v-if="loading" />
 
       <div v-else>
-        <img :src="product?.img" alt="Imagem do produto"
-          class="w-full h-56 object-cover mb-6 rounded-2xl shadow-lg lg:hidden" />
+        <div class="relative">
+          <Rating v-if="product" :product-id="product.id" :rating="product.rating || 0" :show-text-rating="true"
+            :rating-text="product.rating || 0" class="mb-6 absolute bottom-0 right-5" />
+          <img :src="product?.img" alt="Imagem do produto"
+            class="w-full lg:h-60 object-cover mb-6 rounded-md shadow-lg " />
+        </div>
 
         <div class="flex items-center justify-between mb-4">
           <h1 class="text-xl font-semibold">{{ product?.name }}</h1>
@@ -67,10 +71,8 @@
           </div>
         </div>
 
-        <Rating v-if="product" :rating="product.rating" class="mb-6" />
-
         <button @click="handleAddToCart"
-          class="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition">
+          class="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition-all duration-200">
           Adicionar ao Carrinho
         </button>
 
