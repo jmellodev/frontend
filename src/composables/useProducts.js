@@ -1,3 +1,4 @@
+// src/composables/useProducts.js
 import { ref, computed, watch, onMounted } from "vue";
 import api from "@/services/httpClient";
 
@@ -6,7 +7,7 @@ const LAST_UPDATED_LOCAL_STORAGE_KEY = "products_last_updated";
 const CACHE_EXPIRATION_TIME = 60 * 60 * 1000; // 1 hora
 
 export function useProducts() {
-  const products = ref([]);
+  const products = ref([]); // Lista completa de produtos
   const loading = ref(true);
   const selectedCategoryIds = ref(null);
   const searchTerm = ref("");
@@ -86,7 +87,7 @@ export function useProducts() {
   });
 
   return {
-    products,
+    products, // <--- EXPOSTO AQUI: a lista bruta de produtos
     filteredProducts,
     loading,
     selectedCategoryIds,

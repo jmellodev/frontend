@@ -1,11 +1,9 @@
 <template>
-  <header class=" bg-red-400 fixed top-0 w-full z-50 shadow-lg">
+  <header class=" bg-red-400 fixed top-0 w-full z-50">
+    <!-- Menu top -->
     <nav class="relative px-4 hidden md:block">
       <div class="container mx-auto flex justify-between items-center">
-        <div class="text-gray-700 text-2xl font-bold">
-          <img src="../assets/image/logo.png" alt="Pizzaria da Nonna" title="Pizzaria da Nonna"
-            class="object-contain h-10 w-full" />
-        </div>
+        <div class="text-white text-2xl font-bold">Pizzaria da Nonna</div>
         <ul class="space-x-6 text-white flex">
           <li @click="handleCategorySelection(null)" class="py-4">
             <span :class="[
@@ -18,7 +16,6 @@
           <li class="group flex relative py-4" v-for="parent in parentCategories" :key="parent.id">
             <span @click="handleCategorySelection(parent.id, true)" :class="[
               'cursor-pointer whitespace-nowrap ',
-              // Usa a ref injetada para isSelected
               isSelected([
                 parent.id,
                 ...(childCategories[parent.id]?.map((c) => c.id) || []),
@@ -36,7 +33,6 @@
               <li v-for="child in childCategories[parent.id]" :key="child.id" @click="handleCategorySelection(child.id)"
                 :class="[
                   'cursor-pointer p-1 whitespace-nowrap rounded-md text-gray-600 hover:text-red-400 hover:bg-gray-300',
-                  // Usa a ref injetada para a estilização
                   selectedCategoryIdsRef?.includes(child.id)
                     ? 'text-red-400 font-bold bg-gray-200'
                     : 'text-gray-600 hover:text-red-400 hover:bg-gray-300',
@@ -45,7 +41,7 @@
               </li>
             </ul>
           </li>
-          <li class="py-4"><a href="#contact" class="hover:text-yellow-300">Contact</a></li>
+          <li class="py-4"><a href="#contact" class="hover:text-yellow-300">Contato</a></li>
         </ul>
         <div class="flex space-x-2">
           <ThemeToggle />
@@ -54,38 +50,57 @@
       </div>
     </nav>
 
-    <div class="py-2 px-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center md:hidden w-full">
+    <!-- Mobile menu -->
+    <div class="py-2 px-4 bg-gray-50 dark:bg-gray-800 flex justify-between items-center md:hidden w-full">
       <a v-if="showBackButton" @click.prevent="goBack" class="flex-none">
         <i class="fa fa-arrow-left text-gray-400 dark:text-gray-200 text-md"></i>
       </a>
 
       <div v-else>
-        <button class="p-2 text-gray-600 relative">
-          <i @click="toggleMobileMenu" class="h-4 fas text-sm dark:text-gray-200"
-            :class="[isMobileMenuOpen ? 'fa-xmark' : 'fa-bars']">
-          </i>
+        <button class="p-2 text-gray-600 dark:text-gray-300 text-sm relative">
+          <i @click="toggleMobileMenu" class="h-4 fas text-sm" :class="[isMobileMenuOpen ? 'fa-xmark' : 'fa-bars']"></i>
           <div
-            class="absolute group-hover:translate-x-2 transition-all duration-200 ease-in-out z-50 p-2 bg-white dark:bg-gray-800 rounded-md -top-2 -left-5 h-screen flex flex-col space-y-2"
-            :class="[isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
-            <div class="flex items-center justify-between pl-4 py-4 mb-4 h-4 w-full dark:text-gray-400">
-              <span class="italic font-medium text-xl">Menu</span>
-              <i @click="toggleMobileMenu" class="fas text-xl fa-xmark"></i>
+            class="absolute group-hover:translate-x-2 transition-all duration-200 ease-in-out z-50 p-2 dark:bg-gray-700 rounded-md -top-2 -left-5 h-screen flex flex-col space-y-2"
+            :class="[isMobileMenuOpen ? 'translate-x-0 bg-white' : '-translate-x-full']">
+            <div class="flex-row-reverse flex h-4 w-full">
+              <i @click="toggleMobileMenu" class="fas text-xl fa-xmark "></i>
             </div>
-            <ul class="flex flex-col w-56 items-start text-gray-700 dark:text-gray-300 px-4">
+            <ul class="flex flex-col w-48 items-start">
               <li @click="handleCategorySelectionAndCloseMenu(null)"
-                class="flex p-2 whitespace-nowrap hover:bg-gray-800/50 space-x-2">
-                <span class="mb-1 font-medium"><i class="fa fa-list"></i> Ver todas</span>
+                class="flex space-x-2 items-center w-full p-2 text-sm hover:bg-gray-400/30 hover:rounded-md cursor-pointer whitespace-nowrap"
+                :class="[
+                  selectedCategoryIdsRef === null || (selectedCategoryIdsRef && selectedCategoryIdsRef.length === 0)
+                    ? 'text-red-400 bg-gray-400/30 rounded-md'
+                    : '',
+                ]">
+                <i class="fa fa-list"></i> <span>Ver tudo</span>
               </li>
               <li v-for="parent in parentCategories" :key="parent.id"
-                class="flex flex-col p-2 whitespace-nowrap hover:bg-gray-800/50 items-start space-x-2">
-                <span class="mb-1 font-medium" @click="handleCategorySelectionAndCloseMenu(parent.id, true)">
-                  <i :class="parent.icon"></i>
-                  {{ parent.name }}
+                class="flex flex-col w-full mt-1 whitespace-nowrap group" :class="[
+                  'cursor-pointer whitespace-nowrap ',
+                  isSelected([
+                    parent.id,
+                    ...(childCategories[parent.id]?.map((c) => c.id) || []),
+                  ])
+                    ? 'text-red-400 group-hover:bg-pink-400'
+                    : 'group-hover:text-red-400',
+                ]">
+
+                <span
+                  class="flex space-x-1 items-center w-full p-2 text-sm hover:bg-gray-400/30 hover:rounded-md cursor-pointer whitespace-nowrap"
+                  @click="handleCategorySelectionAndCloseMenu(parent.id, true)">
+                  <i :class="['text-xs text-gray-400', parent.icon]"></i>
+                  <span>{{ parent.name }}</span>
                 </span>
-                <ul v-if="childCategories[parent.id]?.length > 0" class="flex flex-col ml-3 gap-y-4 gap-x-3">
-                  <li class="flex" v-for="child in childCategories[parent.id]" :key="child.id"
+                <ul v-if="childCategories[parent.id]?.length > 0" class="ml-3">
+                  <li :class="[
+                    'cursor-pointer p-2 whitespace-nowrap rounded-md flex justify-start mb-1 w-full',
+                    selectedCategoryIdsRef?.includes(child.id)
+                      ? 'text-red-400  bg-gray-400/30'
+                      : 'text-gray-600 dark:text-gray-100 hover:text-red-400 hover:bg-gray-400/30 ',
+                  ]" v-for="child in childCategories[parent.id]" :key="child.id"
                     @click="handleCategorySelectionAndCloseMenu(child.id)">
-                    <span><i :class="child.icon"></i> {{ child.name }}</span>
+                    <span><i :class="['text-xs text-gray-400', child.icon]"></i> {{ child.name }}</span>
                   </li>
                 </ul>
               </li>
@@ -112,14 +127,13 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from "vue"; // Adicionado inject
+import { ref, computed, inject } from "vue";
 import IconCart from "./icons/IconCart.vue";
 import ThemeToggle from "./ThemeToggle.vue";
 import { useCartStore } from "@/stores/cartStore";
 import { useCategories } from "@/composables/useCategories";
 
-// Chaves para provide/inject
-import { SELECTED_CATEGORY_IDS_KEY, FILTER_PRODUCTS_BY_CATEGORY_KEY } from '@/keys'; // Crie este arquivo keys.js
+import { SELECTED_CATEGORY_IDS_KEY, FILTER_PRODUCTS_BY_CATEGORY_KEY, ALL_PRODUCTS_KEY } from '@/keys'; // Adicionado ALL_PRODUCTS_KEY
 
 const isMobileMenuOpen = ref(false);
 
@@ -128,7 +142,6 @@ const toggleMobileMenu = () => {
   console.log("Menu mobile is:", isMobileMenuOpen.value);
 };
 
-// Props genéricas que podem vir do AppLayout
 const props = defineProps({
   title: {
     type: String,
@@ -144,23 +157,20 @@ const props = defineProps({
 const cartStore = useCartStore();
 const cartCount = computed(() => cartStore.items.length);
 
-// INJECT: Recebe a ref `selectedCategoryIds` do ProductListPage
-// O valor default é importante caso o componente seja usado em uma página que não provê essa chave
 const selectedCategoryIdsRef = inject(SELECTED_CATEGORY_IDS_KEY, ref(null));
-
-// INJECT: Recebe a função `filterByCategory` do ProductListPage
 const filterProductsByCategory = inject(FILTER_PRODUCTS_BY_CATEGORY_KEY, () => {
   console.warn('filterByCategory function not provided to NewHeader.');
 });
+// INJECT: Recebe a lista de produtos (allProductsRef)
+const allProductsRef = inject(ALL_PRODUCTS_KEY, ref([])); // <-- INJECT AQUI
 
-
-// `useCategories` usa a ref injetada para a função `isSelected`
+// Passa allProductsRef para useCategories
 const { parentCategories, childCategories, isSelected } = useCategories(
-  null, // Não há `emit` necessário para seleção de categoria neste componente
-  selectedCategoryIdsRef // Passa a ref injetada para `isSelected`
+  null,
+  selectedCategoryIdsRef,
+  allProductsRef // <--- PASSADO AQUI
 );
 
-// Função unificada para manipular o clique em uma categoria (desktop e mobile)
 const handleCategorySelection = (id, includeChildren = false) => {
   let idsToFilter = null;
   if (id) {
@@ -171,28 +181,20 @@ const handleCategorySelection = (id, includeChildren = false) => {
       idsToFilter = [id];
     }
   }
-  // Chama a função injetada
   filterProductsByCategory(idsToFilter);
 
-  // Se estiver na página de produtos, navegar para ela.
-  // Isso é importante porque o NewHeader é global.
-  // Se você estiver na página de carrinho e clicar em "Pizzas",
-  // você quer ir para a ProductListPage com a categoria Pizza selecionada.
-  // Depende da sua estratégia de rotas (Vue Router). Exemplo com Vue Router:
+  // Lógica de navegação (se você estiver em uma página diferente da de produtos)
+  // Certifique-se de que o router esteja configurado em sua aplicação
   // import { useRouter } from 'vue-router';
   // const router = useRouter();
-  // router.push({ name: 'products', query: { category: id || 'all' } });
-  // Ou simplesmente:
-  // window.location.href = `/products?category=${id || 'all'}`;
-  // POR ENQUANTO, vamos apenas chamar a função injetada.
-  // Se a página atual NÃO for ProductListPage, a lógica de filtragem injetada pode não ter efeito.
-  // O router.push seria a maneira robusta de garantir a navegação.
+  // if (router) {
+  //   router.push({ name: 'products', query: { categoryIds: idsToFilter ? idsToFilter.join(',') : 'all' } });
+  // }
 };
 
-// Função para manipular o clique na categoria e fechar o menu mobile
 const handleCategorySelectionAndCloseMenu = (id, includeChildren = false) => {
-  handleCategorySelection(id, includeChildren); // Usa a função unificada
-  toggleMobileMenu(); // Fecha o menu mobile
+  handleCategorySelection(id, includeChildren);
+  toggleMobileMenu();
 };
 
 function goBack() {
@@ -201,6 +203,7 @@ function goBack() {
 </script>
 
 <style scoped>
+/* Seus estilos */
 .title-font {
   font-family: "Lora", serif;
   font-style: italic;

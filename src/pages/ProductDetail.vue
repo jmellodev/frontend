@@ -1,6 +1,5 @@
 <template>
-  <AppLayout :show-back-button="true" :background="product?.img" :top-nav-title="product?.name"
-    :mobile-menu-visible="false">
+  <AppLayout :show-back-button="true" :top-nav-title="product?.name" :mobile-menu-visible="false">
     <div class="p-4 max-w-2xl mx-auto">
       <ProductSkeleton v-if="loading" />
 

@@ -5,7 +5,7 @@
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
           <i class="fa fa-search h-4 w-4 text-gray-400" aria-hidden="true"></i>
         </div>
-        <input type="text" v-model="searchTerm" placeholder="Buscar produtos..."
+        <input type="text" v-model="searchTerm" placeholder="Buscar produtos..." name="search" id="search"
           class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
         <div class="w-10 text-right">
           <Menu as="div" class="relative inline-block text-left group">
@@ -99,26 +99,27 @@
 </template>
 
 <script setup>
-import { provide } from 'vue'; // Adicionado provide
+import { provide } from 'vue';
 import AppLayout from "@/layouts/AppLayout.vue";
 import ProductCard from "@/components/ProductCard.vue";
 import ProductListSkeleton from "@/components/skeletons/ProductListSkeleton.vue";
 import { useProducts } from "@/composables/useProducts";
 
-// Chaves para provide/inject
-import { SELECTED_CATEGORY_IDS_KEY, FILTER_PRODUCTS_BY_CATEGORY_KEY } from '@/keys'; // Crie este arquivo keys.js
-import { Listbox, ListboxOptions, ListboxOption, ListboxButton, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
+import { SELECTED_CATEGORY_IDS_KEY, FILTER_PRODUCTS_BY_CATEGORY_KEY, ALL_PRODUCTS_KEY } from '@/keys'; // Importe ALL_PRODUCTS_KEY
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 
 const {
+  products, // <-- Essencial: A lista bruta de produtos
   filteredProducts,
   loading,
-  selectedCategoryIds, // ESTA É A REF ORIGINAL do useProducts
-  filterByCategory,   // ESTA É A FUNÇÃO ORIGINAL do useProducts
+  selectedCategoryIds,
+  filterByCategory,
   sortOption,
   searchTerm,
 } = useProducts();
 
-// PROVIDE: Torna a ref selectedCategoryIds e a função filterByCategory disponíveis para descendentes
+// PROVIDE: Torna a ref selectedCategoryIds, a função filterByCategory E a lista de produtos disponíveis
 provide(SELECTED_CATEGORY_IDS_KEY, selectedCategoryIds);
 provide(FILTER_PRODUCTS_BY_CATEGORY_KEY, filterByCategory);
+provide(ALL_PRODUCTS_KEY, products); // <--- GARANTA QUE products ESTÁ SENDO PROVIDO AQUI
 </script>
