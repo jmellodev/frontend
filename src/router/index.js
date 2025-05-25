@@ -6,6 +6,7 @@ import Favorites from '@/pages/Favorites.vue'
 import Profile from '@/pages/Profile.vue'
 import Checkout from '@/pages/Checkout.vue'
 import BuildPizza from '@/pages/BuildPizza.vue'
+import WhatsappQrCodeDisplay from '@/pages/admin/views/WhatsappQrCodeDisplay.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,11 @@ const router = createRouter({
       path: '/monte-sua-pizza',
       name: 'buildPiza',
       component: BuildPizza,
+    },
+    {
+      path: '/admin/whatsapp-qr', // Exemplo de rota para a página do QR Code
+      name: 'whatsapp-qr',
+      component: WhatsappQrCodeDisplay,
     },
   ],
 })
