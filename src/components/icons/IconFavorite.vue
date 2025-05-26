@@ -25,9 +25,7 @@ const isFav = () => {
 
 <template>
   <button @click="toggle" class="rounded-full h-6 w-6 border border-gray-400/50">
-    <i
-      :class="isFav() ? 'fas fa-heart text-red-500' : 'fas fa-heart text-gray-400'"
-      class="hover:text-red-500"
-    ></i>
+    <i :class="isFav() ? 'fas fa-heart text-red-500 animate__animated animate__heartBeat' : 'fas fa-heart text-gray-400'"
+      class="hover:text-red-500 hover:animate-pulse"></i>
   </button>
 </template>

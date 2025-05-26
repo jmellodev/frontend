@@ -23,6 +23,11 @@
         <p class="text-gray-700 dark:text-gray-300 mt-2">Você pode fechar esta página.</p>
       </div>
 
+      <div v-else-if="connectionStatus === 'inchat'" class="text-green-600 dark:text-green-400">
+        <i class="fas fa-check-circle mr-2"></i> Bot conectado com sucesso!
+        <p class="text-gray-700 dark:text-gray-300 mt-2">Você pode fechar esta página.</p>
+      </div>
+
       <div v-else-if="connectionStatus === 'disconnected' || connectionStatus === 'closed'">
         <p class="text-red-600 dark:text-red-400">Bot desconectado. Aguardando novo QR Code ou tentando reconectar.</p>
         <button @click="fetchQrCode" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
@@ -70,12 +75,19 @@ const statusColorClass = computed(() => {
   }
 });
 
+// ... dentro do <script setup>
 const fetchQrCode = async () => {
   loading.value = true;
   try {
     const response = await api.get('/whatsapp/status');
     connectionStatus.value = response.data.status;
+
+    // --- AQUI ESTÁ A CORREÇÃO SIMPLIFICADA ---
+    // Atribua diretamente a string recebida.
+    // O WPPConnect (ou seu backend) já está fornecendo o prefixo completo.
     qrCode.value = response.data.qrCode;
+    // --- FIM DA CORREÇÃO SIMPLIFICADA ---
+
   } catch (error) {
     console.error('Erro ao buscar status do QR Code:', error);
     connectionStatus.value = 'failed';
@@ -84,11 +96,12 @@ const fetchQrCode = async () => {
     loading.value = false;
   }
 };
+// ... restante do seu script
 
 onMounted(() => {
   fetchQrCode();
   // Poll a cada 5 segundos para atualizar o status do QR Code/conexão
-  intervalId.value = setInterval(fetchQrCode, 5000);
+  intervalId.value = setInterval(fetchQrCode, 15000);
 });
 
 // Limpa o intervalo quando o componente é desmontado para evitar vazamentos de memória

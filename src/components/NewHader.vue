@@ -51,7 +51,7 @@
     </nav>
 
     <!-- Mobile menu -->
-    <div class="py-2 px-4 bg-gray-50 dark:bg-gray-800 flex justify-between items-center md:hidden w-full">
+    <div class="py-2 px-4 bg-gray-50 dark:bg-gray-800 flex justify-between items-center md:hidden w-screen">
       <a v-if="showBackButton" @click.prevent="goBack" class="flex-none">
         <i class="fa fa-arrow-left text-gray-400 dark:text-gray-200 text-md"></i>
       </a>

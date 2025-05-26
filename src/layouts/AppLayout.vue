@@ -1,9 +1,11 @@
 <template>
-  <NewHader :title="topNavTitle" :showBackButton="showBackButton" />
-  <main class="py-4 h-auto pb-16 md:pb-0 pt-20 m-auto">
-    <slot />
-  </main>
-  <MenuMobile v-if="props.mobileMenuVisible" />
+  <div>
+    <NewHader :title="topNavTitle" :showBackButton="showBackButton" />
+    <main class="py-4 h-auto pb-16 md:pb-0 pt-20 m-auto">
+      <slot />
+    </main>
+    <MenuMobile v-if="props.mobileMenuVisible" />
+  </div>
 </template>
 
 <script setup>

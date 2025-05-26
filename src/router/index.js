@@ -15,41 +15,73 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: ProductListPage,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
     },
     {
       path: '/carrinho',
       name: 'cart',
       component: Cart,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
     },
     {
       path: '/produto/:slug',
       name: 'productDetail',
       component: ProductDetail,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
     },
     {
       path: '/favoritos',
       name: 'favritos',
       component: Favorites,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
     },
     {
       path: '/perfil',
       name: 'perfil',
       component: Profile,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
     },
     {
       path: '/checkout',
       name: 'checkout',
       component: Checkout,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
     },
     {
       path: '/monte-sua-pizza',
       name: 'buildPiza',
       component: BuildPizza,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
     },
     {
       path: '/admin/whatsapp-qr', // Exemplo de rota para a página do QR Code
       name: 'whatsapp-qr',
       component: WhatsappQrCodeDisplay,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
     },
   ],
 })

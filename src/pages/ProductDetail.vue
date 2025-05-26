@@ -1,91 +1,93 @@
 <template>
-  <AppLayout :show-back-button="true" :top-nav-title="product?.name" :mobile-menu-visible="false">
-    <div class="p-4 max-w-2xl mx-auto">
-      <ProductSkeleton v-if="loading" />
+  <div>
+    <AppLayout :show-back-button="true" :top-nav-title="product?.name" :mobile-menu-visible="false">
+      <div class="p-4 max-w-2xl mx-auto">
+        <ProductSkeleton v-if="loading" />
 
-      <div v-else>
-        <div class="relative">
-          <Rating v-if="product" :product-id="product.id" :rating="product.rating || 0" :show-text-rating="true"
-            :rating-text="product.rating || 0" class="mb-6 absolute bottom-0 right-5" />
-          <img :src="product?.img" alt="Imagem do produto"
-            class="w-full lg:h-60 object-cover mb-6 rounded-md shadow-lg " />
-        </div>
-
-        <div class="flex items-center justify-between mb-4">
-          <h1 class="text-xl font-semibold">{{ product?.name }}</h1>
-          <span class="text-green-600 font-bold text-lg">
-            {{ $formatPrice(product?.price?.[selectedSize]) }}
-          </span>
-        </div>
-
-        <p class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-          {{ product?.description }}
-        </p>
-
-        <div class="mb-6">
-          <h4 class="font-medium mb-2">Quantidade</h4>
-          <div class="flex items-center gap-4 w-36">
-            <button @click="decreaseQuantity"
-              class="w-10 h-10 bg-gray-200 dark:bg-gray-800 rounded-md text-xl font-bold hover:bg-gray-300">
-              -
-            </button>
-            <span class="text-xl font-medium w-8 text-center">{{ localQuantity }}</span>
-            <button @click="increaseQuantity"
-              class="w-10 h-10 bg-gray-200 dark:bg-gray-800 rounded-md text-xl font-bold hover:bg-gray-300">
-              +
-            </button>
+        <div v-else>
+          <div class="relative">
+            <Rating v-if="product" :product-id="product.id" :rating="product.rating || 0" :show-text-rating="true"
+              :rating-text="product.rating || 0" class="mb-6 absolute bottom-0 right-5" />
+            <img :src="product?.img" alt="Imagem do produto"
+              class="w-full lg:h-60 object-cover mb-6 rounded-md shadow-lg " />
           </div>
-        </div>
 
-        <div v-if="product?.sizes?.length" class="mb-6">
-          <h4 class="font-medium mb-2">
-            Tamanho{{ product.sizes.length > 1 ? "s" : "" }}
-          </h4>
-          <div class="flex gap-2 flex-wrap">
-            <div v-for="(size, index) in product.sizes" :key="index" @click="selectedSize = index" :class="[
-              'cursor-pointer border rounded-md px-4 py-2 shadow-sm transition',
-              selectedSize === index
-                ? 'bg-red-600 text-white border-red-700'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600',
-            ]">
-              <div class="font-semibold">{{ size }}</div>
-              <div class="text-sm">{{ $formatPrice(product.price?.[index]) }}</div>
+          <div class="flex items-center justify-between mb-4">
+            <h1 class="text-xl font-semibold">{{ product?.name }}</h1>
+            <span class="text-green-600 font-bold text-lg">
+              {{ $formatPrice(product?.price?.[selectedSize]) }}
+            </span>
+          </div>
+
+          <p class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+            {{ product?.description }}
+          </p>
+
+          <div class="mb-6">
+            <h4 class="font-medium mb-2">Quantidade</h4>
+            <div class="flex items-center gap-4 w-36">
+              <button @click="decreaseQuantity"
+                class="w-10 h-10 bg-gray-200 dark:bg-gray-800 rounded-md text-xl font-bold hover:bg-gray-300">
+                -
+              </button>
+              <span class="text-xl font-medium w-8 text-center">{{ localQuantity }}</span>
+              <button @click="increaseQuantity"
+                class="w-10 h-10 bg-gray-200 dark:bg-gray-800 rounded-md text-xl font-bold hover:bg-gray-300">
+                +
+              </button>
             </div>
           </div>
-        </div>
 
-        <div v-if="extras.length" class="mb-6">
-          <h4 class="font-medium mb-2">Adicionais</h4>
-          <div class="flex flex-wrap gap-2">
-            <label v-for="(extra, index) in extras" :key="index" :for="'extra-' + index"
-              class="cursor-pointer border rounded-md px-4 py-2 flex flex-col items-center transition text-sm bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700"
-              :class="{
-                'border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400': selectedExtras.includes(
-                  extra
-                ),
-              }">
-              <input class="hidden" type="checkbox" :id="'extra-' + index" :value="extra" v-model="selectedExtras" />
-              <span class="font-medium">{{ extra.name }}</span>
-              <span class="text-xs text-red-500">{{ $formatPrice(extra.price) }}</span>
-            </label>
+          <div v-if="product?.sizes?.length" class="mb-6">
+            <h4 class="font-medium mb-2">
+              Tamanho{{ product.sizes.length > 1 ? "s" : "" }}
+            </h4>
+            <div class="flex gap-2 flex-wrap">
+              <div v-for="(size, index) in product.sizes" :key="index" @click="selectedSize = index" :class="[
+                'cursor-pointer border rounded-md px-4 py-2 shadow-sm transition',
+                selectedSize === index
+                  ? 'bg-red-600 text-white border-red-700'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600',
+              ]">
+                <div class="font-semibold">{{ size }}</div>
+                <div class="text-sm">{{ $formatPrice(product.price?.[index]) }}</div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <button @click="handleAddToCart"
-          class="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition-all duration-200">
-          Adicionar ao Carrinho
-        </button>
-
-        <transition name="fade">
-          <div v-if="showSuccess"
-            class="m-4 fixed flex justify-center items-center space-x-2 top-4 transform bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50 border-l-4 border-l-green-800">
-            <i class="fa-regular fa-circle-check text-green-800" aria-hidden="true"></i>
-            <span>Produto adicionado ao carrinho!</span>
+          <div v-if="extras.length" class="mb-6">
+            <h4 class="font-medium mb-2">Adicionais</h4>
+            <div class="flex flex-wrap gap-2">
+              <label v-for="(extra, index) in extras" :key="index" :for="'extra-' + index"
+                class="cursor-pointer border rounded-md px-4 py-2 flex flex-col items-center transition text-sm bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700"
+                :class="{
+                  'border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400': selectedExtras.includes(
+                    extra
+                  ),
+                }">
+                <input class="hidden" type="checkbox" :id="'extra-' + index" :value="extra" v-model="selectedExtras" />
+                <span class="font-medium">{{ extra.name }}</span>
+                <span class="text-xs text-red-500">{{ $formatPrice(extra.price) }}</span>
+              </label>
+            </div>
           </div>
-        </transition>
+
+          <button @click="handleAddToCart"
+            class="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition-all duration-200">
+            Adicionar ao Carrinho
+          </button>
+
+          <transition name="fade">
+            <div v-if="showSuccess"
+              class="m-4 fixed flex justify-center items-center space-x-2 top-4 transform bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50 border-l-4 border-l-green-800">
+              <i class="fa-regular fa-circle-check text-green-800" aria-hidden="true"></i>
+              <span>Produto adicionado ao carrinho!</span>
+            </div>
+          </transition>
+        </div>
       </div>
-    </div>
-  </AppLayout>
+    </AppLayout>
+  </div>
 </template>
 <script setup>
 import { ref, onMounted, computed } from "vue";
