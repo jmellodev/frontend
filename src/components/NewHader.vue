@@ -52,12 +52,12 @@
 
     <!-- Mobile menu -->
     <div class="py-2 px-4 bg-gray-50 dark:bg-gray-800 flex justify-between items-center md:hidden w-screen">
-      <a v-if="showBackButton" @click.prevent="goBack" class="flex-none">
+      <button type="button" name="goback" v-if="showBackButton" @click.prevent="goBack" class="flex-none">
         <i class="fa fa-arrow-left text-gray-400 dark:text-gray-200 text-md"></i>
-      </a>
+      </button>
 
       <div v-else>
-        <button class="p-2 text-gray-600 dark:text-gray-300 text-sm relative">
+        <button type="button" name="mobile-menu" class="p-2 text-gray-600 dark:text-gray-300 text-sm relative">
           <i @click="toggleMobileMenu" class="h-4 fas text-sm" :class="[isMobileMenuOpen ? 'fa-xmark' : 'fa-bars']"></i>
           <div
             class="absolute group-hover:translate-x-2 transition-all duration-200 ease-in-out z-50 p-2 dark:bg-gray-700 rounded-md -top-2 -left-5 h-screen flex flex-col space-y-2"
