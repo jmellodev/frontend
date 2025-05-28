@@ -1,5 +1,5 @@
 <template>
-  <AppLayout title="Perfil - Configurações de Notificação" :mobile-menu-visible="true">
+  <AppLayout top-nav-title="Perfil - Configurações de Notificação">
     <div class="container mx-auto p-4 max-w-md bg-white shadow-lg rounded-lg mt-8">
       <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Configurações de Notificação</h2>
 
