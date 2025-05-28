@@ -199,7 +199,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style scoped>
-/* Adicione estilos Tailwind ou CSS personalizado aqui */
-</style>

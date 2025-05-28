@@ -55,7 +55,7 @@ async function requestNotificationPermissionAndGetToken(userId) {
 
       // Obtenha o token de registro do dispositivo
       // Substitua 'YOUR_VAPID_PUBLIC_KEY' pela sua chave VAPID real
-      const currentToken = await getToken(messaging, { vapidKey: 'BM-E994Xf50Yk_p6uR_j4g2G0Fw2v6K6Xg7L7H4B9Y4D2C1A0B9Y8D0C4A2B0Y8D2C0A0B9Y' }); // Exemplo de VAPID Key
+      const currentToken = await getToken(messaging, { vapidKey: 'BIs0n17mt2gj5vBTzyM5znHMDOgI6lcOiGanKQW2SiPlFcgmSvLpBu-d0txnoNKLivhbsUD0iwHHSBQk_LNgQ0A' }); // Exemplo de VAPID Key
 
       if (currentToken) {
         console.log('FCM Registration Token:', currentToken);
