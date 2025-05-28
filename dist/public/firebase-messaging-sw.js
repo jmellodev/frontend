@@ -6,13 +6,13 @@ importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-comp
 // Seu objeto de configuração do Firebase que você copiou do console
 // Certifique-se de que os valores de API Key, Project ID, etc., estão corretos.
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // MUITO IMPORTANTE!
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID" // Opcional
+  apiKey: "AIzaSyCqcgvxcgWwG4LmYkSL66x4GYi1KLxuHts",
+  authDomain: "chat-bot-pizzaria.firebaseapp.com",
+  projectId: "chat-bot-pizzaria",
+  storageBucket: "chat-bot-pizzaria.firebasestorage.app",
+  messagingSenderId: "1090893949199",
+  appId: "1:1090893949199:web:cc9724c44f5ef76ea9f67a",
+  measurementId: "G-TQ6E8YLYHD"
 };
 
 // Inicializa o Firebase no Service Worker
