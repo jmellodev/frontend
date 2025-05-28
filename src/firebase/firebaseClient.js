@@ -60,7 +60,7 @@ async function requestNotificationPermissionAndGetToken(userId) {
       if (currentToken) {
         console.log('FCM Registration Token:', currentToken);
         // Envie este token para o seu backend para armazenamento
-        await api.post('/api/fcm/save-token', { userId, fcmToken: currentToken }); // Ajustado para o endpoint correto
+        await api.post('/fcm/save-token', { userId, fcmToken: currentToken }); // Ajustado para o endpoint correto
         console.log('Token enviado para o backend com sucesso.');
         return currentToken;
       } else {
