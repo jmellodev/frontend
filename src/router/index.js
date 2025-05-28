@@ -7,6 +7,7 @@ import Profile from '@/pages/Profile.vue'
 import Checkout from '@/pages/Checkout.vue'
 import BuildPizza from '@/pages/BuildPizza.vue'
 import WhatsappQrCodeDisplay from '@/pages/admin/views/WhatsappQrCodeDisplay.vue'
+import NotificationOptIn from '@/pages/NotificationOptIn.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,6 +84,15 @@ const router = createRouter({
         leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
       },
     },
+    {
+      path: '/configuracoes',
+      name: 'settings',
+      component: NotificationOptIn,
+      meta: {
+        enterActiveClass: 'animate__animated animate__fadeIn animate__faster',
+        leaveActiveClass: 'animate__animated animate__fadeOut animate__faster',
+      },
+    }
   ],
 })
 
