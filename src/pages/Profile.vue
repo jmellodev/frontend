@@ -1,51 +1,53 @@
 <template>
-  <div class="container mx-auto p-4 max-w-md bg-white shadow-lg rounded-lg mt-8">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Configurações de Notificação</h2>
+  <AppLayout title="Perfil - Configurações de Notificação" :mobile-menu-visible="true">
+    <div class="container mx-auto p-4 max-w-md bg-white shadow-lg rounded-lg mt-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Configurações de Notificação</h2>
 
-    <div class="mb-6">
-      <p class="text-gray-700 mb-2">Status das Notificações:</p>
-      <div :class="statusClass" class="p-3 rounded-md text-sm font-medium flex items-center justify-between">
-        <span>{{ notificationStatus }}</span>
-        <svg v-if="notificationStatus.includes('Concedida')" class="w-5 h-5 text-green-700" fill="currentColor"
-          viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-            clip-rule="evenodd"></path>
-        </svg>
-        <svg v-else-if="notificationStatus.includes('Negada')" class="w-5 h-5 text-red-700" fill="currentColor"
-          viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-            clip-rule="evenodd"></path>
-        </svg>
-        <svg v-else class="w-5 h-5 text-blue-700 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004 12c0 2.21.894 4.204 2.342 5.658M18 18v-5h-.582m-15.356-2A8.001 8.001 0 0020 12c0-2.21-.894-4.204-2.342-5.658">
-          </path>
-        </svg>
+      <div class="mb-6">
+        <p class="text-gray-700 mb-2">Status das Notificações:</p>
+        <div :class="statusClass" class="p-3 rounded-md text-sm font-medium flex items-center justify-between">
+          <span>{{ notificationStatus }}</span>
+          <svg v-if="notificationStatus.includes('Concedida')" class="w-5 h-5 text-green-700" fill="currentColor"
+            viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <svg v-else-if="notificationStatus.includes('Negada')" class="w-5 h-5 text-red-700" fill="currentColor"
+            viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <svg v-else class="w-5 h-5 text-blue-700 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004 12c0 2.21.894 4.204 2.342 5.658M18 18v-5h-.582m-15.356-2A8.001 8.001 0 0020 12c0-2.21-.894-4.204-2.342-5.658">
+            </path>
+          </svg>
+        </div>
       </div>
+
+      <div class="mb-6">
+        <p class="text-gray-700 mb-2">Seu Token FCM:</p>
+        <input type="text" :value="fcmToken || 'Gerando...'" readonly
+          class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 text-sm font-mono"
+          @click="copyToken" />
+        <p v-if="copySuccess" class="text-green-600 text-xs mt-1">Copiado!</p>
+      </div>
+
+      <button @click="handleNotificationRequest" :disabled="permissionRequested || !isFCMSupported"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+        <span v-if="!isFCMSupported">Notificações não suportadas</span>
+        <span v-else-if="permissionRequested">Permissão Solicitada</span>
+        <span v-else>Solicitar Permissão de Notificação</span>
+      </button>
+
+      <p class="text-gray-500 text-xs mt-4 text-center">
+        Ative as notificações para receber atualizações sobre seus pedidos e promoções.
+      </p>
     </div>
-
-    <div class="mb-6">
-      <p class="text-gray-700 mb-2">Seu Token FCM:</p>
-      <input type="text" :value="fcmToken || 'Gerando...'" readonly
-        class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 text-sm font-mono"
-        @click="copyToken" />
-      <p v-if="copySuccess" class="text-green-600 text-xs mt-1">Copiado!</p>
-    </div>
-
-    <button @click="handleNotificationRequest" :disabled="permissionRequested || !isFCMSupported"
-      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
-      <span v-if="!isFCMSupported">Notificações não suportadas</span>
-      <span v-else-if="permissionRequested">Permissão Solicitada</span>
-      <span v-else>Solicitar Permissão de Notificação</span>
-    </button>
-
-    <p class="text-gray-500 text-xs mt-4 text-center">
-      Ative as notificações para receber atualizações sobre seus pedidos e promoções.
-    </p>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup>
@@ -57,6 +59,7 @@ import {
 } from '@/firebase/firebaseClient'; // Certifique-se do caminho correto
 import { getAuth } from 'firebase/auth'; // Importa getAuth para obter o userId
 import { initializeApp } from 'firebase/app'; // Para inicializar o app se não estiver global
+import AppLayout from '@/layouts/AppLayout.vue';
 
 // Suas credenciais de configuração do Firebase para o CLIENTE (Web App)
 const firebaseConfig = {
