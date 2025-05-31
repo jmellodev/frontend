@@ -18,6 +18,12 @@ export default defineConfig({
         name: 'Pizzaria da Nonna',
         short_name: 'Pizzaria',
         description: 'A melhor pizzaria da cidade!',
+        lang: 'pt-BR',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#ffffff',
+        orientation: 'portrait',
+        scope: '/',
         theme_color: '#ffffff',
         icons: [
           {
