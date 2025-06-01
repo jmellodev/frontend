@@ -1,8 +1,8 @@
 <template>
   <AdminLayout>
-    <div class="space-y-6 p-4 md:p-8 bg-gray-900 rounded-lg shadow-xl">
-      <h2 class="text-3xl font-bold text-white">Produtos</h2>
-      <p class="text-gray-400">Adicione, edite ou remova produtos do cardápio.</p>
+    <div class="space-y-6  p-4 md:p-8 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Produtos</h2>
+      <p class="text-gray-600 dark:text-gray-400">Adicione, edite ou remova produtos do cardápio.</p>
 
       <button @click="openForm()"
         class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md transition-colors duration-200">
@@ -10,92 +10,107 @@
       </button>
 
       <div v-if="isLoading" class="text-center py-8">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto"></div>
-        <p class="text-gray-400 mt-4">Carregando produtos...</p>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 dark:border-gray-600 mx-auto"></div>
+        <p class="text-gray-600 dark:text-gray-400 mt-4">Carregando produtos...</p>
       </div>
 
       <div v-else-if="products.length === 0 && !isLoading" class="text-center py-8">
-        <p class="text-gray-400 text-lg">Nenhum produto encontrado.</p>
+        <p class="text-gray-600 dark:text-gray-400 text-lg">Nenhum produto encontrado.</p>
       </div>
 
       <div v-else class="overflow-x-auto mt-4 rounded-lg">
-        <table class="min-w-full table-auto bg-gray-800">
+        <table class="min-w-full table-auto bg-gray-100 dark:bg-gray-800">
           <thead>
-            <tr class="bg-gray-700 text-gray-300 uppercase text-sm leading-normal">
-              <th class="py-3 px-6 text-left">Nome</th>
-              <th class="py-3 px-6 text-left">Preços</th>
-              <th class="py-3 px-6 text-left">Categorias</th>
-              <th class="py-3 px-6 text-left">Ações</th>
+            <tr class="bg-gray-400 dark:bg-gray-700">
+              <th
+                class="py-3 px-2 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal hidden md:block">
+                img
+              </th>
+              <th class="py-3 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Nome
+              </th>
+              <th class="py-3 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Preços
+              </th>
+              <th class="py-3 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">
+                Categorias</th>
+              <th class="py-3 text-center text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Ações
+              </th>
             </tr>
           </thead>
-          <tbody class="text-gray-200 text-sm font-light">
-            <tr v-for="p in paginatedProducts" :key="p.id" class="border-b border-gray-700 hover:bg-gray-700">
-              <td class="py-3 px-6 text-left whitespace-nowrap">
+          <tbody class="text-gray-800 dark:text-gray-200 text-sm font-light">
+            <tr v-for="p in paginatedProducts" :key="p.id"
+              class="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-default transition-colors duration-300">
+              <td class="py-2 px-2 text-left whitespace-nowrap hidden md:table-cell">
+                <img :src="p.img" :alt="p.name"
+                  class="w-12 h-12 object-cover rounded-md shadow-sm border border-gray-300 dark:border-gray-700">
+              </td>
+              <td class="py-3 text-left whitespace-nowrap">
                 {{ p.name }}
-                <div v-if="p.extras && p.extras.length > 0" class="text-xs text-gray-400 mt-1">
+                <div v-if="p.extras && p.extras.length > 0" class="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   <p class="font-semibold">Adicionais:</p>
                   <div v-for="(extra, i) in p.extras" :key="i">
-                    {{ extra.name }} - R$ {{ Number(extra.price).toFixed(2) }}
+                    {{ extra.name }} - {{ $formatPrice(extra.price) }}
                   </div>
                 </div>
               </td>
-              <td class="py-3 px-6 text-left whitespace-pre-line">
+              <td class="py-3 text-left whitespace-pre-line">
                 <div v-if="p.price && Array.isArray(p.price) && p.price.length > 0">
                   <div v-if="p.sizes && Array.isArray(p.sizes) && p.price.length === p.sizes.length">
                     <div v-for="(price, i) in p.price" :key="i">
-                      {{ p.sizes[i] }} - R$ {{ Number(price).toFixed(2) }}
+                      {{ p.sizes[i] }} - {{ $formatPrice(price) }}
                     </div>
                   </div>
                   <div v-else>
                     <div v-for="(price, i) in p.price" :key="i">
-                      R$ {{ Number(price).toFixed(2) }}
+                      {{ $formatPrice(price) }}
                     </div>
                   </div>
                 </div>
-                <div v-else class="text-red-400">Dados de preço ausentes ou inválidos.</div>
+                <div v-else class="text-red-600 dark:text-red-400">Dados de preço ausentes ou inválidos.</div>
               </td>
-              <td class="py-3 px-6 text-left">
+              <td class="py-3 text-left">
                 {{ getCategoryNames(p.categoryIds) }}
               </td>
-              <td class="py-3 px-6 text-left">
-                <button @click="openForm(p)"
-                  class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md mr-2 transition-colors duration-200">
-                  Editar
+              <td class="py-3 text-right">
+                <button @click="openForm(p)" title="Editar Produto"
+                  class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-l-md transition-colors duration-200">
+                  <i class="fa-duotone fa-edit"></i>
                 </button>
-                <button @click="askDelete(p)"
-                  class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors duration-200">
-                  Excluir
+                <button @click="askDelete(p)" title="Excluir Produto"
+                  class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-r-md transition-colors duration-200">
+                  <i class="fa-duotone fa-trash"></i>
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
 
-        <div class="flex flex-col md:flex-row justify-between items-center mt-6 text-white p-4 bg-gray-800 rounded-lg">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-900 dark:text-white p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <span class="mb-4 md:mb-0">Total de itens: {{ totalItems }}</span>
 
           <div class="flex items-center gap-2">
-            <label for="pageSize" class="text-sm text-gray-300">Itens por página:</label>
+            <label for="pageSize" class="text-sm text-gray-700 dark:text-gray-300">Itens por página:</label>
             <div class="relative">
               <select id="pageSize" v-model.number="pageSize"
-                class="appearance-none bg-gray-700 text-white border border-gray-600 rounded px-3 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                class="appearance-none bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-400 dark:border-gray-600 rounded px-3 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option :value="3">3</option>
                 <option :value="5">5</option>
                 <option :value="10">10</option>
                 <option :value="25">25</option>
               </select>
-              <div class="pointer-events-none absolute inset-y-0 right-2 flex items-center text-white">
+              <div
+                class="pointer-events-none absolute inset-y-0 right-2 flex items-center text-gray-800 dark:text-white">
                 ▼
               </div>
             </div>
 
             <button @click="currentPage--" :disabled="currentPage === 1"
-              class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
+              class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
               &lt; Anterior
             </button>
             <span class="px-2">Página {{ currentPage }} de {{ totalPages }}</span>
             <button @click="currentPage++" :disabled="currentPage >= totalPages"
-              class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
+              class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
               Próximo &gt;
             </button>
           </div>
@@ -103,94 +118,98 @@
       </div>
 
       <BaseModal v-if="showForm" v-model:open="showForm">
-        <button @click="showForm = false" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
-          &times;
-        </button>
-        <h3 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">
-          {{ form.id ? "Editar" : "Novo" }} Produto
-        </h3>
+        <div class="">
+          <button @click="showForm = false"
+            class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
+            &times;
+          </button>
+          <h3 class="text-2xl font-bold mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
+            {{ form.id ? "Editar" : "Novo" }} Produto
+          </h3>
 
-        <div v-if="isFormLoading" class="text-center py-4">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto"></div>
-          <p class="text-gray-400 mt-2">Salvando...</p>
-        </div>
-
-        <div v-else class="space-y-4">
-          <input v-model="form.name" placeholder="Nome do Produto"
-            class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <textarea v-model="form.description" placeholder="Descrição do Produto" rows="3"
-            class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <input v-model="form.img" placeholder="URL da imagem (ex: https://exemplo.com/imagem.jpg)"
-            class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-
-          <div>
-            <label for="categories-select" class="block text-sm font-medium text-gray-300 mb-1">Categorias:</label>
-            <select id="categories-select" v-model="form.categoryIds" multiple
-              class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 h-32">
-              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-                {{ cat.name }}
-              </option>
-            </select>
-            <p class="text-xs text-gray-400 mt-1">Segure Ctrl/Cmd para selecionar múltiplas.</p>
+          <div v-if="isFormLoading" class="text-center py-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 dark:border-gray-600 mx-auto">
+            </div>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Salvando...</p>
           </div>
 
-          <div class="border border-gray-700 p-3 rounded-md">
-            <p class="text-sm font-medium text-gray-300 mb-2">Preços e Tamanhos:</p>
-            <div v-for="(price, index) in form.price" :key="index" class="flex items-center mb-2 gap-2">
-              <input v-model="form.sizes[index]" placeholder="Tamanho (Opcional)"
-                class="flex-1 p-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <input v-model.number="form.price[index]" type="number" step="0.01" placeholder="Preço"
-                class="w-24 p-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <button @click="removeSize(index)"
-                class="text-red-500 hover:text-red-400 text-xl transition-colors duration-200">
-                &times;
+          <div v-else class="space-y-4">
+            <input v-model="form.name" placeholder="Nome do Produto"
+              class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <textarea v-model="form.description" placeholder="Descrição do Produto" rows="3"
+              class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input v-model="form.img" placeholder="URL da imagem (ex: https://exemplo.com/imagem.jpg)"
+              class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+            <div>
+              <MultiSelectCategoryInput v-model="form.categoryIds" :categories="categories" class="w-full" />
+
+
+              <!-- Select -->
+
+              <!-- End Select -->
+              <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Segure Ctrl/Cmd para selecionar múltiplas.</p>
+            </div>
+
+            <div class="border border-gray-300 dark:border-gray-700 p-3 rounded-md">
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preços e Tamanhos:</p>
+              <div v-for="(price, index) in form.price" :key="index" class="flex items-center mb-2 gap-2">
+                <input v-model="form.sizes[index]" placeholder="Tamanho (Opcional)"
+                  class="w-full p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input v-model.number="form.price[index]" type="number" step="0.01" placeholder="Preço"
+                  class="w-24 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <button @click="removeSize(index)"
+                  class="text-red-500 hover:text-red-400 text-xl transition-colors duration-200">
+                  &times;
+                </button>
+              </div>
+              <button @click="addSizePrice()" class="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-2">
+                + Adicionar Preço/Tamanho
               </button>
             </div>
-            <button @click="addSizePrice()" class="text-sm text-blue-400 hover:underline mt-2">
-              + Adicionar Preço/Tamanho
-            </button>
-          </div>
 
 
-          <div>
-            <p class="text-sm font-medium text-gray-300 mb-2">Adicionais:</p>
-            <div v-for="(extra, index) in form.extras" :key="index" class="flex items-center gap-2 mb-2">
-              <input v-model="extra.name" placeholder="Nome do Adicional"
-                class="flex-1 p-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <input v-model.number="extra.price" type="number" step="0.01" placeholder="Preço"
-                class="w-24 p-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <button @click="removeExtra(index)"
-                class="text-red-500 hover:text-red-400 text-xl transition-colors duration-200">
-                &times;
+            <div>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Adicionais:</p>
+              <div v-for="(extra, index) in form.extras" :key="index" class="flex items-center gap-2 mb-2">
+                <input v-model="extra.name" placeholder="Nome do Adicional"
+                  class="flex-1 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input v-model.number="extra.price" type="number" step="0.01" placeholder="Preço"
+                  class="w-24 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <button @click="removeExtra(index)"
+                  class="text-red-500 hover:text-red-400 text-xl transition-colors duration-200">
+                  &times;
+                </button>
+              </div>
+              <button @click="addExtra()" class="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-2">
+                + Adicionar adicional
               </button>
             </div>
-            <button @click="addExtra()" class="text-sm text-blue-400 hover:underline mt-2">
-              + Adicionar adicional
-            </button>
-          </div>
 
-          <div class="flex justify-end mt-6 gap-3 border-t border-gray-700 pt-4">
-            <button @click="save()" :disabled="isFormLoading"
-              class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              Salvar
-            </button>
-            <button @click="showForm = false" :disabled="isFormLoading"
-              class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              Cancelar
-            </button>
+            <div class="flex justify-end mt-6 gap-3 border-t border-gray-300 dark:border-gray-700 pt-4">
+              <button @click="save()" :disabled="isFormLoading"
+                class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                Salvar
+              </button>
+              <button @click="showForm = false" :disabled="isFormLoading"
+                class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
-
       </BaseModal>
 
       <BaseModal v-if="showDeleteModal" v-model:open="showDeleteModal">
 
-        <button @click="showDeleteModal = false" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
+        <button @click="showDeleteModal = false"
+          class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
           &times;
         </button>
         <p class="text-lg mb-4">
           Tem certeza que deseja excluir o produto
-          <strong class="text-red-400">{{ productToDelete?.name }}</strong>? Esta ação é irreversível.
+          <strong class="text-red-600 dark:text-red-400">{{ productToDelete?.name }}</strong>? Esta ação é
+          irreversível.
         </p>
         <div class="mt-6 flex justify-end gap-3">
           <button @click="deleteProduct" :disabled="isFormLoading"
@@ -213,6 +232,7 @@ import { ref, onMounted, watch, computed } from "vue";
 import api from "@/services/httpClient";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import BaseModal from "@/components/modals/BaseModal.vue";
+import MultiSelectCategoryInput from "@/components/forms/MultiSelectCategoryInput.vue";
 
 const products = ref([]);
 const categories = ref([]);
@@ -220,7 +240,7 @@ const showForm = ref(false);
 const showDeleteModal = ref(false);
 const productToDelete = ref(null);
 const currentPage = ref(1);
-const pageSize = ref(3);
+const pageSize = ref(10);
 const totalItems = ref(0);
 const isLoading = ref(true);
 const isFormLoading = ref(false);

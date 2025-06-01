@@ -1,50 +1,60 @@
 <template>
   <AdminLayout>
-    <div class="space-y-6 p-4 md:p-8 bg-gray-900 rounded-lg shadow-xl">
-      <h2 class="text-3xl font-bold text-white">Configurações do Administrador</h2>
-      <p class="text-gray-400">Ajuste as configurações gerais da sua plataforma.</p>
+    <div class="space-y-6">
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Configurações do Administrador</h2>
+      <p class="text-gray-600 dark:text-gray-400">Ajuste as configurações gerais da sua plataforma.</p>
 
-      <div class="bg-gray-800 p-6 rounded-lg shadow-md">
-        <h3 class="text-xl font-semibold text-white mb-4 border-b border-gray-700 pb-2">Configurações Gerais</h3>
+      <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-300 dark:border-gray-700">
+        <h3
+          class="text-xl font-semibold text-gray-900 dark:text-white mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
+          Configurações Gerais</h3>
         <div class="space-y-4">
           <div>
-            <label for="appName" class="block text-sm font-medium text-gray-300 mb-1">Nome do Aplicativo:</label>
+            <label for="appName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do
+              Aplicativo:</label>
             <input type="text" id="appName" v-model="settings.appName"
-              class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full p-3 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Nome da Pizzaria" />
           </div>
           <div>
-            <label for="contactEmail" class="block text-sm font-medium text-gray-300 mb-1">Email de Contato:</label>
+            <label for="contactEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email de
+              Contato:</label>
             <input type="email" id="contactEmail" v-model="settings.contactEmail"
-              class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full p-3 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="contato@pizzaria.com" />
           </div>
           <div>
-            <label for="whatsappNumber" class="block text-sm font-medium text-gray-300 mb-1">Número de WhatsApp (para
+            <label for="whatsappNumber" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número
+              de WhatsApp (para
               pedidos):</label>
             <input type="text" id="whatsappNumber" v-model="settings.whatsappNumber"
-              class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full p-3 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="+55 11 91234-5678" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-800 p-6 rounded-lg shadow-md">
-        <h3 class="text-xl font-semibold text-white mb-4 border-b border-gray-700 pb-2">Notificações FCM</h3>
-        <p class="text-gray-400 mb-4">Gerencie as configurações de notificação push do Firebase Cloud Messaging.</p>
+      <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-300 dark:border-gray-700">
+        <h3
+          class="text-xl font-semibold text-gray-900 dark:text-white mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
+          Notificações FCM</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Gerencie as configurações de notificação push do Firebase Cloud
+          Messaging.</p>
         <div class="space-y-4">
           <div>
-            <label for="notificationTopic" class="block text-sm font-medium text-gray-300 mb-1">Tópico Padrão para
+            <label for="notificationTopic"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tópico Padrão para
               Notificações:</label>
             <input type="text" id="notificationTopic" v-model="settings.notificationTopic"
-              class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full p-3 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="geral_promocoes" />
-            <p class="text-xs text-gray-500 mt-1">Este tópico será usado para enviar notificações em massa.</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">Este tópico será usado para enviar notificações em
+              massa.</p>
           </div>
           <div class="flex items-center">
             <input type="checkbox" id="enableOrderNotifications" v-model="settings.enableOrderNotifications"
-              class="h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500" />
-            <label for="enableOrderNotifications" class="ml-2 block text-sm text-gray-300">
+              class="h-5 w-5 text-blue-600 bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500" />
+            <label for="enableOrderNotifications" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
               Habilitar notificações de atualização de pedido
             </label>
           </div>

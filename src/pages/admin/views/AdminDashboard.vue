@@ -1,41 +1,45 @@
 <template>
   <AdminLayout>
-    <div class="space-y-8 p-4 md:p-8 bg-gray-900 rounded-lg shadow-xl">
-      <h2 class="text-3xl font-bold text-white">Dashboard Administrativo</h2>
-      <p class="text-gray-400">Visão geral e estatísticas da sua plataforma.</p>
+    <div class="space-y-8 p-4 md:p-8 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
+      <div class="text-gray-700 dark:text-white flex flex-col items-start space-y-0">
+        <span class="text-2xl font-bold">Dashboard Administrativo</span><small
+          class="text-gray-500 dark:text-gray-400 text-xs">Visão geral e estatísticas da sua plataforma.</small>
+      </div>
 
       <div v-if="isLoading" class="text-center py-12">
         <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-400 mx-auto"></div>
         <p class="text-gray-400 mt-4 text-lg">Carregando dados do dashboard...</p>
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-gray-700 dark:text-white">
+        <div
+          class="dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700/20 hover:scale-110 transition-all duration-300">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-semibold text-white">Visão Geral de Pedidos</h3>
-            <i class="fas fa-receipt text-blue-400 text-3xl"></i>
+            <h3 class="text-xl font-semibold ">Visão Geral de Pedidos</h3>
+            <i class="fa-duotone fa-receipt text-blue-400 text-3xl"></i>
           </div>
-          <div class="space-y-2 text-gray-300">
-            <p><strong>Total de Pedidos:</strong> <span class="text-white text-lg">{{ dashboardData.totalOrders
+          <div class="space-y-2">
+            <p><strong>Total de Pedidos:</strong> <span class="text-lg">{{ dashboardData.totalOrders
             }}</span></p>
             <p><strong>Pedidos Finalizados:</strong> <span class="text-green-400 text-lg">{{
               dashboardData.completedOrders }}</span></p>
             <p><strong>Pedidos Pendentes:</strong> <span class="text-yellow-400 text-lg">{{ dashboardData.pendingOrders
             }}</span></p>
-            <p><strong>Receita Total:</strong> <span class="text-white text-lg">{{
+            <p><strong>Receita Total:</strong> <span class=" text-lg">{{
               $formatPrice(dashboardData.totalRevenue) }}</span></p>
           </div>
         </div>
 
-        <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+        <div
+          class="dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700/20 hover:scale-110 transition-all duration-300">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-semibold text-white">Resumo de Produtos</h3>
-            <i class="fas fa-box-open text-purple-400 text-3xl"></i>
+            <h3 class="text-xl font-semibold ">Resumo de Produtos</h3>
+            <i class="fa-duotone fa-box-open text-orange-600 text-3xl"></i>
           </div>
-          <div class="space-y-2 text-gray-300">
-            <p><strong>Total de Produtos:</strong> <span class="text-white text-lg">{{ dashboardData.totalProducts
+          <div class="space-y-2 ">
+            <p><strong>Total de Produtos:</strong> <span class="text-lg">{{ dashboardData.totalProducts
             }}</span></p>
-            <p><strong>Total de Categorias:</strong> <span class="text-white text-lg">{{ dashboardData.totalCategories
+            <p><strong>Total de Categorias:</strong> <span class="text-lg">{{ dashboardData.totalCategories
             }}</span></p>
             <p><strong>Produtos Mais Vendidos:</strong></p>
             <ul class="list-disc list-inside ml-4">
@@ -48,15 +52,16 @@
           </div>
         </div>
 
-        <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+        <div
+          class="dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700/20 hover:scale-110 transition-all duration-300">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-semibold text-white">Resumo de Clientes</h3>
-            <i class="fas fa-users text-pink-400 text-3xl"></i>
+            <h3 class="text-xl font-semibold">Resumo de Clientes</h3>
+            <i class="fa-duotone fa-users text-pink-400 text-3xl"></i>
           </div>
-          <div class="space-y-2 text-gray-300">
-            <p><strong>Total de Clientes:</strong> <span class="text-white text-lg">{{ dashboardData.totalClients
+          <div class="space-y-2">
+            <p><strong>Total de Clientes:</strong> <span class="text-lg">{{ dashboardData.totalClients
             }}</span></p>
-            <p><strong>Novos Clientes (Últimos 30 dias):</strong> <span class="text-white text-lg">{{
+            <p><strong>Novos Clientes (Últimos 30 dias):</strong> <span class="text-lg">{{
               dashboardData.newClientsLast30Days }}</span></p>
             <p><strong>Clientes Mais Ativos:</strong></p>
             <ul class="list-disc list-inside ml-4">
@@ -68,32 +73,34 @@
           </div>
         </div>
 
-        <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+        <div
+          class="dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700/20 hover:scale-110 transition-all duration-300">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-semibold text-white">Estatísticas de Entrega</h3>
-            <i class="fas fa-truck text-orange-400 text-3xl"></i>
+            <h3 class="text-xl font-semibold">Estatísticas de Entrega</h3>
+            <i class="fa-duotone fa-truck text-orange-400 text-3xl"></i>
           </div>
-          <div class="space-y-2 text-gray-300">
-            <p><strong>Pedidos para Delivery:</strong> <span class="text-white text-lg">{{ dashboardData.deliveryOrders
+          <div class="space-y-2">
+            <p><strong>Pedidos para Delivery:</strong> <span class="text-lg">{{ dashboardData.deliveryOrders
             }}</span></p>
-            <p><strong>Pedidos para Retirada:</strong> <span class="text-white text-lg">{{ dashboardData.pickupOrders
+            <p><strong>Pedidos para Retirada:</strong> <span class="text-lg">{{ dashboardData.pickupOrders
             }}</span></p>
-            <p><strong>Taxa Média de Entrega:</strong> <span class="text-white text-lg">{{
+            <p><strong>Taxa Média de Entrega:</strong> <span class="text-lg">{{
               $formatPrice(dashboardData.averageDeliveryFee) }}</span></p>
           </div>
         </div>
 
-        <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+        <div
+          class="dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700/20 hover:scale-110 transition-all duration-300">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-semibold text-white">Resumo de Pagamentos</h3>
-            <i class="fas fa-credit-card text-teal-400 text-3xl"></i>
+            <h3 class="text-xl font-semibold">Resumo de Pagamentos</h3>
+            <i class="fa-duotone fa-credit-card text-teal-400 text-3xl"></i>
           </div>
-          <div class="space-y-2 text-gray-300">
-            <p><strong>Pagamentos Pix:</strong> <span class="text-white text-lg">{{
+          <div class="space-y-2">
+            <p><strong>Pagamentos Pix:</strong> <span class="text-lg">{{
               $formatPrice(dashboardData.pixPayments) }}</span></p>
-            <p><strong>Pagamentos Cartão:</strong> <span class="text-white text-lg">{{
+            <p><strong>Pagamentos Cartão:</strong> <span class="text-lg">{{
               $formatPrice(dashboardData.cardPayments) }}</span></p>
-            <p><strong>Pagamentos Dinheiro:</strong> <span class="text-white text-lg">{{
+            <p><strong>Pagamentos Dinheiro:</strong> <span class="text-lg">{{
               $formatPrice(dashboardData.cashPayments) }}</span></p>
           </div>
         </div>

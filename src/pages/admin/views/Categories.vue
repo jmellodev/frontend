@@ -1,8 +1,8 @@
 <template>
   <AdminLayout>
-    <div class="space-y-6 p-4 md:p-8 bg-gray-900 rounded-lg shadow-xl">
-      <h2 class="text-3xl font-bold text-white">Categorias</h2>
-      <p class="text-gray-400">Adicione, edite ou remova categorias de produtos.</p>
+    <div class="space-y-6 p-4 md:p-8 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Categorias</h2>
+      <p class="text-gray-600 dark:text-gray-400">Adicione, edite ou remova categorias de produtos.</p>
 
       <button @click="openForm()"
         class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md transition-colors duration-200">
@@ -10,73 +10,80 @@
       </button>
 
       <div v-if="isLoading" class="text-center py-8">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto"></div>
-        <p class="text-gray-400 mt-4">Carregando categorias...</p>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 dark:border-gray-600 mx-auto"></div>
+        <p class="text-gray-600 dark:text-gray-400 mt-4">Carregando categorias...</p>
       </div>
 
       <div v-else-if="categories.length === 0" class="text-center py-8">
-        <p class="text-gray-400 text-lg">Nenhuma categoria encontrada.</p>
+        <p class="text-gray-600 dark:text-gray-400 text-lg">Nenhuma categoria encontrada.</p>
       </div>
 
       <div v-else class="overflow-x-auto mt-4 rounded-lg">
-        <table class="min-w-full table-auto bg-gray-800">
+        <table class="min-w-full table-auto bg-gray-100 dark:bg-gray-800">
           <thead>
-            <tr class="bg-gray-700 text-gray-300 uppercase text-sm leading-normal">
-              <th class="py-3 px-6 text-left">Nome</th>
-              <th class="py-3 px-6 text-left">Categoria Pai</th>
-              <th class="py-3 px-6 text-left">Ícone</th>
-              <th class="py-3 px-6 text-left">Ações</th>
+            <tr class="bg-gray-200 dark:bg-gray-700">
+              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Nome
+              </th>
+              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">
+                Categoria Pai</th>
+              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Ícone
+              </th>
+              <th class="py-3 px-6 text-right text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Ações
+              </th>
             </tr>
           </thead>
-          <tbody class="text-gray-200 text-sm font-light">
-            <tr v-for="cat in paginatedCategories" :key="cat.id" class="border-b border-gray-700 hover:bg-gray-700">
+          <tbody class="text-gray-800 dark:text-gray-200 text-sm font-light">
+            <tr v-for="cat in paginatedCategories" :key="cat.id"
+              class="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700">
               <td class="py-3 px-6 text-left whitespace-nowrap flex flex-col">
                 <span>{{ cat.name }}</span>
-                <small class="italic">/{{ cat.slug }}</small>
+                <small class="italic text-gray-600 dark:text-gray-400">/{{ cat.slug }}</small>
               </td>
               <td class="py-3 px-6 text-left">{{ getParentCategoryName(cat.parent_id) }}</td>
               <td class="py-3 px-6 text-left">
-                <i :class="cat.icon" class="mr-2" :title="cat.icon"></i>
+                <i :class="cat.icon" class="mr-2 text-blue-600 dark:text-blue-400" :title="cat.icon"></i>
               </td>
-              <td class="py-3 px-6 text-left">
+              <td class="py-3 px-6 text-right">
                 <button @click="openForm(cat)"
-                  class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md mr-2 transition-colors duration-200">
-                  Editar
+                  class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-l-md transition-colors duration-200">
+                  <i class="fa-duotone fa-edit" aria-label="hidden"></i>
                 </button>
                 <button @click="askDelete(cat)"
-                  class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors duration-200">
-                  Excluir
+                  class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-r-md transition-colors duration-200">
+                  <i class="fa-duotone fa-trash" aria-label="hidden"></i>
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
 
-        <div class="flex flex-col md:flex-row justify-between items-center mt-6 text-white p-4 bg-gray-800 rounded-lg">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-900 dark:text-white p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <span class="mb-4 md:mb-0">Total de itens: {{ totalItems }}</span>
 
           <div class="flex items-center gap-2">
-            <label for="pageSize" class="text-sm text-gray-300">Itens por página:</label>
+            <label for="pageSize" class="text-sm text-gray-700 dark:text-gray-300">Itens por página:</label>
             <div class="relative">
               <select id="pageSize" v-model.number="pageSize"
-                class="appearance-none bg-gray-700 text-white border border-gray-600 rounded px-3 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                class="appearance-none bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-400 dark:border-gray-600 rounded px-3 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option :value="3">3</option>
                 <option :value="5">5</option>
                 <option :value="10">10</option>
                 <option :value="25">25</option>
               </select>
-              <div class="pointer-events-none absolute inset-y-0 right-2 flex items-center text-white">
+              <div
+                class="pointer-events-none absolute inset-y-0 right-2 flex items-center text-gray-800 dark:text-white">
                 ▼
               </div>
             </div>
 
             <button @click="currentPage--" :disabled="currentPage === 1"
-              class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
+              class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
               &lt; Anterior
             </button>
             <span class="px-2">Página {{ currentPage }} de {{ totalPages }}</span>
             <button @click="currentPage++" :disabled="currentPage >= totalPages"
-              class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
+              class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
               Próximo &gt;
             </button>
           </div>
@@ -84,72 +91,86 @@
       </div>
 
       <BaseModal v-if="showForm" v-model:open="showForm">
-        <button @click="showForm = false" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
-          &times;
-        </button>
-        <h3 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">
-          {{ form.id ? "Editar" : "Nova" }} Categoria
-        </h3>
+        <div class="bg-white dark:bg-gray-900 p-6 rounded-lg w-full max-w-md text-gray-900 dark:text-white relative">
+          <button @click="showForm = false"
+            class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
+            &times;
+          </button>
+          <h3 class="text-2xl font-bold mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
+            {{ form.id ? "Editar" : "Nova" }} Categoria
+          </h3>
 
-        <div v-if="isFormLoading" class="text-center py-4">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto"></div>
-          <p class="text-gray-400 mt-2">Salvando...</p>
-        </div>
-
-        <div v-else class="space-y-4">
-          <input v-model="form.name" placeholder="Nome da Categoria"
-            class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <input v-model="form.slug" placeholder="Slug (gerado automaticamente)" readonly
-            class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-not-allowed" />
-
-          <div>
-            <label for="parent-category-select" class="block text-sm font-medium text-gray-300 mb-1">Categoria Pai
-              (Opcional):</label>
-            <select id="parent-category-select" v-model="form.parent_id"
-              class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Nenhuma (Categoria Principal)</option>
-              <option v-for="cat in availableParentCategories" :key="cat.id" :value="cat.id">
-                {{ cat.name }}
-              </option>
-            </select>
+          <div v-if="isFormLoading" class="text-center py-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 dark:border-gray-600 mx-auto">
+            </div>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Salvando...</p>
           </div>
 
-          <div>
-            <label for="icon-input" class="block text-sm font-medium text-gray-300 mb-1">Ícone:</label>
-            <div class="flex items-center gap-2">
-              <input type="text" id="icon-input" v-model="form.icon" placeholder="Ex: fas fa-pizza-slice"
-                class="flex-1 p-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <button @click="showIconPicker = true"
-                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-200">
-                <i :class="form.icon || 'fas fa-search'"></i>
-                <span class="ml-2 hidden sm:inline">Escolher</span>
+          <div v-else class="space-y-4">
+            <input v-model="form.name" placeholder="Nome da Categoria"
+              class="w-full p-3 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input v-model="form.slug" placeholder="Slug (gerado automaticamente)" readonly
+              class="w-full p-3 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md hidden focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-not-allowed" />
+
+            <div>
+              <label for="parent-category-select"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria Pai
+                (Opcional):</label>
+              <select id="parent-category-select" v-model="form.parent_id"
+                class="w-full p-3 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Nenhuma (Categoria Principal)</option>
+                <option v-for="cat in availableParentCategories" :key="cat.id" :value="cat.id">
+                  {{ cat.name }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label for="icon-input"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ícone:</label>
+              <div class="flex items-center gap-2 relative">
+                <input type="text" id="icon-input" v-model="form.icon" placeholder="Ex: fas fa-pizza-slice"
+                  class="w-full p-3 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <button @click="showIconPicker = true"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-200 absolute right-0 top-0 h-full flex items-center">
+                  <i :class="form.icon || 'fas fa-search'"></i>
+                  <span class="ml-2 hidden sm:inline">Escolher</span>
+                </button>
+              </div>
+              <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Use classes de ícones como "fas fa-pizza-slice"
+                <a class="text-blue-600 dark:text-blue-400 hover:underline" href="https://fontawesome.com/icons"
+                  target="_blank">(Font
+                  Awesome)</a>.
+              </p>
+            </div>
+
+            <div class="flex justify-end mt-6 gap-3 border-t border-gray-300 dark:border-gray-700 pt-4">
+              <button @click="save()" :disabled="isFormLoading"
+                class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                Salvar
+              </button>
+              <button @click="showForm = false" :disabled="isFormLoading"
+                class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                Cancelar
               </button>
             </div>
-            <p class="text-xs text-gray-400 mt-1">Use classes de ícones como "fas fa-pizza-slice" (Font Awesome).</p>
-          </div>
-
-
-          <div class="flex justify-end mt-6 gap-3 border-t border-gray-700 pt-4">
-            <button @click="save()" :disabled="isFormLoading"
-              class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              Salvar
-            </button>
-            <button @click="showForm = false" :disabled="isFormLoading"
-              class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              Cancelar
-            </button>
           </div>
         </div>
       </BaseModal>
 
       <BaseModal v-if="showDeleteModal" v-model:open="showDeleteModal">
-        <button @click="showDeleteModal = false" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
+        <button @click="showDeleteModal = false"
+          class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl mb-5">
           &times;
         </button>
-        <p class="text-lg mb-4">
-          Tem certeza que deseja excluir a categoria
-          <strong class="text-red-400">{{ categoryToDelete?.name }}</strong>? Esta ação é irreversível.
-        </p>
+        <div class="mb-4 flex flex-col items-center space-y-4">
+          <i class="fa-duotone fa-solid fa-circle-exclamation text-6xl text-red-400"></i>
+          <span>
+            Tem certeza que deseja excluir a categoria
+            <strong class="text-red-600 dark:text-red-400">{{ categoryToDelete?.name }}</strong>?
+          </span>
+          Esta ação é irreversível.
+        </div>
         <div class="mt-6 flex justify-end gap-3">
           <button @click="deleteCategory" :disabled="isFormLoading"
             class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">

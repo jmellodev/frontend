@@ -29,3 +29,5 @@ splash_screens*
 *.sw?
 
 *.tsbuildinfo
+
+/src/assets/fontawesome-web_*
