@@ -44,7 +44,7 @@
           <li class="py-4"><a href="#contact" class="hover:text-yellow-300">Contato</a></li>
         </ul>
         <div class="flex space-x-2">
-          <ThemeToggle />
+          <!-- <ThemeToggle /> -->
           <IconCart :cart-count="cartCount" />
         </div>
       </div>
@@ -119,7 +119,7 @@
       <img v-else src="../assets/image/logo.png" alt="Pizzaria da Nonna" class="object-contain h-10 w-full" />
 
       <div class="flex-none">
-        <ThemeToggle />
+        <!-- <ThemeToggle /> -->
         <IconCart :cart-count="cartCount" />
       </div>
     </div>

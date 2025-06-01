@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="transition-colors duration-500 ease-out">
 
 <head>
   <meta charset="UTF-8">
@@ -23,7 +23,15 @@
 <body class="antialiased bg-gray-50 dark:bg-gray-900">
   <div id="app"></div>
   <script type="module" src="/src/main.js"></script>
-  <!-- <script src="/assets/js/themeToggle.js"></script> -->
+  <script>
+    // Ao carregar a página, aplica o tema salvo ou a preferência do sistema
+    // Esta lógica deve APENAS LER e aplicar, não escrever no localStorage incondicionalmente.
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
 </body>
 
 </html>

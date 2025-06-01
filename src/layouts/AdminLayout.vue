@@ -5,6 +5,7 @@
       <button @click="toggleMobileMenu" class="text-gray-600 dark:text-white text-2xl">
         <i class="fa-duotone fa-bars"></i> </button>
       <h1 class="text-xl font-bold">Painel Administrativo</h1>
+      <ThemeToggle />
       <button @click="logout" class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-sm">Sair</button>
     </header>
 
