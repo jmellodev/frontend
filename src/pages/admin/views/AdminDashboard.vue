@@ -20,11 +20,11 @@
           </div>
           <div class="space-y-2">
             <p><strong>Total de Pedidos:</strong> <span class="text-lg">{{ dashboardData.totalOrders
-            }}</span></p>
+                }}</span></p>
             <p><strong>Pedidos Finalizados:</strong> <span class="text-green-400 text-lg">{{
               dashboardData.completedOrders }}</span></p>
             <p><strong>Pedidos Pendentes:</strong> <span class="text-yellow-400 text-lg">{{ dashboardData.pendingOrders
-            }}</span></p>
+                }}</span></p>
             <p><strong>Receita Total:</strong> <span class=" text-lg">{{
               $formatPrice(dashboardData.totalRevenue) }}</span></p>
           </div>
@@ -38,9 +38,9 @@
           </div>
           <div class="space-y-2 ">
             <p><strong>Total de Produtos:</strong> <span class="text-lg">{{ dashboardData.totalProducts
-            }}</span></p>
+                }}</span></p>
             <p><strong>Total de Categorias:</strong> <span class="text-lg">{{ dashboardData.totalCategories
-            }}</span></p>
+                }}</span></p>
             <p><strong>Produtos Mais Vendidos:</strong></p>
             <ul class="list-disc list-inside ml-4">
               <li v-for="(product, index) in dashboardData.topSellingProducts" :key="index" class="text-sm">
@@ -60,7 +60,7 @@
           </div>
           <div class="space-y-2">
             <p><strong>Total de Clientes:</strong> <span class="text-lg">{{ dashboardData.totalClients
-            }}</span></p>
+                }}</span></p>
             <p><strong>Novos Clientes (Últimos 30 dias):</strong> <span class="text-lg">{{
               dashboardData.newClientsLast30Days }}</span></p>
             <p><strong>Clientes Mais Ativos:</strong></p>
@@ -81,9 +81,9 @@
           </div>
           <div class="space-y-2">
             <p><strong>Pedidos para Delivery:</strong> <span class="text-lg">{{ dashboardData.deliveryOrders
-            }}</span></p>
+                }}</span></p>
             <p><strong>Pedidos para Retirada:</strong> <span class="text-lg">{{ dashboardData.pickupOrders
-            }}</span></p>
+                }}</span></p>
             <p><strong>Taxa Média de Entrega:</strong> <span class="text-lg">{{
               $formatPrice(dashboardData.averageDeliveryFee) }}</span></p>
           </div>
@@ -140,7 +140,7 @@ async function fetchDashboardData() {
   try {
     // TODO: Implementar este endpoint no seu backend para retornar os dados do dashboard
     // Exemplo de como a API poderia ser chamada:
-    const response = await api.get('/dashboard');
+    // const response = await api.get('/dashboard');
 
     // Mock de dados para demonstração. Substitua pela lógica real da sua API.
     dashboardData.value = {

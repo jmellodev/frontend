@@ -1,7 +1,8 @@
 // src/services/firebaseClient.js
 import { initializeApp } from 'firebase/app';
-import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging'; // Importa isSupported
-import api from '@/services/httpClient'; // Seu cliente Axios
+import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
+import { getAuth, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'; // <--- NOVAS IMPORTAÇÕES PARA AUTH
+import api from '@/services/httpClient'; // Seu cliente Axios (agora sem circular dependency)
 
 // Seu objeto de configuração do Firebase (o mesmo do Service Worker)
 const firebaseConfig = {
@@ -16,6 +17,11 @@ const firebaseConfig = {
 
 // Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
+
+// --- Instâncias de Autenticação ---
+const auth = getAuth(app); // <--- INSTÂNCIA DE AUTH
+const googleProvider = new GoogleAuthProvider(); // <--- PROVEDOR GOOGLE
+const emailProvider = new EmailAuthProvider(); // <--- PROVEDOR EMAIL (útil para signInWithCredential)
 
 let messagingInstance = null; // Variável para armazenar a instância de messaging
 
@@ -55,12 +61,17 @@ async function requestNotificationPermissionAndGetToken(userId) {
 
       // Obtenha o token de registro do dispositivo
       // Substitua 'YOUR_VAPID_PUBLIC_KEY' pela sua chave VAPID real
-      const currentToken = await getToken(messaging, { vapidKey: 'BIs0n17mt2gj5vBTzyM5znHMDOgI6lcOiGanKQW2SiPlFcgmSvLpBu-d0txnoNKLivhbsUD0iwHHSBQk_LNgQ0A' }); // Exemplo de VAPID Key
+      const currentToken = await getToken(messaging, { vapidKey: 'BIs0n17mt2gj5vBTzyM5znHMDOgI6lcOiGanKQW2SiPlFcgmSvLpBu-d0txnoNKLivhbsUD0iwHHSBQk_LNgQ0A' });
 
       if (currentToken) {
         console.log('FCM Registration Token:', currentToken);
         // Envie este token para o seu backend para armazenamento
-        await api.post('/fcm/save-token', { userId, fcmToken: currentToken }); // Ajustado para o endpoint correto
+        // ATENÇÃO: O endpoint correto para salvar tokens FCM DEVE ser ajustado
+        // para não colidir com o middleware de autenticação se /fcm/save-token
+        // não for uma rota pública.
+        // Se for uma rota admin, o token de autenticação admin precisará ser enviado.
+        // Por enquanto, mantemos a rota original, mas esteja ciente.
+        await api.post('/fcm/save-token', { userId, fcmToken: currentToken });
         console.log('Token enviado para o backend com sucesso.');
         return currentToken;
       } else {
@@ -85,8 +96,6 @@ async function setupForegroundNotifications() {
   if (messaging) {
     onMessage(messaging, (payload) => {
       console.log('Mensagem recebida em primeiro plano:', payload);
-      // Exiba a notificação na UI do seu aplicativo, se desejar
-      // Ex: usando um componente de toast/snackbar
       alert(`Notificação: ${payload.notification.title} - ${payload.notification.body}`);
     });
   } else {
@@ -95,7 +104,11 @@ async function setupForegroundNotifications() {
 }
 
 export {
+  app, // Exporta a instância do app Firebase
+  auth, // <--- EXPORTA A INSTÂNCIA DE AUTH
+  googleProvider, // <--- EXPORTA O PROVEDOR GOOGLE
+  emailProvider, // <--- EXPORTA O PROVEDOR EMAIL
   requestNotificationPermissionAndGetToken,
   setupForegroundNotifications,
-  initializeMessaging // Exporta a nova função para inicialização condicional
+  initializeMessaging
 };
