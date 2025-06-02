@@ -43,7 +43,7 @@
 
     <Sidebar :mobile-menu-open="mobileMenuOpen" @toggle-mobile-menu="toggleMobileMenu" />
 
-    <transition name="fade" mode="out-in">
+    <!-- <transition name="fade" mode="out-in">
       <aside v-if="mobileMenuOpen" class="fixed inset-0 bg-white dark:bg-gray-900 p-6 z-50 md:hidden flex flex-col">
         <div class="flex justify-end mb-6">
           <button @click="closeMobileMenu" class="text-gray-500 dark:text-white text-3xl">
@@ -83,7 +83,7 @@
           </RouterLink>
         </nav>
       </aside>
-    </transition>
+    </transition> -->
 
     <main class="flex-1 p-4 md:ml-64 mt-14">
       <slot />
