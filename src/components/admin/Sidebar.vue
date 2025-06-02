@@ -71,7 +71,8 @@
           <i class="fa-duotone fa-tools mr-3 text-lg"></i> Configurações
         </RouterLink>
         <Divider />
-        <RouterLink to="/admin/manage-users" active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
+        <RouterLink @click="closeMobileMenu" to="/admin/manage-users"
+          active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
           class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
           <i class="fa-duotone fa-users-gear mr-3 text-lg"></i> Gerenciar Usuários
         </RouterLink>
