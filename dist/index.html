@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="transition-colors duration-500 ease-out">
 
 <head>
   <meta charset="UTF-8">
@@ -16,13 +16,21 @@
   <meta name="theme-color" content="#212121" media="(prefers-color-scheme: dark)">
   <meta name="mobile-web-app-capable" content="yes">
   <title>Pizzaria da Nonna</title>
-  <script type="module" crossorigin src="/assets/index-DGxS9ITQ.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DuKAD7hv.css">
+  <script type="module" crossorigin src="/assets/index-deNkyI_o.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CrNPjF0J.css">
 <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
 
 <body class="antialiased bg-gray-50 dark:bg-gray-900">
   <div id="app"></div>
-  <!-- <script src="/assets/js/themeToggle.js"></script> -->
+  <script>
+    // Ao carregar a página, aplica o tema salvo ou a preferência do sistema
+    // Esta lógica deve APENAS LER e aplicar, não escrever no localStorage incondicionalmente.
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
 </body>
 
 </html>
