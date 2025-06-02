@@ -8,7 +8,7 @@
         <h1 class="text-xl font-bold text-gray-900 dark:text-white">Painel Admin</h1>
       </div>
 
-      <div class="flex items-center space-x-4 py-4 bg-amber-300 group relative">
+      <div class="flex items-center space-x-4 py-4 group relative">
         <div v-if="authStore.user?.email" class="text-gray-700 dark:text-gray-300 sm:block">
           <div class="flex items-center cursor-pointer">
             <span class="text-xs">{{ authStore.user.displayName }}</span>
@@ -41,34 +41,7 @@
       </div>
     </header>
 
-    <nav class="hidden md:block w-64 bg-gray-100 dark:bg-gray-800 p-4 min-h-screen shadow-lg fixed top-14 left-0 z-30">
-      <div class="space-y-3 pt-4">
-        <RouterLink to="/admin" active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-          class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-          <i class="fa-duotone fa-chart-line mr-3 text-lg"></i> Dashboard
-        </RouterLink>
-        <RouterLink to="/admin/orders" active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-          class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-          <i class="fa-duotone fa-receipt mr-3 text-lg"></i> Pedidos
-        </RouterLink>
-        <RouterLink to="/admin/products" active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-          class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-          <i class="fa-duotone fa-box-open mr-3 text-lg"></i> Produtos
-        </RouterLink>
-        <RouterLink to="/admin/categories" active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-          class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-          <i class="fa-duotone fa-tags mr-3 text-lg"></i> Categorias
-        </RouterLink>
-        <RouterLink to="/admin/whatsapp-qr" active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-          class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-          <i class="fab fa-whatsapp mr-3 text-lg"></i> WhatsApp QR
-        </RouterLink>
-        <RouterLink to="/admin/settings" active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-          class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-          <i class="fa-duotone fa-tools mr-3 text-lg"></i> Configurações
-        </RouterLink>
-      </div>
-    </nav>
+    <Sidebar :mobile-menu-open="mobileMenuOpen" @toggle-mobile-menu="toggleMobileMenu" />
 
     <transition name="fade" mode="out-in">
       <aside v-if="mobileMenuOpen" class="fixed inset-0 bg-white dark:bg-gray-900 p-6 z-50 md:hidden flex flex-col">
@@ -122,6 +95,7 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth'; // Importa o store de autenticação
 import ThemeToggle from '@/components/ThemeToggle.vue'; // Importa o ThemeToggle
+import Sidebar from '@/components/admin/Sidebar.vue';
 
 const authStore = useAuthStore();
 const mobileMenuOpen = ref(false);

@@ -4,7 +4,13 @@
       <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Gerenciamento de Usuários</h2>
       <p class="text-gray-600 dark:text-gray-400">Visualize e gerencie as permissões de administrador dos usuários.</p>
 
-      <div v-if="isLoading" class="text-center py-8">
+      <div v-if="!authStore.isAuthenticated || !authStore.isAdmin"
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline">Você não tem permissão para acessar esta área ou sua sessão expirou. Por favor,
+          faça login como administrador.</span>
+      </div>
+
+      <div v-else-if="isLoading" class="text-center py-8">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 dark:border-gray-600 mx-auto"></div>
         <p class="text-gray-600 dark:text-gray-400 mt-4">Carregando usuários...</p>
       </div>
@@ -121,22 +127,23 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import BaseModal from '@/components/modals/BaseModal.vue';
-import api from '@/services/httpClient'; // Seu cliente Axios configurado
-import { useToastStore } from '@/stores/toast'; // Para notificações toast
+import api from '@/services/httpClient';
+import { useToastStore } from '@/stores/toast';
+import { useAuthStore } from '@/stores/auth';
 
 const users = ref([]);
 const isLoading = ref(true);
 const showConfirmModal = ref(false);
-const userToActOn = ref(null); // Usuário selecionado para promover/rebaixar
-const actionType = ref(''); // 'promote' ou 'demote'
-const isProcessingAction = ref(false); // Estado para o botão do modal de confirmação
+const userToActOn = ref(null);
+const actionType = ref('');
+const isProcessingAction = ref(false);
 
-// Paginação
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalItems = ref(0);
 
-const toastStore = useToastStore(); // Instância do store de toast
+const toastStore = useToastStore();
+const authStore = useAuthStore();
 
 const paginatedUsers = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
@@ -145,50 +152,24 @@ const paginatedUsers = computed(() => {
 
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
 
-// Função para carregar a lista de usuários do backend
-async function loadUsers() {
-  isLoading.value = true;
-  try {
-    // Endpoint para listar usuários que você criou no backend
-    const response = await api.get('/admin/manage-users/users');
-    users.value = response.data;
-    totalItems.value = users.value.length;
-    // Ajusta a página atual se ela exceder o total de páginas após o carregamento
-    if (currentPage.value > totalPages.value && totalPages.value > 0) {
-      currentPage.value = totalPages.value;
-    } else if (totalPages.value === 0) {
-      currentPage.value = 1;
-    }
-  } catch (error) {
-    console.error('Erro ao carregar usuários:', error.response?.data || error.message);
-    toastStore.showToast('Erro', 'Não foi possível carregar os usuários.', 'error');
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-// Classe dinâmica para o badge de status de admin
 const getAdminStatusBadgeClass = (isAdmin) => {
   return isAdmin
     ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold dark:bg-green-700 dark:text-green-100'
     : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold dark:bg-red-700 dark:text-red-100';
 };
 
-// Abre o modal de confirmação para promover/rebaixar
 function confirmAction(user, type) {
   userToActOn.value = user;
   actionType.value = type;
   showConfirmModal.value = true;
 }
 
-// Fecha o modal de confirmação
 function closeConfirmModal() {
   userToActOn.value = null;
   actionType.value = '';
   showConfirmModal.value = false;
 }
 
-// Executa a ação de promover ou rebaixar após a confirmação
 async function executeAction() {
   if (!userToActOn.value || !actionType.value) return;
 
@@ -199,23 +180,69 @@ async function executeAction() {
 
     await api.post(endpoint, { email: userToActOn.value.email });
 
-    toastStore.showToast('Sucesso!', `Usuário ${userToActOn.value.email} foi ${message} com sucesso.`, 'success');
+    toastStore.showToast('Sucesso!', `Usuário ${userToActOn.value.email} foi ${message} com sucesso. Ele precisará fazer login novamente.`, 'success', 5000);
     closeConfirmModal();
     await loadUsers(); // Recarrega a lista para refletir as mudanças
   } catch (error) {
     console.error(`Erro ao ${actionType.value} usuário:`, error.response?.data || error.message);
-    toastStore.showToast('Erro', `Não foi possível ${actionType.value} o usuário.`, 'error');
+    toastStore.showToast('Erro', `Não foi possível ${actionType.value} o usuário: ${error.response?.data?.error || error.message}`, 'error', 5000);
   } finally {
     isProcessingAction.value = false;
   }
 }
 
-// Reseta a página para 1 quando o tamanho da página é alterado
+async function loadUsers() {
+  // Apenas tenta carregar usuários se o usuário estiver autenticado e for admin
+  if (!authStore.isAuthenticated || !authStore.isAdmin) {
+    isLoading.value = false;
+    console.warn('Não autenticado ou não é admin. Não carregando usuários.');
+    // O router.beforeEach já deve redirecionar, mas esta é uma camada extra
+    return;
+  }
+
+  isLoading.value = true;
+  try {
+    console.log("Tentando carregar usuários da API...");
+    const response = await api.get('/admin/manage-users/users');
+    console.log("Usuários recebidos:", response.data);
+    users.value = response.data;
+    totalItems.value = users.value.length;
+    if (currentPage.value > totalPages.value && totalPages.value > 0) {
+      currentPage.value = totalPages.value;
+    } else if (totalPages.value === 0) {
+      currentPage.value = 1;
+    }
+  } catch (error) {
+    console.error('Erro ao carregar usuários:', error.response?.data || error.message);
+    // O interceptor do httpClient já lida com 401/403, mas para outros erros, mostramos toast
+    if (error.response?.status !== 401 && error.response?.status !== 403) {
+      toastStore.showToast('Erro', 'Não foi possível carregar os usuários.', 'error');
+    }
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 watch(pageSize, () => {
   currentPage.value = 1;
 });
 
-onMounted(() => {
+// Ao montar, espera que o authStore esteja pronto antes de tentar carregar usuários
+onMounted(async () => {
+  // Garante que o authStore esteja inicializado e o isAdmin esteja populado
+  // Isso é importante porque o onMounted pode ser chamado antes do router.beforeEach
+  // ter tido a chance de inicializar completamente o authStore.
+  if (!authStore.isAuthenticated && !authStore.loading) {
+    console.log("ManageUsers: onMounted - authStore não inicializado, chamando initializeAuth...");
+    await authStore.initializeAuth();
+  }
+
+  // Agora que o authStore deve estar pronto, tentamos carregar os usuários
+  console.log("ManageUsers: onMounted - Chamando loadUsers...");
   loadUsers();
 });
 </script>
+
+<style scoped>
+/* Estilos específicos para este componente, se necessário */
+</style>
