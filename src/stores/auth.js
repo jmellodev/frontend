@@ -6,8 +6,6 @@ import api from '../services/httpClient'; // Seu cliente HTTP configurado
 import router from '../router'; // Importa o roteador para redirecionamentos
 import { useToastStore } from './toast'; // Importa o store de toast para feedback visual
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
-
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     // O objeto 'user' conterá informações básicas do usuário e a flag 'isAdmin'

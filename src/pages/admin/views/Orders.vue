@@ -13,7 +13,26 @@
         <p class="text-gray-600 dark:text-gray-400 text-lg">Nenhum pedido encontrado.</p>
       </div>
 
-      <div v-else class="overflow-x-auto mt-4 rounded-lg">
+      <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div v-for="order in orders" :key="order.id"
+          class="p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-lg relative"
+          :class="getStatusBadgeClass(order.status)">
+          <div class="flex-shrink-0 mr-4 space-y-1">
+            <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
+            <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
+            <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
+            <p class="font-semibold">Status: <span class="font-light" :class="getStatusBadgeClass(order.status)">{{
+              order.status }}</span></p>
+            <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span></p>
+          </div>
+          <button @click="view(order)"
+            class="p-2 absolute right-0 bottom-0 w-10 h-10 bg-green-800 hover:bg-green-700 text-white rounded-br-md rounded-tl-4xl drop-shadow-amber-500 transition-colors duration-200">
+            Ver
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto mt-4 rounded-lg hidden">
         <table class="min-w-full table-auto bg-gray-100 dark:bg-gray-800">
           <thead>
             <tr class="bg-gray-200 dark:bg-gray-700">
@@ -195,7 +214,7 @@ const getStatusBadgeClass = (status) => {
       return 'bg-blue-500 text-blue-200 px-2 py-1 rounded-full text-xs font-semibold';
     case 'Finalizado':
     case 'Entregue': // Ambos podem ter a mesma cor de sucesso
-      return 'bg-green-500 text-green-200 px-2 py-1 rounded-full text-xs font-semibold';
+      return 'bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold';
     case 'Cancelado':
       return 'bg-red-500 text-red-200 px-2 py-1 rounded-full text-xs font-semibold';
     default:

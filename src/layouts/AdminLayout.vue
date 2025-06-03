@@ -4,22 +4,21 @@
       class="fixed top-0 left-0 right-0 z-50 bg-gray-100 dark:bg-gray-800 shadow-md px-6 flex items-center justify-between h-14">
       <div class="flex items-center">
         <button @click="toggleMobileMenu" class="md:hidden text-gray-700 dark:text-white text-2xl mr-4">
-          &#9776; </button>
-        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Painel Admin</h1>
+          <i class="fa-duotone fa-solid fa-bars-sort"></i>
+        </button>
+        <h1 class="text-md font-bold text-gray-900 dark:text-white">Painel Admin</h1>
       </div>
 
       <div class="flex items-center space-x-4 py-4 group relative">
         <div v-if="authStore.user?.email" class="text-gray-700 dark:text-gray-300 sm:block">
-          <div class="flex items-center cursor-pointer">
+          <div @click="toggleUserMenu" class="flex items-center cursor-pointer">
             <span class="text-xs">{{ authStore.user.displayName }}</span>
-            <i class="fa-duotone fa-user-circle ml-2 text-2xl"></i>
+            <i class="fa-duotone fa-user-circle ml-2 text-2xl dark:text-white"></i>
           </div>
 
           <ul
-            class="w-auto flex-col space-y-4 text-sm dark:text-gray-200 bg-gray-100 dark:bg-gray-800 absolute p-2 rounded-md shadow-lg top-8 -z-50 -right-1 opacity-0 -translate-y-full group-hover:flex group-hover:translate-y-5 group-hover:opacity-100 transition-all duration-200 border border-gray-200 dark:border-gray-800">
-            <li class="flex items-center space-x-2 p-0 whitespace-nowrap ">
-              <i class="fa-duotone fa-home sr-only"></i>
-            </li>
+            class="w-auto flex-col space-y-4 text-sm dark:text-gray-200 bg-gray-100 dark:bg-gray-800 absolute p-2 rounded-md shadow-lg top-8 -z-50 -right-1 opacity-0 -translate-y-full group-hover:flex group-hover:translate-y-5 group-hover:opacity-100 transition-all duration-200 border border-gray-200 dark:border-gray-800"
+            :class="[{ 'opacity-100 translate-y-5': userMenuOpen }]">
             <li
               class="flex items-center space-x-2 p-2 whitespace-nowrap cursor-pointer hover:bg-gray-200/90 dark:hover:bg-gray-400">
               <i class="fa-duotone fa-user"></i><span class="text-gray-600">Perfil</span>
@@ -43,50 +42,13 @@
 
     <Sidebar :mobile-menu-open="mobileMenuOpen" @toggle-mobile-menu="toggleMobileMenu" />
 
-    <!-- <transition name="fade" mode="out-in">
-      <aside v-if="mobileMenuOpen" class="fixed inset-0 bg-white dark:bg-gray-900 p-6 z-50 md:hidden flex flex-col">
-        <div class="flex justify-end mb-6">
-          <button @click="closeMobileMenu" class="text-gray-500 dark:text-white text-3xl">
-            &times;
-          </button>
-        </div>
-        <nav class="space-y-3 flex-grow">
-          <RouterLink @click="closeMobileMenu" to="/admin"
-            active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-            class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-            <i class="fa-duotone fa-chart-line mr-3 text-lg"></i> Dashboard
-          </RouterLink>
-          <RouterLink @click="closeMobileMenu" to="/admin/orders"
-            active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-            class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-            <i class="fa-duotone fa-receipt mr-3 text-lg"></i> Pedidos
-          </RouterLink>
-          <RouterLink @click="closeMobileMenu" to="/admin/products"
-            active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-            class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-            <i class="fa-duotone fa-box-open mr-3 text-lg"></i> Produtos
-          </RouterLink>
-          <RouterLink @click="closeMobileMenu" to="/admin/categories"
-            active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-            class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-            <i class="fa-duotone fa-tags mr-3 text-lg"></i> Categorias
-          </RouterLink>
-          <RouterLink @click="closeMobileMenu" to="/admin/whatsapp-qr"
-            active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-            class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-            <i class="fab fa-whatsapp mr-3 text-lg"></i> WhatsApp QR
-          </RouterLink>
-          <RouterLink @click="closeMobileMenu" to="/admin/settings"
-            active-class="bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-white"
-            class="flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
-            <i class="fa-duotone fa-tools mr-3 text-lg"></i> Configurações
-          </RouterLink>
-        </nav>
-      </aside>
-    </transition> -->
-
-    <main class="flex-1 p-4 md:ml-64 mt-14">
-      <slot />
+    <main class="flex-1 p-4 md:ml-64 mt-14 wrap-original-transform" @click="userMenuOpen = false">
+      <div class="transition-transform duration-300 ease-in-out" :class="{
+        'translate-x-0 ': !mobileMenuOpen,
+        'translate-x-52 original-transform': mobileMenuOpen
+      }" @click.stop="closeMobileMenu">
+        <slot />
+      </div>
     </main>
   </div>
 </template>
@@ -94,11 +56,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth'; // Importa o store de autenticação
-import ThemeToggle from '@/components/ThemeToggle.vue'; // Importa o ThemeToggle
 import Sidebar from '@/components/admin/Sidebar.vue';
 
 const authStore = useAuthStore();
 const mobileMenuOpen = ref(false);
+const userMenuOpen = ref(false);
+const toggleUserMenu = () => {
+  userMenuOpen.value = !userMenuOpen.value;
+};
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -124,5 +89,15 @@ onMounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.wrap-original-transform {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  perspective-origin: 100% 50%;
+}
+
+.original-transform {
+  transform: rotateY(-40deg);
 }
 </style>
