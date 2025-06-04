@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+  <div class="flex min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200 relative">
     <header
       class="fixed top-0 left-0 right-0 z-50 bg-gray-100 dark:bg-gray-800 shadow-md px-6 flex items-center justify-between h-14">
       <div class="flex items-center">

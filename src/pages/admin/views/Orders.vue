@@ -22,7 +22,7 @@
             <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
             <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
             <p class="font-semibold">Status: <span class="font-light" :class="getStatusBadgeClass(order.status)">{{
-              order.status }}</span></p>
+              formatText(order.status) }}</span></p>
             <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span></p>
           </div>
           <button @click="view(order)"
@@ -119,7 +119,7 @@
             <select v-model="selectedOrder.status"
               class="p-2 bg-gray-200 dark:bg-gray-700 border border-gray-400 dark:border-gray-600 rounded-md text-gray-800 dark:text-white focus:ring-blue-500 focus:border-blue-500 ml-2 mt-2">
               <option v-for="status in statusOptions" :key="status" :value="status">
-                {{ status }}
+                {{ formatText(status) }}
               </option>
             </select>
           </div>
@@ -129,7 +129,7 @@
           <h4
             class="font-semibold mt-6 mb-2 text-gray-700 dark:text-gray-300 border-t border-gray-300 dark:border-gray-700 pt-4">
             Itens do Pedido:</h4>
-          <ul class="list-disc list-inside text-sm space-y-2">
+          <ul class="text-sm space-y-2">
             <li v-for="(item, idx) in selectedOrder.itens" :key="idx" class="text-gray-700 dark:text-gray-300">
               <p class="font-semibold">{{ item.item }}</p>
               <p v-if="item.adicionais" class="text-xs text-gray-600 dark:text-gray-400 ml-4">Adicionais: {{
@@ -163,7 +163,17 @@ const orders = ref([]);
 const selectedOrder = ref(null);
 const showDetails = ref(false);
 const isLoading = ref(true);
-const statusOptions = ["Pendente", "Em preparo", "Finalizado", "Entregue", "Cancelado"];
+const statusOptions = ["recebido", "em_preparo", "finalizado", "a_caminho", "entregue", "cancelado"];
+
+function formatText(text) {
+  // 1. Substitui todos os underscores por espaços
+  let formattedText = text.replace(/_/g, ' ');
+
+  // 2. Transforma a primeira letra em maiúscula
+  formattedText = formattedText.charAt(0).toUpperCase() + formattedText.slice(1);
+
+  return formattedText;
+}
 
 // Função para formatar o timestamp do Firestore
 function formatDate(ts) {
@@ -178,7 +188,6 @@ const getPaymentType = (type) => {
     case 'debit_card':
       return 'Cartão de Débito';
     case 'bank_transfer':
-      return 'Transferência Bancária';
     case 'pix':
       return 'Pix';
     case 'cash':
@@ -191,6 +200,7 @@ const getPaymentType = (type) => {
 const getStatusPayment = (status) => {
   switch (status) {
     case 'paid':
+    case 'approved':
       return 'Pago';
     case 'pending':
       return 'Pendente';
@@ -208,12 +218,12 @@ const getStatusPayment = (status) => {
 // Classe dinâmica para o badge de status
 const getStatusBadgeClass = (status) => {
   switch (status) {
-    case 'Pendente':
+    case 'recebido':
       return 'bg-yellow-500 text-yellow-200 px-2 py-1 rounded-full text-xs font-semibold';
-    case 'Em preparo':
+    case 'em_preparo':
       return 'bg-blue-500 text-blue-200 px-2 py-1 rounded-full text-xs font-semibold';
-    case 'Finalizado':
-    case 'Entregue': // Ambos podem ter a mesma cor de sucesso
+    case 'finalizado':
+    case 'entregue': // Ambos podem ter a mesma cor de sucesso
       return 'bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold';
     case 'Cancelado':
       return 'bg-red-500 text-red-200 px-2 py-1 rounded-full text-xs font-semibold';

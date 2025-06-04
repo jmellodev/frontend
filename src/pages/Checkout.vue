@@ -245,10 +245,14 @@ const paymentOptions = [
 ];
 
 function generateOrderNumber() {
-  const timestamp = Date.now().toString(36).slice(-5);
-  const randomChars = Math.random().toString(36).substring(2, 7);
-  return `${timestamp.toUpperCase()}${randomChars.toUpperCase()}`;
+  // Pega os últimos 5 dígitos do timestamp atual
+  const timestampPart = Date.now().toString().slice(-5);
+  // Gera um número aleatório entre 0 e 99999 e garante 5 dígitos, preenchendo com zeros à esquerda se necessário
+  const randomPart = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+  // Concatena as partes para formar o número do pedido
+  return `${timestampPart}${randomPart}`;
 }
+
 
 onMounted(() => {
   const storedData = localStorage.getItem(CUSTOMER_DATA_LOCAL_STORAGE_KEY);
