@@ -27,13 +27,13 @@
             <span class="font-semibold mr-2">Endereço:</span>
             <span class="text-gray-500 dark:text-gray-400">{{
               customerData.address
-              }}</span>
+            }}</span>
           </div>
           <div>
             <span class="font-semibold mr-2">Ponto de referência:</span>
             <span class="text-gray-500 dark:text-gray-400">{{
               customerData.reference
-              }}</span>
+            }}</span>
           </div>
           <button @click="editingCustomerData = true"
             class="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500">
@@ -291,7 +291,7 @@ async function submitOrder() {
       paymentMethod.value === "cash" && needChange.value === "yes"
         ? changeAmount.value
         : null,
-    orderDate: new Date().toISOString(),
+    created_at: new Date().toISOString(),
     status: "pending",
   };
 
@@ -303,17 +303,17 @@ async function submitOrder() {
         const extrasString = item.extras
           .map((e) => `${e.name} - R$ ${e.price.toFixed(2).replace(".", ",")}`)
           .join(" | ");
-        itemString += `\nAdicionais: ${extrasString}`;
+        itemString += `\n_Adicionais:_ ${extrasString}`;
       }
       return itemString;
     })
     .join("\n");
 
-  let deliverySpecificInfo = [`Tipo: ${orderDetails.deliveryType}`];
+  let deliverySpecificInfo = [`*Tipo:* ${orderDetails.deliveryType}`];
   if (orderDetails.deliveryType === "Entrega") {
-    deliverySpecificInfo.push(`Tempo de entrega: 40 a 50min`);
+    deliverySpecificInfo.push(`*Tempo de entrega:* 40 a 50min`);
   } else {
-    deliverySpecificInfo.push(`Pronto para retirada em: 20-30min`);
+    deliverySpecificInfo.push(`*Pronto para retirada em:* 20-30min`);
   }
 
   const message =
@@ -322,28 +322,28 @@ async function submitOrder() {
     `${cartItems}\n\n` +
     `DADOS DA ENTREGA:\n` +
     `${deliverySpecificInfo.join("\n")}\n` +
-    `Cliente: ${customerData.name}\n` +
-    `Telefone: ${customerData.phone}\n` +
+    `*Cliente:* ${customerData.name}\n` +
+    `*Telefone:* ${customerData.phone}\n` +
     (orderDetails.deliveryType === "Entrega"
-      ? `Endereço: ${customerData.address}\n`
+      ? `*Endereço:* ${customerData.address}\n`
       : "") +
     (orderDetails.deliveryType === "Entrega" && customerData.reference
-      ? `Ponto de referência: ${customerData.reference}\n`
+      ? `*Ponto de referência:* ${customerData.reference}\n`
       : orderDetails.deliveryType === "Entrega"
-        ? `Ponto de referência: nenhum\n`
+        ? `*Ponto de referência:* nenhum\n`
         : "") +
     (orderDetails.deliveryType === "Entrega" && customerData.neighborhood
-      ? `Bairro: ${customerData.neighborhood}\n`
+      ? `*Bairro:* ${customerData.neighborhood}\n`
       : "") +
     `\n` +
     `DADOS DO PAGAMENTO:\n` +
-    `Método de pagamento: ${orderDetails.paymentMethod ? orderDetails.paymentMethod.toUpperCase() : "N/A"
+    `*Método de pagamento:* ${orderDetails.paymentMethod ? orderDetails.paymentMethod.toUpperCase() : "N/A"
     }\n` +
-    `Subtotal: R$ ${orderDetails.subtotal.toFixed(2).replace(".", ",")}\n` +
+    `*Subtotal:* R$ ${orderDetails.subtotal.toFixed(2).replace(".", ",")}\n` +
     (orderDetails.deliveryType === "Entrega"
-      ? `Taxa de entrega: R$ ${orderDetails.tax.toFixed(2).replace(".", ",")}\n`
+      ? `*Taxa de entrega:* R$ ${orderDetails.tax.toFixed(2).replace(".", ",")}\n`
       : "") +
-    `Total: R$ ${orderDetails.total.toFixed(2).replace(".", ",")}`;
+    `*Total:* R$ ${orderDetails.total.toFixed(2).replace(".", ",")}`;
 
   const phone = "5571992477638";
   const encoded = encodeURIComponent(message);

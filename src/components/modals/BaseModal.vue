@@ -2,13 +2,13 @@
   <div v-if="open"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 dark:bg-gray-900/40 rounded-lg w-full text-gray-900 dark:text-white"
     @click.self="closeModal">
-    <transition name="scale-fade" appear>
+    <Transition name="custom-classes" appear enter-active-class="animate__animated animate__zoomIn animate__faster"
+      leave-active-class="animate__animated animate__bounceOutRight animate__faster">
       <div v-show="open" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg w-auto
-               max-h-[95vh] overflow-y-auto p-6 relative
-               transform transition-all duration-300 ease-out custom-scrollbar" role="dialog" aria-modal="true">
+               max-h-[95vh] overflow-y-auto p-6 relative custom-scrollbar" role="dialog" aria-modal="true">
         <slot />
       </div>
-    </transition>
+    </Transition>
   </div>
 </template>
 
@@ -30,16 +30,38 @@ function closeModal() {
 </script>
 
 <style scoped>
+.bounce-enter-active {
+  animation: bounce-in 0.5s;
+}
+
+.bounce-leave-active {
+  animation: bounce-in 0.5s reverse;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.25);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* Estilos para a animação de escala e fade */
 .scale-fade-enter-active,
 .scale-fade-leave-active {
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .scale-fade-enter-from,
 .scale-fade-leave-to {
+  transform: translateZ(20px);
   opacity: 0;
-  transform: scale(0.95);
 }
 
 /* Estilos para a scrollbar personalizada */

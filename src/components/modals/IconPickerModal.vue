@@ -7,15 +7,16 @@
 
     <div class="mb-4">
       <input type="text" v-model="searchQuery" placeholder="Buscar ícone (ex: pizza, star, user)"
-        class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        class="w-full p-3 dark:bg-gray-800 border dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
     </div>
 
     <div
       class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-4 max-h-[calc(95vh-160px)] overflow-y-auto pr-2">
       <div v-for="icon in filteredIcons" :key="icon" @click="selectIcon(icon)"
-        class="flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200 border border-gray-700">
+        class="flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200 border border-gray-700"
+        :title="icon.replace('fas fa-', '').replace('fab fa-', '')">
         <i :class="icon" class="text-3xl mb-2 text-blue-400"></i>
-        <span class="text-xs text-center break-words">{{ icon.replace('fas fa-', '').replace('fab fa-', '') }}</span>
+        <!-- <span class="text-xs text-center break-words">{{ icon.replace('fas fa-', '').replace('fab fa-', '') }}</span> -->
       </div>
       <div v-if="filteredIcons.length === 0" class="col-span-full text-center text-gray-400 py-8">
         Nenhum ícone encontrado.

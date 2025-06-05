@@ -1,80 +1,79 @@
 <template>
-  <AdminLayout>
-    <div class="space-y-6 p-4 md:p-8 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
-      <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Pedidos</h2>
-      <p class="text-gray-600 dark:text-gray-400">Gerencie todos os pedidos recebidos.</p>
+  <div>
+    <AdminLayout>
+      <div class="space-y-6 p-4 md:p-8 bg-white dark:bg-gray-800 h-screen rounded-lg shadow-xl">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Pedidos</h2>
+        <p class="text-gray-600 dark:text-gray-400">Gerencie todos os pedidos recebidos.</p>
 
-      <div v-if="isLoading" class="text-center py-8">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 dark:border-gray-600 mx-auto"></div>
-        <p class="text-gray-600 dark:text-gray-400 mt-4">Carregando pedidos...</p>
-      </div>
-
-      <div v-else-if="orders.length === 0" class="text-center py-8">
-        <p class="text-gray-600 dark:text-gray-400 text-lg">Nenhum pedido encontrado.</p>
-      </div>
-
-      <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <div v-for="order in orders" :key="order.id"
-          class="p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-lg relative"
-          :class="getStatusBadgeClass(order.status)">
-          <div class="flex-shrink-0 mr-4 space-y-1">
-            <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-            <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
-            <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
-            <p class="font-semibold">Status: <span class="font-light" :class="getStatusBadgeClass(order.status)">{{
-              formatText(order.status) }}</span></p>
-            <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span></p>
+        <div v-if="isLoading" class="text-center py-8">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 dark:border-gray-600 mx-auto">
           </div>
-          <button @click="view(order)"
-            class="p-2 absolute right-0 bottom-0 w-10 h-10 bg-green-800 hover:bg-green-700 text-white rounded-br-md rounded-tl-4xl drop-shadow-amber-500 transition-colors duration-200">
-            Ver
-          </button>
+          <p class="text-gray-600 dark:text-gray-400 mt-4">Carregando pedidos...</p>
+        </div>
+
+        <div v-else-if="orders.length === 0" class="text-center py-8">
+          <p class="text-gray-600 dark:text-gray-400 text-lg">Nenhum pedido encontrado.</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+          <div v-for="order in orders" :key="order.id" @click="view(order)"
+            class="p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md  cursor-pointer hover:shadow-lg transition-all duration-300">
+            <div class="flex-shrink-0 mr-4 space-y-1">
+              <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
+              <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
+              <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
+              <p class="font-semibold">Status: <span class="font-light" :class="getStatusBadgeClass(order.status)">{{
+                formatText(order.status) }}</span></p>
+              <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto mt-4 rounded-lg hidden">
+          <table class="min-w-full table-auto bg-gray-100 dark:bg-gray-800">
+            <thead>
+              <tr class="bg-gray-200 dark:bg-gray-700">
+                <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">#</th>
+                <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">
+                  Cliente
+                </th>
+                <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Total
+                </th>
+                <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Status
+                </th>
+                <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Data
+                </th>
+                <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-800 dark:text-gray-200 text-sm font-light">
+              <tr v-for="order in orders" :key="order.id"
+                class="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700">
+                <td class="py-3 px-6 text-left whitespace-nowrap">{{ order.id }}</td>
+                <td class="py-3 px-6 text-left">{{ order.client }}</td>
+                <td class="py-3 px-6 text-left">{{ $formatPrice(order.total) }}</td>
+                <td class="py-3 px-6 text-left">
+                  <span :class="getStatusBadgeClass(order.status)">
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td class="py-3 px-6 text-left">{{ formatDate(order.created_at) }}</td>
+                <td class="py-3 px-6 text-left">
+                  <button @click="view(order)"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">
+                    Ver
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div class="overflow-x-auto mt-4 rounded-lg hidden">
-        <table class="min-w-full table-auto bg-gray-100 dark:bg-gray-800">
-          <thead>
-            <tr class="bg-gray-200 dark:bg-gray-700">
-              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">#</th>
-              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Cliente
-              </th>
-              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Total
-              </th>
-              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Status
-              </th>
-              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Data
-              </th>
-              <th class="py-3 px-6 text-left text-gray-700 dark:text-gray-300 uppercase text-sm leading-normal">Ações
-              </th>
-            </tr>
-          </thead>
-          <tbody class="text-gray-800 dark:text-gray-200 text-sm font-light">
-            <tr v-for="order in orders" :key="order.id"
-              class="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700">
-              <td class="py-3 px-6 text-left whitespace-nowrap">{{ order.id }}</td>
-              <td class="py-3 px-6 text-left">{{ order.client }}</td>
-              <td class="py-3 px-6 text-left">{{ $formatPrice(order.total) }}</td>
-              <td class="py-3 px-6 text-left">
-                <span :class="getStatusBadgeClass(order.status)">
-                  {{ order.status }}
-                </span>
-              </td>
-              <td class="py-3 px-6 text-left">{{ formatDate(order.created_at) }}</td>
-              <td class="py-3 px-6 text-left">
-                <button @click="view(order)"
-                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">
-                  Ver
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
+    </AdminLayout>
     <BaseModal v-if="selectedOrder" v-model:open="showDetails">
-      <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-xl text-gray-900 dark:text-white relative">
+      <div class="text-gray-900 dark:text-white relative">
         <button @click="closeModal"
           class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
           &times;
@@ -131,9 +130,10 @@
             Itens do Pedido:</h4>
           <ul class="text-sm space-y-2">
             <li v-for="(item, idx) in selectedOrder.itens" :key="idx" class="text-gray-700 dark:text-gray-300">
-              <p class="font-semibold">{{ item.item }}</p>
-              <p v-if="item.adicionais" class="text-xs text-gray-600 dark:text-gray-400 ml-4">Adicionais: {{
-                item.adicionais }}</p>
+              <p class="font-semibold">{{ item.item.replaceAll('r$', 'R$') }}</p>
+              <p v-if="item.adicionais" class="text-xs text-gray-600 dark:text-gray-400">
+                <span class="italic">Adicionais:</span> {{ item.adicionais.replaceAll('r$', 'R$') }}
+              </p>
             </li>
           </ul>
         </div>
@@ -150,7 +150,7 @@
         </div>
       </div>
     </BaseModal>
-  </AdminLayout>
+  </div>
 </template>
 
 <script setup>
@@ -163,19 +163,14 @@ const orders = ref([]);
 const selectedOrder = ref(null);
 const showDetails = ref(false);
 const isLoading = ref(true);
-const statusOptions = ["recebido", "em_preparo", "finalizado", "a_caminho", "entregue", "cancelado"];
-
+const statusOptions = ["recebido", "em_preparo", "finalizado", "a_caminho", "entregue", "cancelado", "em processamento"];
 function formatText(text) {
   // 1. Substitui todos os underscores por espaços
   let formattedText = text.replace(/_/g, ' ');
-
   // 2. Transforma a primeira letra em maiúscula
   formattedText = formattedText.charAt(0).toUpperCase() + formattedText.slice(1);
-
   return formattedText;
 }
-
-// Função para formatar o timestamp do Firestore
 function formatDate(ts) {
   // CORREÇÃO AQUI: Acessa ts._seconds em vez de ts.seconds
   if (!ts || typeof ts._seconds === 'undefined') return "";
@@ -196,7 +191,6 @@ const getPaymentType = (type) => {
       return 'Outro';
   }
 };
-
 const getStatusPayment = (status) => {
   switch (status) {
     case 'paid':
@@ -214,10 +208,10 @@ const getStatusPayment = (status) => {
       return 'Desconhecido';
   }
 };
-
-// Classe dinâmica para o badge de status
 const getStatusBadgeClass = (status) => {
   switch (status) {
+    case 'em processamento':
+      return 'bg-orange-500 text-orange-200 px-2 py-1 rounded-full text-xs font-semibold';
     case 'recebido':
       return 'bg-yellow-500 text-yellow-200 px-2 py-1 rounded-full text-xs font-semibold';
     case 'em_preparo':
@@ -231,18 +225,15 @@ const getStatusBadgeClass = (status) => {
       return 'bg-gray-500 text-gray-200 px-2 py-1 rounded-full text-xs font-semibold';
   }
 };
-
 function view(order) {
   // Cria uma cópia profunda do objeto do pedido para evitar mutações diretas
   selectedOrder.value = JSON.parse(JSON.stringify(order));
   showDetails.value = true;
 }
-
 function closeModal() {
   selectedOrder.value = null;
   showDetails.value = false;
 }
-
 async function updateStatus() {
   if (selectedOrder.value && selectedOrder.value.id) {
     try {
@@ -265,7 +256,6 @@ async function updateStatus() {
     }
   }
 }
-
 onMounted(async () => {
   try {
     isLoading.value = true;
@@ -279,7 +269,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style scoped>
-/* Estilos específicos para este componente, se necessário */
-</style>

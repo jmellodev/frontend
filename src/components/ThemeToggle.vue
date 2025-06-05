@@ -17,8 +17,6 @@ import { ref, onMounted } from "vue";
 
 const isDark = ref(false);
 
-// Função para aplicar o tema (adiciona/remove classe 'dark' e salva no localStorage)
-// Esta função agora é chamada APÓS o ripple cobrir a tela.
 const setTheme = (dark) => {
   isDark.value = dark;
   if (dark) {
@@ -32,12 +30,11 @@ const setTheme = (dark) => {
   }
 };
 
-// Função para iniciar o efeito de ripple e, em seguida, alterar o tema
 const toggleThemeWithRipple = (event) => {
   const targetIsDark = !isDark.value; // Calcula o estado do tema de destino
 
-  const ripple = document.createElement('div');
-  ripple.classList.add('theme-ripple-effect');
+  const rippleElement = document.createElement('div');
+  rippleElement.classList.add('theme-ripple-effect'); // Uma classe opcional para identificação
 
   // Calcula a posição do clique ou do centro do toggle
   let clientX, clientY;
@@ -45,58 +42,64 @@ const toggleThemeWithRipple = (event) => {
     clientX = event.clientX;
     clientY = event.clientY;
   } else {
-    // Fallback para o centro do toggle se o evento não estiver disponível
     const toggleElement = document.getElementById('theme-switch');
     if (toggleElement) {
       const rect = toggleElement.getBoundingClientRect();
       clientX = rect.left + rect.width / 2;
       clientY = rect.top + rect.height / 2;
     } else {
-      // Fallback para o centro da tela
       clientX = window.innerWidth / 2;
       clientY = window.innerHeight / 2;
     }
   }
 
-  // Calcula o tamanho do círculo para cobrir toda a tela
-  const maxDim = Math.max(window.innerWidth, window.innerHeight);
-  // Tamanho extra grande para garantir cobertura total em qualquer resolução
-  const size = Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight) * 2;
+  // Define a cor do tema de destino para o gradiente
+  const themeColor = targetIsDark ? '#fff' : '#1a202c'; // Cores Tailwind: gray-900 ou white
 
+  // **Configurações Iniciais do Ripple Element**
+  rippleElement.style.position = 'fixed';
+  rippleElement.style.top = '0';
+  rippleElement.style.left = '0';
+  rippleElement.style.width = '100vw';
+  rippleElement.style.height = '100vh';
+  rippleElement.style.zIndex = '9999';
+  rippleElement.style.pointerEvents = 'none'; // Não interfere com cliques
 
-  // Define os estilos iniciais do círculo
-  ripple.style.position = 'fixed';
-  ripple.style.borderRadius = '50%';
-  ripple.style.left = `${clientX - size / 2}px`;
-  ripple.style.top = `${clientY - size / 2}px`;
-  ripple.style.width = `${size}px`;
-  ripple.style.height = `${size}px`;
-  ripple.style.transform = 'scale(0)'; // Começa pequeno
-  ripple.style.opacity = '1'; // Totalmente opaco no início
-  ripple.style.zIndex = '9999'; // Acima de tudo
-  ripple.style.pointerEvents = 'none'; // Não bloqueia cliques
+  // Define o `radial-gradient` com o centro no ponto do clique
+  rippleElement.style.backgroundImage = `radial-gradient(circle at ${clientX}px ${clientY}px, transparent 25%, ${themeColor} 25.5%)`;
 
-  // Define a cor de fundo do círculo com base no TEMA DE DESTINO
-  // Se o tema atual é claro (isDark=false), o próximo será escuro, então o ripple é cinza escuro.
-  // Se o tema atual é escuro (isDark=true), o próximo será claro, então o ripple é branco.
-  ripple.style.backgroundColor = targetIsDark ? '#1a202c' : '#ffffff'; // Cores Tailwind: gray-900 ou white
+  // Define o `background-size` inicial.
+  // IMPORTANTE: Este valor deve ser o mesmo do seu estado inicial no CSS (`100% 100%`).
+  rippleElement.style.backgroundSize = '100% 100%';
+  rippleElement.style.backgroundRepeat = 'no-repeat'; // Para garantir que o gradiente não se repita
 
-  document.body.appendChild(ripple);
+  // A transição será APENAS para `background-size`
+  // O tempo da transição pode ser ajustado aqui (ex: '0.7s', '1s')
+  rippleElement.style.transition = 'background-size 1s ease-out';
 
-  // Força o reflow para garantir que o estado inicial (scale(0)) seja renderizado
-  // antes de aplicar a transição.
-  void ripple.offsetWidth;
+  document.body.appendChild(rippleElement);
 
-  // Aplica a transição para animar o círculo
-  ripple.style.transition = 'transform 0.7s ease-out'; // Apenas transform, a opacidade permanece 1
-  ripple.style.transform = 'scale(1)'; // Expande para cobrir a tela
+  // --- AQUI É A PARTE CRÍTICA PARA GARANTIR A ANIMAÇÃO ---
+  // Força o reflow para que o navegador renderize o `background-size: 100%`
+  // antes de aplicar a mudança para o estado final.
+  void rippleElement.offsetWidth;
 
-  // Após a transição de expansão do ripple, altere o tema e remova o elemento ripple.
-  // Usamos { once: true } para garantir que o listener seja executado apenas uma vez.
-  ripple.addEventListener('transitionend', () => {
-    setTheme(targetIsDark); // Altera o tema real do documento
-    ripple.remove(); // Remove o elemento ripple
-  }, { once: true });
+  // **Inicia a Animação**
+  // Aumenta o `background-size` para expandir o anel
+  // O valor '400% 400%' deve ser suficiente para cobrir a tela.
+  // Se precisar de mais cobertura, aumente esse valor (ex: '800% 800%').
+  requestAnimationFrame(() => {
+    rippleElement.style.backgroundSize = '400% 400%';
+  });
+
+  setTheme(targetIsDark); // Altera o tema real do documento
+  // Remove o elemento e aplica o tema real quando a transição do background-size termina
+  rippleElement.addEventListener('transitionend', (e) => {
+    // Garante que é a transição da propriedade 'background-size' que terminou
+    if (e.propertyName === 'background-size') {
+      rippleElement.remove(); // Remove o elemento ripple
+    }
+  }, { once: true }); // Executa o listener apenas uma vez
 };
 
 onMounted(() => {

@@ -117,114 +117,115 @@
         </div>
       </div>
 
-      <BaseModal v-if="showForm" v-model:open="showForm">
-        <div class="">
-          <button @click="showForm = false"
-            class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
-            &times;
-          </button>
-          <h3 class="text-2xl font-bold mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
-            {{ form.id ? "Editar" : "Novo" }} Produto
-          </h3>
 
-          <div v-if="isFormLoading" class="text-center py-4">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 dark:border-gray-600 mx-auto">
-            </div>
-            <p class="text-gray-600 dark:text-gray-400 mt-2">Salvando...</p>
-          </div>
+    </div>
+  </AdminLayout>
+  <BaseModal v-if="showForm" v-model:open="showForm">
+    <div class="">
+      <button @click="showForm = false"
+        class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
+        &times;
+      </button>
+      <h3 class="text-2xl font-bold mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
+        {{ form.id ? "Editar" : "Novo" }} Produto
+      </h3>
 
-          <div v-else class="space-y-4">
-            <input v-model="form.name" placeholder="Nome do Produto"
-              class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <textarea v-model="form.description" placeholder="Descrição do Produto" rows="3"
-              class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <input v-model="form.img" placeholder="URL da imagem (ex: https://exemplo.com/imagem.jpg)"
-              class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-
-            <div>
-              <MultiSelectCategoryInput v-model="form.categoryIds" :categories="categories" class="w-full" />
-
-
-              <!-- Select -->
-
-              <!-- End Select -->
-              <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Segure Ctrl/Cmd para selecionar múltiplas.</p>
-            </div>
-
-            <div class="border border-gray-300 dark:border-gray-700 p-3 rounded-md">
-              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preços e Tamanhos:</p>
-              <div v-for="(price, index) in form.price" :key="index" class="flex items-center mb-2 gap-2">
-                <input v-model="form.sizes[index]" placeholder="Tamanho (Opcional)"
-                  class="w-full p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <input v-model.number="form.price[index]" type="number" step="0.01" placeholder="Preço"
-                  class="w-24 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <button @click="removeSize(index)"
-                  class="text-red-500 hover:text-red-400 text-xl transition-colors duration-200">
-                  &times;
-                </button>
-              </div>
-              <button @click="addSizePrice()" class="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-2">
-                + Adicionar Preço/Tamanho
-              </button>
-            </div>
-
-
-            <div>
-              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Adicionais:</p>
-              <div v-for="(extra, index) in form.extras" :key="index" class="flex items-center gap-2 mb-2">
-                <input v-model="extra.name" placeholder="Nome do Adicional"
-                  class="flex-1 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <input v-model.number="extra.price" type="number" step="0.01" placeholder="Preço"
-                  class="w-24 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <button @click="removeExtra(index)"
-                  class="text-red-500 hover:text-red-400 text-xl transition-colors duration-200">
-                  &times;
-                </button>
-              </div>
-              <button @click="addExtra()" class="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-2">
-                + Adicionar adicional
-              </button>
-            </div>
-
-            <div class="flex justify-end mt-6 gap-3 border-t border-gray-300 dark:border-gray-700 pt-4">
-              <button @click="save()" :disabled="isFormLoading"
-                class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                Salvar
-              </button>
-              <button @click="showForm = false" :disabled="isFormLoading"
-                class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                Cancelar
-              </button>
-            </div>
-          </div>
+      <div v-if="isFormLoading" class="text-center py-4">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 dark:border-gray-600 mx-auto">
         </div>
-      </BaseModal>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">Salvando...</p>
+      </div>
 
-      <BaseModal v-if="showDeleteModal" v-model:open="showDeleteModal">
+      <div v-else class="space-y-4">
+        <input v-model="form.name" placeholder="Nome do Produto"
+          class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <textarea v-model="form.description" placeholder="Descrição do Produto" rows="3"
+          class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input v-model="form.img" placeholder="URL da imagem (ex: https://exemplo.com/imagem.jpg)"
+          class="w-full p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-        <button @click="showDeleteModal = false"
-          class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
-          &times;
-        </button>
-        <p class="text-lg mb-4">
-          Tem certeza que deseja excluir o produto
-          <strong class="text-red-600 dark:text-red-400">{{ productToDelete?.name }}</strong>? Esta ação é
-          irreversível.
-        </p>
-        <div class="mt-6 flex justify-end gap-3">
-          <button @click="deleteProduct" :disabled="isFormLoading"
-            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-            Excluir
+        <div>
+          <MultiSelectCategoryInput v-model="form.categoryIds" :categories="categories" class="w-full" />
+
+
+          <!-- Select -->
+
+          <!-- End Select -->
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Segure Ctrl/Cmd para selecionar múltiplas.</p>
+        </div>
+
+        <div class="border border-gray-300 dark:border-gray-700 p-3 rounded-md">
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preços e Tamanhos:</p>
+          <div v-for="(price, index) in form.price" :key="index" class="flex items-center mb-2 gap-2">
+            <input v-model="form.sizes[index]" placeholder="Tamanho (Opcional)"
+              class="w-full p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input v-model.number="form.price[index]" type="number" step="0.01" placeholder="Preço"
+              class="w-24 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button @click="removeSize(index)"
+              class="text-red-500 hover:text-red-400 text-xl transition-colors duration-200">
+              &times;
+            </button>
+          </div>
+          <button @click="addSizePrice()" class="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-2">
+            + Adicionar Preço/Tamanho
           </button>
-          <button @click="showDeleteModal = false" :disabled="isFormLoading"
+        </div>
+
+
+        <div>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Adicionais:</p>
+          <div v-for="(extra, index) in form.extras" :key="index" class="flex items-center gap-2 mb-2">
+            <input v-model="extra.name" placeholder="Nome do Adicional"
+              class="flex-1 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input v-model.number="extra.price" type="number" step="0.01" placeholder="Preço"
+              class="w-24 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button @click="removeExtra(index)"
+              class="text-red-500 hover:text-red-400 text-xl transition-colors duration-200">
+              &times;
+            </button>
+          </div>
+          <button @click="addExtra()" class="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-2">
+            + Adicionar adicional
+          </button>
+        </div>
+
+        <div class="flex justify-end mt-6 gap-3 border-t border-gray-300 dark:border-gray-700 pt-4">
+          <button @click="save()" :disabled="isFormLoading"
+            class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            Salvar
+          </button>
+          <button @click="showForm = false" :disabled="isFormLoading"
             class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
             Cancelar
           </button>
         </div>
-
-      </BaseModal>
+      </div>
     </div>
-  </AdminLayout>
+  </BaseModal>
+
+  <BaseModal v-if="showDeleteModal" v-model:open="showDeleteModal">
+
+    <button @click="showDeleteModal = false"
+      class="absolute top-3 right-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
+      &times;
+    </button>
+    <p class="text-lg mb-4">
+      Tem certeza que deseja excluir o produto
+      <strong class="text-red-600 dark:text-red-400">{{ productToDelete?.name }}</strong>? Esta ação é
+      irreversível.
+    </p>
+    <div class="mt-6 flex justify-end gap-3">
+      <button @click="deleteProduct" :disabled="isFormLoading"
+        class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+        Excluir
+      </button>
+      <button @click="showDeleteModal = false" :disabled="isFormLoading"
+        class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+        Cancelar
+      </button>
+    </div>
+
+  </BaseModal>
 </template>
 
 <script setup>

@@ -1,9 +1,10 @@
+<!-- src/pages/admin/Login.vue -->
 <template>
-  <div
-    class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
-    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md h-screen md:h-auto"
+  <div class="min-h-screen flex items-center justify-center transition-colors duration-200 body">
+    <div class="p-8 rounded-lg  w-full max-w-md h-screen md:h-auto morph"
       :class="[authStore.error ? 'shadow-red-500/30' : '']">
-      <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-6">Login Admin</h2>
+      <ThemeToggle />
+      <img src="@/assets/image/logo.png" alt="Logo" class="mx-auto mb-6 w-auto h-24">
 
       <div v-if="authStore.error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
         role="alert">
@@ -44,7 +45,7 @@
           <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
         </div>
         <div class="relative flex justify-center text-sm">
-          <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Ou</span>
+          <span class="px-2 bg-[#e0e0e0] dark:bg-gray-800 text-gray-500 dark:text-gray-400">Ou</span>
         </div>
       </div>
 
@@ -73,6 +74,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth'; // Importa o store de autenticação
+import ThemeToggle from '@/components/ThemeToggle.vue';
 
 const authStore = useAuthStore();
 
@@ -87,3 +89,44 @@ const handleGoogleLogin = async () => {
   await authStore.loginWithGoogle();
 };
 </script>
+<style>
+/* .div-with-hole {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 25%, var(--color-red-900) 25.5%);
+  background-size: 20% 20%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  transition: all 1s ease;
+}
+
+.div-with-hole:hover {
+  background-size: 400% 400%;
+} */
+
+.morph {
+  border-radius: 10px;
+  background: var(--color-gray-200);
+  box-shadow: 15px 15px 30px var(--color-gray-400),
+    -15px -15px 30px var(--color-gray-300);
+}
+
+.dark .morph {
+  background-color: var(--color-gray-900);
+  box-shadow: 15px 15px 30px var(--color-gray-800),
+    -15px -15px 30px var(--color-gray-950);
+}
+
+.body {
+  background-color: var(--color-gray-200);
+  transition: background-color 0.3s ease;
+}
+
+.dark .body {
+  background-color: var(--color-gray-900);
+}
+</style>
