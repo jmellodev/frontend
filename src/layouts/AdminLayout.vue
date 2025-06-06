@@ -1,12 +1,12 @@
 <template>
   <div class="flex min-h-screen bg-gray-200 dark:bg-gray-900 ">
     <header
-      class="fixed top-0 left-0 right-0 z-50 bg-gray-200 dark:bg-gray-800 shadow pr-6 flex items-center justify-between h-14">
+      class="fixed top-0 left-0 right-0 z-50 bg-gray-200 dark:bg-gray-800 shadow pr-6 pl-4 md:pl-0 flex items-center justify-between h-14">
       <div class="flex items-center">
         <button @click="toggleMobileMenu" class="md:hidden text-gray-700 dark:text-white text-2xl mr-4">
           <i class="fa-duotone fa-solid fa-bars-sort"></i>
         </button>
-        <h1 class="text-md font-bold text-white bg-gray-700 p-4 w-64">Painel Admin</h1>
+        <h1 class="text-md font-bold text-white bg-gray-700 p-4 md:w-64 hidden md:flex">Painel Admin</h1>
       </div>
       <div class="flex space-x-6">
         <div class="flex items-center space-x-8">
