@@ -1,10 +1,11 @@
 // src/services/firebaseClient.js
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
-import { getAuth, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'; // <--- NOVAS IMPORTAÇÕES PARA AUTH
-import api from '@/services/httpClient'; // Seu cliente Axios (agora sem circular dependency)
+import { getAuth, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore'; // <--- IMPORTAÇÃO SIMPLIFICADA
+import api from '@/services/httpClient';
 
-// Seu objeto de configuração do Firebase (o mesmo do Service Worker)
+// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCqcgvxcgWwG4LmYkSL66x4GYi1KLxuHts",
   authDomain: "chat-bot-pizzaria.firebaseapp.com",
@@ -18,12 +19,15 @@ const firebaseConfig = {
 // Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
 
-// --- Instâncias de Autenticação ---
-const auth = getAuth(app); // <--- INSTÂNCIA DE AUTH
-const googleProvider = new GoogleAuthProvider(); // <--- PROVEDOR GOOGLE
-const emailProvider = new EmailAuthProvider(); // <--- PROVEDOR EMAIL (útil para signInWithCredential)
+// --- Instâncias dos serviços ---
+const auth = getAuth(app);
+const db = getFirestore(app); // <--- INSTÂNCIA DO FIRESTORE
+const googleProvider = new GoogleAuthProvider();
+const emailProvider = new EmailAuthProvider();
 
-let messagingInstance = null; // Variável para armazenar a instância de messaging
+console.log('Firebase inicializado com sucesso');
+
+let messagingInstance = null;
 
 /**
  * Inicializa a instância de Messaging apenas se for suportado pelo navegador.
@@ -31,7 +35,7 @@ let messagingInstance = null; // Variável para armazenar a instância de messag
  */
 async function initializeMessaging() {
   if (await isSupported()) {
-    if (!messagingInstance) { // Garante que só inicializa uma vez
+    if (!messagingInstance) {
       messagingInstance = getMessaging(app);
       console.log('Firebase Messaging suportado e inicializado.');
     }
@@ -59,23 +63,17 @@ async function requestNotificationPermissionAndGetToken(userId) {
     if (permission === 'granted') {
       console.log('Permissão de notificação concedida.');
 
-      // Obtenha o token de registro do dispositivo
-      // Substitua 'YOUR_VAPID_PUBLIC_KEY' pela sua chave VAPID real
-      const currentToken = await getToken(messaging, { vapidKey: 'BIs0n17mt2gj5vBTzyM5znHMDOgI6lcOiGanKQW2SiPlFcgmSvLpBu-d0txnoNKLivhbsUD0iwHHSBQk_LNgQ0A' });
+      const currentToken = await getToken(messaging, {
+        vapidKey: 'BIs0n17mt2gj5vBTzyM5znHMDOgI6lcOiGanKQW2SiPlFcgmSvLpBu-d0txnoNKLivhbsUD0iwHHSBQk_LNgQ0A'
+      });
 
       if (currentToken) {
         console.log('FCM Registration Token:', currentToken);
-        // Envie este token para o seu backend para armazenamento
-        // ATENÇÃO: O endpoint correto para salvar tokens FCM DEVE ser ajustado
-        // para não colidir com o middleware de autenticação se /fcm/save-token
-        // não for uma rota pública.
-        // Se for uma rota admin, o token de autenticação admin precisará ser enviado.
-        // Por enquanto, mantemos a rota original, mas esteja ciente.
         await api.post('/fcm/save-token', { userId, fcmToken: currentToken });
         console.log('Token enviado para o backend com sucesso.');
         return currentToken;
       } else {
-        console.warn('Nenhum token de registro de FCM disponível. Permissão negada ou Service Worker não registrado.');
+        console.warn('Nenhum token de registro de FCM disponível.');
         return null;
       }
     } else {
@@ -96,19 +94,63 @@ async function setupForegroundNotifications() {
   if (messaging) {
     onMessage(messaging, (payload) => {
       console.log('Mensagem recebida em primeiro plano:', payload);
-      alert(`Notificação: ${payload.notification.title} - ${payload.notification.body}`);
+
+      // Cria notificação mais rica
+      if ('Notification' in window && Notification.permission === 'granted') {
+        const notification = new Notification(payload.notification.title, {
+          body: payload.notification.body,
+          icon: payload.notification.icon || '/favicon.ico',
+          badge: '/favicon.ico',
+          tag: payload.data?.orderId || 'general',
+          requireInteraction: true,
+          actions: [
+            { action: 'view', title: 'Ver Pedido' },
+            { action: 'close', title: 'Fechar' }
+          ]
+        });
+
+        notification.onclick = function () {
+          window.focus();
+          if (payload.data?.orderId) {
+            // Navegar para o pedido específico se necessário
+            console.log('Abrindo pedido:', payload.data.orderId);
+          }
+          notification.close();
+        };
+      } else {
+        // Fallback para alert se notificações não estiverem disponíveis
+        alert(`Notificação: ${payload.notification.title} - ${payload.notification.body}`);
+      }
     });
   } else {
     console.warn('Não foi possível configurar notificações em primeiro plano: Messaging não suportado.');
   }
 }
 
+/**
+ * Utilitário para verificar conexão com Firestore
+ * @returns {Promise<boolean>} True se conectado, false caso contrário
+ */
+async function checkFirestoreConnection() {
+  try {
+    const { doc, getDoc } = await import('firebase/firestore');
+    const testDoc = doc(db, 'test', 'connection');
+    await getDoc(testDoc);
+    return true;
+  } catch (error) {
+    console.error('Erro ao verificar conexão Firestore:', error);
+    return false;
+  }
+}
+
 export {
-  app, // Exporta a instância do app Firebase
-  auth, // <--- EXPORTA A INSTÂNCIA DE AUTH
-  googleProvider, // <--- EXPORTA O PROVEDOR GOOGLE
-  emailProvider, // <--- EXPORTA O PROVEDOR EMAIL
+  app,
+  auth,
+  db, // <--- EXPORTA A INSTÂNCIA DO FIRESTORE
+  googleProvider,
+  emailProvider,
   requestNotificationPermissionAndGetToken,
   setupForegroundNotifications,
-  initializeMessaging
+  initializeMessaging,
+  checkFirestoreConnection // <--- NOVA FUNÇÃO UTILITÁRIA
 };

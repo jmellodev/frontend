@@ -1,6 +1,6 @@
 <template>
   <div v-if="open"
-    class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 dark:bg-gray-900/40 rounded-lg w-full text-gray-900 dark:text-white"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 dark:bg-gray-900/40 m-auto text-gray-900 dark:text-white"
     @click.self="closeModal">
     <Transition name="custom-classes" appear enter-active-class="animate__animated animate__zoomIn animate__faster"
       leave-active-class="animate__animated animate__bounceOutRight animate__faster">
@@ -66,44 +66,45 @@ function closeModal() {
 
 /* Estilos para a scrollbar personalizada */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
+  width: 10px;
+  right: 15px;
   /* Largura da scrollbar */
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
   /* Cor do fundo da trilha da scrollbar (tema claro) */
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #888;
+  background: transparent;
   /* Cor do "polegar" da scrollbar (tema claro) */
   border-radius: 10px;
-  border: 3px solid #f1f1f1;
+  border: 0px solid transparent;
   /* Borda para dar um efeito 3D */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: transparent;
   /* Cor do "polegar" ao passar o mouse (tema claro) */
 }
 
 /* Estilos para o tema escuro */
 .dark .custom-scrollbar::-webkit-scrollbar-track {
-  background: #333;
+  background: transparent;
   /* Cor do fundo da trilha da scrollbar (tema escuro) */
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #555;
+  background: transparent;
   /* Cor do "polegar" da scrollbar (tema escuro) */
-  border: 3px solid #333;
+  border: 0px solid #333;
   /* Borda para dar um efeito 3D */
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #777;
+  background: transparent;
   /* Cor do "polegar" ao passar o mouse (tema escuro) */
 }
 </style>

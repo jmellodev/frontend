@@ -125,6 +125,7 @@ const dashboardData = ref({
   totalCategories: 0,
   topSellingProducts: [], // Ex: [{ name: 'Pizza Calabresa', sales: 120 }]
   totalClients: 0,
+  totalOrders: 0,
   newClientsLast30Days: 0,
   mostActiveClients: [], // Ex: [{ name: 'João Silva', orders: 15 }]
   deliveryOrders: 0,
@@ -141,11 +142,11 @@ async function fetchDashboardData() {
     // TODO: Implementar este endpoint no seu backend para retornar os dados do dashboard
     // Exemplo de como a API poderia ser chamada:
     // const response = await api.get('/dashboard');
+    const response = dashboardData.value; // Simulação de chamada de API
 
     // Mock de dados para demonstração. Substitua pela lógica real da sua API.
     dashboardData.value = {
-      totalOrders: response.data.totalOrders || 1234,
-      completedOrders: response.data.completedOrders || 980,
+      'completedOrders': response.data.completedOrders || 980,
       pendingOrders: response.data.pendingOrders || 150,
       totalRevenue: response.data.totalRevenue || 75000.50,
       totalProducts: response.data.totalProducts || 55,
@@ -156,6 +157,7 @@ async function fetchDashboardData() {
         { name: 'Pizza de Chocolate', sales: 75 },
       ],
       totalClients: response.data.totalClients || 800,
+      totalOrders: response.data.totalOrders || 1234,
       newClientsLast30Days: response.data.newClientsLast30Days || 45,
       mostActiveClients: response.data.mostActiveClients || [
         { name: 'Ana Souza', orders: 15 },
@@ -170,7 +172,7 @@ async function fetchDashboardData() {
     };
 
     console.log('Dados do dashboard carregados:', dashboardData.value);
-
+    return dashboardData.value;
   } catch (error) {
     console.error('Erro ao carregar dados do dashboard:', error.response?.data || error.message);
     // TODO: Exibir uma mensagem de erro amigável para o usuário

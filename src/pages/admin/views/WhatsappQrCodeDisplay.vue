@@ -115,6 +115,7 @@ const startBot = async () => {
   loading.value = true;
   try {
     const response = await api.post('/admin/start-bot');
+    console.log(response);
     connectionStatus.value = response.data.status;
     qrCode.value = response.data.qrCode; // Atualiza o QR Code se necessário
     setInterval(fetchQrCode, 15000);
