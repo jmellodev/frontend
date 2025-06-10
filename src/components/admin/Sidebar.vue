@@ -185,7 +185,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
 import Divider from "../Divider.vue";
 
 // Define as props que este componente pode receber

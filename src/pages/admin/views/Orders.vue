@@ -39,32 +39,167 @@
           <p class="text-gray-600 dark:text-gray-400 text-lg">Nenhum pedido encontrado.</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-2">
-          <div v-for="order in sortedOrders" :key="order.id" @click="view(order)" :class="[
-            'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300',
-            order.isNew ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20' : ''
-          ]">
-            <div class="flex-shrink-0 mr-4 space-y-1">
-              <div class="flex items-center gap-2">
-                <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-                <span v-if="order.isNew"
-                  class="px-1 py-0.5 bg-green-500 text-white text-xs rounded-full animate-bounce">
-                  NOVO
-                </span>
+        <div v-else class="flex flex-col lg:flex-row gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 flex-grow">
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner">
+              <h3
+                class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
+                Novos Pedidos
+                <span
+                  class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-orange-200 text-orange-800 dark:bg-orange-800 dark:text-orange-200">{{
+                  newOrders.length }}</span>
+              </h3>
+              <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
+                <div v-for="order in newOrders" :key="order.id" @click="view(order)" :class="[
+                  'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300',
+                  newOrderIds.has(order.id) ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20' : ''
+                ]">
+                  <div class="flex-shrink-0 mr-4 space-y-1">
+                    <div class="flex items-center gap-2">
+                      <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
+                      <span v-if="newOrderIds.has(order.id)"
+                        class="px-1 py-0.5 bg-green-500 text-white text-xs rounded-full animate-bounce">
+                        NOVO
+                      </span>
+                    </div>
+                    <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
+                    <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
+                    <p class="font-semibold">Status:
+                      <span class="font-light" :class="getStatusBadgeClass(order.status)">
+                        {{ formatText(order.status) }}
+                      </span>
+                    </p>
+                    <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span>
+                    </p>
+                  </div>
+                </div>
+                <p v-if="newOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum pedido
+                  novo.</p>
               </div>
-              <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
-              <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
-              <p class="font-semibold">Status:
-                <span class="font-light" :class="getStatusBadgeClass(order.status)">
-                  {{ formatText(order.status) }}
-                </span>
-              </p>
-              <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span></p>
             </div>
+
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner">
+              <h3
+                class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
+                Em Preparo
+                <span
+                  class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200">{{
+                  preparingOrders.length }}</span>
+              </h3>
+              <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
+                <div v-for="order in preparingOrders" :key="order.id" @click="view(order)" :class="[
+                  'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
+                ]">
+                  <div class="flex-shrink-0 mr-4 space-y-1">
+                    <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
+                    <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
+                    <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
+                    <p class="font-semibold">Status:
+                      <span class="font-light" :class="getStatusBadgeClass(order.status)">
+                        {{ formatText(order.status) }}
+                      </span>
+                    </p>
+                    <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span>
+                    </p>
+                  </div>
+                </div>
+                <p v-if="preparingOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum
+                  pedido em preparo.</p>
+              </div>
+            </div>
+
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner">
+              <h3
+                class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
+                A Caminho
+                <span
+                  class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-purple-200 text-purple-800 dark:bg-purple-800 dark:text-purple-200">{{
+                  onTheWayOrders.length }}</span>
+              </h3>
+              <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
+                <div v-for="order in onTheWayOrders" :key="order.id" @click="view(order)" :class="[
+                  'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
+                ]">
+                  <div class="flex-shrink-0 mr-4 space-y-1">
+                    <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
+                    <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
+                    <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
+                    <p class="font-semibold">Status:
+                      <span class="font-light" :class="getStatusBadgeClass(order.status)">
+                        {{ formatText(order.status) }}
+                      </span>
+                    </p>
+                    <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span>
+                    </p>
+                  </div>
+                </div>
+                <p v-if="onTheWayOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum
+                  pedido a caminho.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:w-64 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner flex-shrink-0">
+            <h3
+              class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
+              Legenda</h3>
+            <ul class="space-y-2">
+              <li>
+                <span :class="getStatusBadgeClass('recebido')">Recebido</span>
+              </li>
+              <li>
+                <span :class="getStatusBadgeClass('em processamento')">Em Processamento</span>
+              </li>
+              <li>
+                <span :class="getStatusBadgeClass('em_preparo')">Em Preparo</span>
+              </li>
+              <li>
+                <span :class="getStatusBadgeClass('a_caminho')">A Caminho</span>
+              </li>
+              <li>
+                <span :class="getStatusBadgeClass('entregue')">Entregue</span>
+              </li>
+              <li>
+                <span :class="getStatusBadgeClass('cancelado')">Cancelado</span>
+              </li>
+              <li class="mt-4">
+                <span class="px-2 py-1 bg-green-500 text-white text-xs rounded-full">NOVO (Badge Verde)</span>: Pedido
+                que acaba de ser marcado como "recebido" ou "em processamento" e ainda não foi visualizado.
+              </li>
+            </ul>
           </div>
         </div>
 
-        <!-- Notificação de erro de conexão -->
+        <div v-if="finishedOrders.length > 0" class="mt-8">
+          <h3
+            class="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
+            Pedidos Finalizados
+            <span
+              class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200">{{
+                finishedOrders.length }}</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-for="order in finishedOrders" :key="order.id" @click="view(order)" :class="[
+              'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
+            ]">
+              <div class="flex-shrink-0 mr-4 space-y-1">
+                <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
+                <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
+                <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
+                <p class="font-semibold">Status:
+                  <span class="font-light" :class="getStatusBadgeClass(order.status)">
+                    {{ formatText(order.status) }}
+                  </span>
+                </p>
+                <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else-if="!isLoading && orders.length > 0" class="mt-8 text-center text-gray-500 dark:text-gray-400 py-4">
+          Nenhum pedido finalizado.</div>
+
+
         <div v-if="connectionError"
           class="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded relative">
           <strong class="font-bold">Erro de Conexão!</strong>
@@ -166,7 +301,7 @@ import BaseModal from "@/components/modals/BaseModal.vue";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { getFirestore, collection, onSnapshot, doc, updateDoc, query, orderBy } from 'firebase/firestore';
 
-// Estados reativo
+// Estados reativos
 const orders = ref([]);
 const selectedOrder = ref(null);
 const showDetails = ref(false);
@@ -175,13 +310,13 @@ const isConnected = ref(false);
 const connectionError = ref('');
 const lastUpdate = ref('');
 const isUpdatingStatus = ref(false);
-const newOrderIds = ref(new Set());
+const newOrderIds = ref(new Set()); // Para controlar quais pedidos são "novos" visualmente (badge)
 
 // Instância do Firestore
 const db = getFirestore(app);
 let unsubscribe = null;
 
-const statusOptions = ["recebido", "em_preparo", "finalizado", "a_caminho", "entregue", "cancelado", "em processamento"];
+const statusOptions = ["recebido", "em_preparo", "a_caminho", "entregue", "cancelado", "em processamento"];
 
 // Função auxiliar para extrair timestamp para ordenação
 function getTimestamp(ts) {
@@ -204,19 +339,35 @@ function getTimestamp(ts) {
   return 0;
 }
 
-// Computed para ordenar pedidos (novos primeiro, depois por data)
-const sortedOrders = computed(() => {
-  return [...orders.value].sort((a, b) => {
-    // Primeiro, pedidos novos
-    if (a.isNew && !b.isNew) return -1;
-    if (!a.isNew && b.isNew) return 1;
-
-    // Depois por data (mais recentes primeiro)
-    const dateA = getTimestamp(a.created_at);
-    const dateB = getTimestamp(b.created_at);
-    return dateB - dateA;
-  });
+// --- Computed Properties para as Colunas ---
+const newOrders = computed(() => {
+  return orders.value
+    .filter(order => ['recebido', 'em processamento'].includes(order.status))
+    .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at)); // Mais recentes primeiro
 });
+
+const preparingOrders = computed(() => {
+  return orders.value
+    .filter(order => order.status === 'em_preparo')
+    .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at));
+});
+
+const onTheWayOrders = computed(() => {
+  return orders.value
+    .filter(order => order.status === 'a_caminho')
+    .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at));
+});
+
+const finishedOrders = computed(() => {
+  return orders.value
+    .filter(order => ['entregue', 'cancelado'].includes(order.status))
+    .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at));
+});
+// --- Fim das Computed Properties para Colunas ---
+
+
+// Removido o sortedOrders principal, pois agora cada coluna terá sua própria ordenação.
+
 
 function formatText(text) {
   let formattedText = text.replace(/_/g, ' ');
@@ -230,27 +381,7 @@ function formatDate(ts) {
   if (ts && typeof ts.toDate === 'function') {
     return ts.toDate().toLocaleString('pt-BR');
   }
-  // Se tem a propriedade _seconds (formato antigo)
-  if (ts && typeof ts._seconds !== 'undefined') {
-    return new Date(ts._seconds * 1000).toLocaleString('pt-BR');
-  }
-  // Se é uma data JavaScript
-  if (ts instanceof Date) {
-    return ts.toLocaleString('pt-BR');
-  }
-  // Se é uma string de data
-  if (typeof ts === 'string') {
-    return new Date(ts).toLocaleString('pt-BR');
-  }
-  // Se é um timestamp em segundos
-  if (typeof ts === 'number' && ts > 1000000000) {
-    // Se é em milissegundos
-    if (ts > 1000000000000) {
-      return new Date(ts).toLocaleString('pt-BR');
-    }
-    // Se é em segundos
-    return new Date(ts * 1000).toLocaleString('pt-BR');
-  }
+
   return "";
 }
 
@@ -288,6 +419,8 @@ const getStatusBadgeClass = (status) => {
     case 'finalizado':
     case 'entregue':
       return 'rounded-full px-2 py-0.5 text-xs font-medium bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500';
+    case 'a_caminho': // Adicionado para a legenda
+      return 'rounded-full px-2 py-0.5 text-xs font-medium bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-500';
     case 'cancelado':
       return 'rounded-full px-2 py-0.5 text-xs font-medium bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-500';
     default:
@@ -312,8 +445,7 @@ function view(order) {
   showDetails.value = true;
 
   // Remove o badge "novo" quando o pedido é visualizado
-  if (order.isNew) {
-    order.isNew = false;
+  if (newOrderIds.value.has(order.id)) {
     newOrderIds.value.delete(order.id);
   }
 }
@@ -377,11 +509,8 @@ async function updateStatus() {
       // Não é um erro crítico, continua o fluxo
     }
 
-    // Atualiza localmente também para feedback imediato
-    const localIndex = orders.value.findIndex(o => o.id === orderId);
-    if (localIndex !== -1) {
-      orders.value[localIndex].status = newStatus;
-    }
+    // A atualização local será tratada pelo listener do Firestore
+    // que detectará a modificação e atualizará `orders.value`
 
     closeModal();
     console.log(`Status do pedido ${orderId} atualizado para: ${newStatus}`);
@@ -409,49 +538,67 @@ async function updateStatus() {
 
 function setupRealtimeListener() {
   try {
-    // Cria query ordenada por data de criação
     const ordersQuery = query(
       collection(db, 'orders'),
       orderBy('created_at', 'desc')
     );
 
-    // Configura listener em tempo real
     unsubscribe = onSnapshot(
       ordersQuery,
       (snapshot) => {
-        const currentOrderIds = new Set(orders.value.map(o => o.id));
+        const currentOrderIds = new Set(orders.value.map(o => o.id)); // IDs que já estão no array orders.value
 
         snapshot.docChanges().forEach((change) => {
           const orderData = { id: change.doc.id, ...change.doc.data() };
+          const isNewStatus = ['recebido', 'em processamento'].includes(orderData.status);
 
           if (change.type === 'added') {
-            // Novo pedido
+            // Se o pedido NÃO está na lista local (verdadeiramente novo para esta sessão)
             if (!currentOrderIds.has(orderData.id)) {
-              orderData.isNew = true;
-              newOrderIds.value.add(orderData.id);
-              orders.value.unshift(orderData);
+              if (isNewStatus) { // E se o status dele for "novo"
+                newOrderIds.value.add(orderData.id); // Adiciona ao Set de IDs "novos" para o badge visual
+              }
+              orders.value.unshift(orderData); // Adiciona o pedido à lista principal
 
-              // Notificação sonora ou visual para novo pedido
-              if ('Notification' in window && Notification.permission === 'granted') {
+              // Notificação sonora ou visual APENAS se for um novo pedido E com status "novo"
+              if (isNewStatus && 'Notification' in window && Notification.permission === 'granted') {
                 new Notification('Novo Pedido!', {
                   body: `Pedido #${orderData.id} de ${orderData.client}`,
                   icon: '/favicon.ico'
                 });
               }
+            } else {
+              // Caso o pedido já exista na lista (ex: listener reconectou), 
+              // garantir que o newOrderIds reflita o status atual
+              if (isNewStatus) {
+                newOrderIds.value.add(orderData.id);
+              } else {
+                newOrderIds.value.delete(orderData.id); // Remove de "novo" se o status mudou
+              }
+              // Atualiza o item existente caso tenha sido 'added' mas já esteja na lista
+              const index = orders.value.findIndex(o => o.id === orderData.id);
+              if (index !== -1) {
+                orders.value[index] = { ...orders.value[index], ...orderData };
+              }
             }
           } else if (change.type === 'modified') {
-            // Pedido modificado
             const index = orders.value.findIndex(o => o.id === orderData.id);
             if (index !== -1) {
-              orders.value[index] = { ...orders.value[index], ...orderData };
+              orders.value[index] = { ...orders.value[index], ...orderData }; // Atualiza dados
+
+              // Reavalia o estado "novo" com base no status atualizado
+              if (isNewStatus) {
+                newOrderIds.value.add(orderData.id);
+              } else {
+                newOrderIds.value.delete(orderData.id); // Remove de "novo" se o status mudou
+              }
             }
           } else if (change.type === 'removed') {
-            // Pedido removido
             const index = orders.value.findIndex(o => o.id === orderData.id);
             if (index !== -1) {
               orders.value.splice(index, 1);
             }
-            newOrderIds.value.delete(orderData.id);
+            newOrderIds.value.delete(orderData.id); // Garante que seja removido do set de IDs "novos"
           }
         });
 
@@ -466,7 +613,6 @@ function setupRealtimeListener() {
         isConnected.value = false;
         isLoading.value = false;
 
-        // Tentar reconectar após 5 segundos
         setTimeout(() => {
           if (!isConnected.value) {
             reconnect();
@@ -487,16 +633,13 @@ function reconnect() {
   connectionError.value = '';
   isLoading.value = true;
 
-  // Remove listener existente se houver
   if (unsubscribe) {
     unsubscribe();
   }
 
-  // Configura novo listener
   setupRealtimeListener();
 }
 
-// Fallback: carrega pedidos via API se Firestore falhar
 async function loadOrdersFromAPI() {
   try {
     const res = await api.get('/orders');
@@ -510,15 +653,12 @@ async function loadOrdersFromAPI() {
 onMounted(async () => {
   console.log("Iniciando conexão em tempo real com Firestore...");
 
-  // Solicita permissão para notificações
   if ('Notification' in window && Notification.permission === 'default') {
     await Notification.requestPermission();
   }
 
-  // Configura listener do Firestore
   setupRealtimeListener();
 
-  // Fallback: se não conectar em 10 segundos, usa API
   setTimeout(() => {
     if (!isConnected.value && orders.value.length === 0) {
       console.warn("Firestore não conectou, usando API como fallback");
@@ -529,7 +669,6 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  // Remove listener quando componente é desmontado
   if (unsubscribe) {
     unsubscribe();
     console.log("Listener Firestore removido");
