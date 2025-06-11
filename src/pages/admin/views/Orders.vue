@@ -1,21 +1,22 @@
 <template>
   <div>
     <AdminLayout>
-      <div class="space-y-6 p-4 md:p-8 bg-white dark:bg-gray-800 h-screen rounded-lg shadow-xl">
+      <div class="space-y-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h2 class="text-2xl font-bold text-gray-700 dark:text-white">
               Pedidos
-              <span v-if="isConnected" class="inline-flex items-center ml-2">
-                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span class="text-xs text-green-600 dark:text-green-400 ml-1">Tempo Real</span>
-              </span>
-              <span v-else class="inline-flex items-center ml-2">
-                <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-                <span class="text-xs text-red-600 dark:text-red-400 ml-1">Desconectado</span>
+              <span class="inline-flex items-center ml-2">
+                <div
+                  :class="[isConnected ? 'w-2 h-2 bg-green-500 rounded-full animate-pulse' : 'w-2 h-2 bg-red-500 rounded-full']">
+                </div>
+                <span
+                  :class="[isConnected ? 'text-xs text-green-600 dark:text-green-400 ml-1' : 'text-xs text-red-600 dark:text-red-400 ml-1']">
+                  {{ isConnected ? 'Tempo real' : 'Desconectado' }}
+                </span>
               </span>
             </h2>
-            <p class="text-gray-600 dark:text-gray-400 text-xs font-normal">
+            <p class="text-gray-600 dark:text-gray-400 text-xs font-normal italic">
               Gerencie todos os pedidos recebidos em tempo real.
             </p>
           </div>
@@ -41,35 +42,39 @@
 
         <div v-else class="flex flex-col lg:flex-row gap-4">
           <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 flex-grow">
-            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner">
+            <!-- Novos -->
+            <div class="bg-green-700/10 rounded-lg ">
               <h3
-                class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
-                Novos Pedidos
+                class="text-gray-900 p-2 dark:text-white mb-4 border-b border-green-900/30 rounded-t-md bg-green-700 bg-linear from-green-800 via-green-700 to-green-500">
+                <span>Novos pedidos</span>
                 <span
-                  class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-orange-200 text-orange-800 dark:bg-orange-800 dark:text-orange-200">{{
-                  newOrders.length }}</span>
+                  class="ml-2 px-2 py-1 text-xs rounded-full bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200">
+                  {{ newOrders.length }}
+                </span>
               </h3>
               <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
                 <div v-for="order in newOrders" :key="order.id" @click="view(order)" :class="[
-                  'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300',
-                  newOrderIds.has(order.id) ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20' : ''
+                  'p-2 rounded-md border border-green-200/40 dark:border-green-700/40 bg-green-200 dark:bg-green-800 text-green-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300',
+                  newOrderIds.has(order.id) ? 'bg-green-50 dark:bg-green-900/20' : ''
                 ]">
-                  <div class="flex-shrink-0 mr-4 space-y-1">
-                    <div class="flex items-center gap-2">
-                      <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-                      <span v-if="newOrderIds.has(order.id)"
-                        class="px-1 py-0.5 bg-green-500 text-white text-xs rounded-full animate-bounce">
-                        NOVO
+                  <div class="flex-shrink-0 mr-4 space-y-1 text-xs">
+                    <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
+                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-user"></i> <span class="font-light">{{
+                      order.client }}</span></p>
+                    <p class="font-semibold">
+                      <i class="fa-duotone fa-solid fa-money-bill-wave mr-2"></i>
+                      <span class="font-light">
+                        {{ $formatPrice(order.total) }}
                       </span>
-                    </div>
-                    <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
-                    <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
-                    <p class="font-semibold">Status:
+                    </p>
+                    <p class="font-semibold hidden">Status:
                       <span class="font-light" :class="getStatusBadgeClass(order.status)">
                         {{ formatText(order.status) }}
                       </span>
                     </p>
-                    <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span>
+                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-calendar-days"></i> <span
+                        class="font-light">{{ formatDate(order.created_at)
+                        }}</span>
                     </p>
                   </div>
                 </div>
@@ -77,14 +82,14 @@
                   novo.</p>
               </div>
             </div>
-
-            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner">
+            <!-- Em preparo -->
+            <div class="bg-sky-700 p-4 rounded-lg shadow-lg bg-linear from-sky-800 via-sky-700 to-sky-500">
               <h3
                 class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
                 Em Preparo
                 <span
                   class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200">{{
-                  preparingOrders.length }}</span>
+                    preparingOrders.length }}</span>
               </h3>
               <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
                 <div v-for="order in preparingOrders" :key="order.id" @click="view(order)" :class="[
@@ -107,14 +112,14 @@
                   pedido em preparo.</p>
               </div>
             </div>
-
-            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner">
+            <!-- A caminho -->
+            <div class="bg-purple-700 p-4 rounded-lg shadow-lg bg-linear from-purple-800 via-purple-700 to-purple-500">
               <h3
                 class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
                 A Caminho
                 <span
                   class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-purple-200 text-purple-800 dark:bg-purple-800 dark:text-purple-200">{{
-                  onTheWayOrders.length }}</span>
+                    onTheWayOrders.length }}</span>
               </h3>
               <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
                 <div v-for="order in onTheWayOrders" :key="order.id" @click="view(order)" :class="[
@@ -139,7 +144,7 @@
             </div>
           </div>
 
-          <div class="lg:w-64 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner flex-shrink-0">
+          <div class="lg:w-52 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner flex-shrink-0">
             <h3
               class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
               Legenda</h3>
@@ -173,9 +178,9 @@
         <div v-if="finishedOrders.length > 0" class="mt-8">
           <h3
             class="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
-            Pedidos Finalizados
-            <span
-              class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200">{{
+            Pedidos finalizados
+            <span class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-800 dark:bg-gray-900 inset-shadow-red-500 shaodw-md
+               dark:text-gray-200">{{
                 finishedOrders.length }}</span>
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -564,7 +569,7 @@ function setupRealtimeListener() {
               if (isNewStatus && 'Notification' in window && Notification.permission === 'granted') {
                 new Notification('Novo Pedido!', {
                   body: `Pedido #${orderData.id} de ${orderData.client}`,
-                  icon: '/favicon.ico'
+                  icon: '/assets/image/logo.png'
                 });
               }
             } else {
