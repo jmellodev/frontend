@@ -585,7 +585,7 @@ function setupRealtimeListener() {
               if (isNewStatus && 'Notification' in window && Notification.permission === 'granted') {
                 new Notification('Novo Pedido!', {
                   body: `Pedido #${orderData.id} de ${orderData.client}`,
-                  icon: '/assets/image/logo.png'
+                  icon: '/assets/image/old_nonna.png'
                 });
               }
             } else {
