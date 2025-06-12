@@ -41,11 +41,11 @@
         </div>
 
         <div v-else class="flex flex-col lg:flex-row gap-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 flex-grow">
+          <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-2 flex-grow">
             <!-- Novos -->
             <div class="bg-green-700/10 rounded-lg ">
               <h3
-                class="text-gray-900 p-2 dark:text-white mb-4 border-b border-green-900/30 rounded-t-md bg-green-700 bg-linear from-green-800 via-green-700 to-green-500">
+                class="p-2 text-white mb-4 border-b border-green-900/30 rounded-t-md bg-green-700 bg-linear from-green-800 via-green-700 to-green-500">
                 <span>Novos pedidos</span>
                 <span
                   class="ml-2 px-2 py-1 text-xs rounded-full bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200">
@@ -54,8 +54,50 @@
               </h3>
               <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
                 <div v-for="order in newOrders" :key="order.id" @click="view(order)" :class="[
-                  'p-2 rounded-md border border-green-200/40 dark:border-green-700/40 bg-green-200 dark:bg-green-800 text-green-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300',
+                  'p-2 rounded-md border border-green-200/40 dark:border-green-700/40 bg-green-200 dark:bg-green-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300',
                   newOrderIds.has(order.id) ? 'bg-green-50 dark:bg-green-900/20' : ''
+                ]">
+                  <div class="flex-shrink-0 space-y-1 text-xs">
+                    <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
+                    <p><i class="fa-duotone fa-solid fa-user"></i> <span class="font-light">
+                        {{ order.client }}</span>
+                    </p>
+                    <p class="flex items-center justify-between space-x-4">
+                    <div>
+                      <i class="fa-duotone fa-solid fa-money-bill-wave mr-2"></i>
+                      <span class="font-light">
+                        {{ $formatPrice(order.total) }}
+                      </span>
+                    </div>
+                    <div>Pagamento: {{ getStatusPayment(order.payment_status) }}</div>
+                    </p>
+                    <p class="font-semibold hidden">Status:
+                      <span class="font-light" :class="getStatusBadgeClass(order.status)">
+                        {{ formatText(order.status) }}
+                      </span>
+                    </p>
+                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-calendar-days"></i> <span
+                        class="font-light">{{ formatDate(order.created_at)
+                        }}</span>
+                    </p>
+                  </div>
+                </div>
+                <p v-if="newOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum pedido
+                  novo.</p>
+              </div>
+            </div>
+            <!-- Em preparo -->
+            <div class="bg-sky-700/10 rounded-lg">
+              <h3
+                class="text-white rounded-t-md mb-4 border-b p-2 border-gray-300 dark:border-gray-700 bg-sky-700 bg-linear from-sky-800 via-sky-700 to-sky-500">
+                Em preparo
+                <span
+                  class="ml-2 px-2 py-1 text-xs rounded-full bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200">{{
+                    preparingOrders.length }}</span>
+              </h3>
+              <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
+                <div v-for="order in preparingOrders" :key="order.id" @click="view(order)" :class="[
+                  'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
                 ]">
                   <div class="flex-shrink-0 mr-4 space-y-1 text-xs">
                     <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
@@ -78,63 +120,41 @@
                     </p>
                   </div>
                 </div>
-                <p v-if="newOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum pedido
-                  novo.</p>
-              </div>
-            </div>
-            <!-- Em preparo -->
-            <div class="bg-sky-700 p-4 rounded-lg shadow-lg bg-linear from-sky-800 via-sky-700 to-sky-500">
-              <h3
-                class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
-                Em Preparo
-                <span
-                  class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200">{{
-                    preparingOrders.length }}</span>
-              </h3>
-              <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
-                <div v-for="order in preparingOrders" :key="order.id" @click="view(order)" :class="[
-                  'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
-                ]">
-                  <div class="flex-shrink-0 mr-4 space-y-1">
-                    <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-                    <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
-                    <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
-                    <p class="font-semibold">Status:
-                      <span class="font-light" :class="getStatusBadgeClass(order.status)">
-                        {{ formatText(order.status) }}
-                      </span>
-                    </p>
-                    <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span>
-                    </p>
-                  </div>
-                </div>
                 <p v-if="preparingOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum
                   pedido em preparo.</p>
               </div>
             </div>
             <!-- A caminho -->
-            <div class="bg-purple-700 p-4 rounded-lg shadow-lg bg-linear from-purple-800 via-purple-700 to-purple-500">
+            <div class="bg-purple-700/10 rounded-lg">
               <h3
-                class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
-                A Caminho
+                class="bg-purple-700 bg-linear from-purple-800 via-purple-700 to-purple-500 p-2 rounded-t-md text-white">
+                A caminho
                 <span
                   class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-purple-200 text-purple-800 dark:bg-purple-800 dark:text-purple-200">{{
                     onTheWayOrders.length }}</span>
               </h3>
               <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
                 <div v-for="order in onTheWayOrders" :key="order.id" @click="view(order)" :class="[
-                  'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
+                  'p-2 rounded-md border border-purple-200/40 dark:border-purple-700/40 bg-purple-200 dark:bg-purple-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
                 ]">
-                  <div class="flex-shrink-0 mr-4 space-y-1">
+                  <div class="flex-shrink-0 mr-4 space-y-1 text-xs">
                     <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-                    <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
-                    <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
-                    <p class="font-semibold">Status:
+                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-user"></i> <span class="font-light">{{
+                      order.client }}</span></p>
+                    <p class="font-semibold">
+                      <i class="fa-duotone fa-solid fa-money-bill-wave mr-2"></i>
+                      <span class="font-light">
+                        {{ $formatPrice(order.total) }}
+                      </span>
+                    </p>
+                    <p class="font-semibold hidden">Status:
                       <span class="font-light" :class="getStatusBadgeClass(order.status)">
                         {{ formatText(order.status) }}
                       </span>
                     </p>
-                    <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span>
+                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-calendar-days"></i> <span
+                        class="font-light">{{ formatDate(order.created_at)
+                        }}</span>
                     </p>
                   </div>
                 </div>
@@ -143,7 +163,7 @@
               </div>
             </div>
           </div>
-
+          <!-- Legenda -->
           <div class="lg:w-52 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner flex-shrink-0">
             <h3
               class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
@@ -167,9 +187,10 @@
               <li>
                 <span :class="getStatusBadgeClass('cancelado')">Cancelado</span>
               </li>
-              <li class="mt-4">
-                <span class="px-2 py-1 bg-green-500 text-white text-xs rounded-full">NOVO (Badge Verde)</span>: Pedido
-                que acaba de ser marcado como "recebido" ou "em processamento" e ainda não foi visualizado.
+              <li class="flex flex-col">
+                <span class="px-2 py-1 bg-green-500 text-green-800 text-xs rounded-full">NOVO <small>(Badge
+                    Verde)</small></span>: <span class="dark:text-gray-400 text-xs">Pedido
+                  que acaba de ser marcado como "recebido" ou "em processamento" e ainda não foi visualizado.</span>
               </li>
             </ul>
           </div>
@@ -203,7 +224,6 @@
         </div>
         <div v-else-if="!isLoading && orders.length > 0" class="mt-8 text-center text-gray-500 dark:text-gray-400 py-4">
           Nenhum pedido finalizado.</div>
-
 
         <div v-if="connectionError"
           class="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded relative">
@@ -347,7 +367,7 @@ function getTimestamp(ts) {
 // --- Computed Properties para as Colunas ---
 const newOrders = computed(() => {
   return orders.value
-    .filter(order => ['recebido', 'em processamento'].includes(order.status))
+    .filter(order => ['recebido', 'em processamento'].includes(order.status) && order.payment_status !== 'cancelled')
     .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at)); // Mais recentes primeiro
 });
 
@@ -369,10 +389,6 @@ const finishedOrders = computed(() => {
     .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at));
 });
 // --- Fim das Computed Properties para Colunas ---
-
-
-// Removido o sortedOrders principal, pois agora cada coluna terá sua própria ordenação.
-
 
 function formatText(text) {
   let formattedText = text.replace(/_/g, ' ');
@@ -404,7 +420,7 @@ const getPaymentType = (type) => {
 const getStatusPayment = (status) => {
   switch (status) {
     case 'paid':
-    case 'approved': return 'Pago';
+    case 'approved': return 'Aprovado';
     case 'pending': return 'Pendente';
     case 'failed': return 'Falhou';
     case 'refunded': return 'Reembolsado';
