@@ -571,7 +571,7 @@ function setupRealtimeListener() {
 
         snapshot.docChanges().forEach((change) => {
           const orderData = { id: change.doc.id, ...change.doc.data() };
-          const isNewStatus = ['recebido', 'em processamento'].includes(orderData.status);
+          const isNewStatus = ['recebido', 'em processamento'].includes(orderData.status) && orderData.payment_status !== 'cancelled' && orderData.payment_status !== 'pending';
 
           if (change.type === 'added') {
             // Se o pedido NÃO está na lista local (verdadeiramente novo para esta sessão)
