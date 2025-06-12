@@ -367,7 +367,7 @@ function getTimestamp(ts) {
 // --- Computed Properties para as Colunas ---
 const newOrders = computed(() => {
   return orders.value
-    .filter(order => ['recebido', 'em processamento'].includes(order.status) && order.payment_status !== 'cancelled')
+    .filter(order => ['recebido', 'em processamento'].includes(order.status) && order.payment_status !== 'cancelled' && order.payment_status !== 'pending')
     .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at)); // Mais recentes primeiro
 });
 
