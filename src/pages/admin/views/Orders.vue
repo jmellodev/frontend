@@ -41,7 +41,7 @@
         </div>
 
         <div v-else class="flex flex-col lg:flex-row gap-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-2 flex-grow">
+          <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-x-4 flex-grow">
             <!-- Novos -->
             <div class="bg-green-700/10 rounded-lg ">
               <h3
@@ -62,15 +62,15 @@
                     <p><i class="fa-duotone fa-solid fa-user"></i> <span class="font-light">
                         {{ order.client }}</span>
                     </p>
-                    <p class="flex items-center justify-between space-x-4">
-                    <div>
-                      <i class="fa-duotone fa-solid fa-money-bill-wave mr-2"></i>
-                      <span class="font-light">
-                        {{ $formatPrice(order.total) }}
-                      </span>
+                    <div class="flex items-center justify-between space-x-4">
+                      <div>
+                        <i class="fa-duotone fa-solid fa-money-bill-wave mr-2"></i>
+                        <span class="font-light">
+                          {{ $formatPrice(order.total) }}
+                        </span>
+                      </div>
+                      <div>Pagamento: {{ getStatusPayment(order.payment_status) }}</div>
                     </div>
-                    <div>Pagamento: {{ getStatusPayment(order.payment_status) }}</div>
-                    </p>
                     <p class="font-semibold hidden">Status:
                       <span class="font-light" :class="getStatusBadgeClass(order.status)">
                         {{ formatText(order.status) }}
@@ -127,7 +127,7 @@
             <!-- A caminho -->
             <div class="bg-purple-700/10 rounded-lg">
               <h3
-                class="bg-purple-700 bg-linear from-purple-800 via-purple-700 to-purple-500 p-2 rounded-t-md text-white">
+                class="bg-purple-700 bg-linear from-purple-800 via-purple-700 to-purple-500 p-2 mb-4 rounded-t-md text-white">
                 A caminho
                 <span
                   class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-purple-200 text-purple-800 dark:bg-purple-800 dark:text-purple-200">{{
@@ -164,7 +164,7 @@
             </div>
           </div>
           <!-- Legenda -->
-          <div class="lg:w-52 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner flex-shrink-0">
+          <div class="lg:w-52 bg-gray-200 dark:bg-gray-900 p-4 rounded-lg flex-shrink-0">
             <h3
               class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
               Legenda</h3>
@@ -187,10 +187,10 @@
               <li>
                 <span :class="getStatusBadgeClass('cancelado')">Cancelado</span>
               </li>
-              <li class="flex flex-col">
-                <span class="px-2 py-1 bg-green-500 text-green-800 text-xs rounded-full">NOVO <small>(Badge
-                    Verde)</small></span>: <span class="dark:text-gray-400 text-xs">Pedido
-                  que acaba de ser marcado como "recebido" ou "em processamento" e ainda não foi visualizado.</span>
+              <li class="flex flex-col space-y-1.5">
+                <span class="px-2 py-1 bg-green-500 text-green-700 text-xs rounded-full w-14">Novo</span>
+                <span class="dark:text-gray-400 text-xs">Pedido que acaba de ser marcado como "recebido" ou "em
+                  processamento" e ainda não foi visualizado.</span>
               </li>
             </ul>
           </div>
@@ -223,7 +223,8 @@
           </div>
         </div>
         <div v-else-if="!isLoading && orders.length > 0" class="mt-8 text-center text-gray-500 dark:text-gray-400 py-4">
-          Nenhum pedido finalizado.</div>
+          Nenhum pedido finalizado.
+        </div>
 
         <div v-if="connectionError"
           class="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded relative">

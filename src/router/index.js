@@ -17,6 +17,7 @@ import WhatsappQrCodeDisplay from '@/pages/admin/views/WhatsappQrCodeDisplay.vue
 import AdminSettings from '@/pages/admin/views/AdminSettings.vue'
 import AdminLogin from '@/pages/admin/views/Login.vue'
 import AdminManagerUsers from '@/pages/admin/views/ManagerUsers.vue'
+import SalesReports from '@/pages/admin/views/SalesReports.vue';
 
 import { useAuthStore } from '@/stores/auth' // Importa o store de autenticação
 
@@ -81,6 +82,12 @@ const router = createRouter({
       name: 'admin-manager-users',
       component: AdminManagerUsers,
       meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/admin/reports', // A URL será /admin/reports
+      name: 'AdminSalesReports',
+      component: SalesReports,
+      meta: { requiresAuth: true, requiresAdmin: true } // Proteja esta rota!
     },
   ],
 })
