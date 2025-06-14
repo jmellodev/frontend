@@ -117,23 +117,33 @@
     </RouterLink>
     <div class="grid grid-col">
       <RouterLink to="/admin/categories"
-        class="flex flex-col items-center justify-center bg-orange-400 text-orange-800 cursor-pointer">
-        <i class="fa-duotone fa-truck fa-2x"></i>
+        class="flex flex-col items-center justify-center bg-orange-400 text-orange-800 cursor-pointer relative overflow-hidden group">
         <span>Gerenciar entregadores</span>
+        <div
+          class="absolute -bottom-2 -right-2 z-50 text-green-800/60 -rotate-12 group-hover:bottom-0 group-hover:rotate-0 transition-all duration-200 ease-in">
+          <i class="fa-duotone fa-truck fa-4x"></i>
+        </div>
       </RouterLink>
       <RouterLink to="/admin/products"
         class="flex items-center justify-center bg-green-500 text-green-800 cursor-pointer relative overflow-hidden">
-        <span>Gerenciar produtos</span>
-        <i class="fa-duotone fa-box fa-4x absolute -bottom-6 -right-4 z-50 text-green-800/60 -rotate-12"></i>
+        Gerenciar produtos
+        <div class="absolute -bottom-2 -right-2 z-50 text-green-800/60 -rotate-12">
+          <i class="fa-duotone fa-box fa-4x"></i>
+        </div>
       </RouterLink>
       <RouterLink to="/admin/categories"
-        class="flex flex-col items-center justify-center bg-yellow-500 text-yellow-800 cursor-pointer">
-        <i class="fa-duotone fa-list fa-2x"></i>
+        class="flex flex-col items-center justify-center bg-yellow-500 text-yellow-800 cursor-pointer overflow-hidden relative">
         Gerenciar categorias
+        <div class="absolute -bottom-2 -right-2 z-50 text-green-800/60 -rotate-12">
+          <i class="fa-duotone fa-list fa-4x"></i>
+        </div>
       </RouterLink>
-      <RouterLink to="/admin/settings" class="flex flex-col items-center justify-center bg-purple-400 text-white">
-        <i class="fa-duotone fa-cogs fa-2x"></i>
+      <RouterLink to="/admin/settings"
+        class="flex flex-col items-center justify-center bg-purple-400 text-white relative overflow-hidden">
         Configurações
+        <div class="absolute -bottom-2 -right-2 z-50 text-green-800/60 -rotate-12">
+          <i class="fa-duotone fa-cogs fa-4x"></i>
+        </div>
       </RouterLink>
     </div>
 
