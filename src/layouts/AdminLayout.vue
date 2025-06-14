@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="grid min-h-full bg-gray-200 dark:bg-gray-900 relative">
+    <div class="grid min-h-screen bg-gray-200 dark:bg-gray-900 relative">
       <header
         class="fixed top-0 lg:top-0.5 left-0 right-0 lg:right-2 z-50 bg-gray-100/30 backdrop-blur-xs dark:bg-gray-800/50 shadow pr-6 pl-4 md:pl-0 flex items-center justify-between h-14 rounded-2xl transform-all duration-300"
         :class="shortMenu ? 'lg:left-25' : 'lg:left-56'">

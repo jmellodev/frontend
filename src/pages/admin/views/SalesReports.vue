@@ -74,7 +74,7 @@
           <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-sm">
             <p class="text-gray-600 dark:text-gray-400 text-sm">Vendas Totais</p>
             <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ formatPrice(reportData.totalSales)
-            }}
+              }}
             </p>
           </div>
           <div v-if="reportData.salesCount !== undefined" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-sm">
@@ -389,7 +389,7 @@ const chartDataByDay = computed(() => {
   return {
     labels: labels,
     datasets: [{
-      label: 'Vendas por Dia',
+      label: 'Vendas por dia',
       backgroundColor: '#F97316', // orange-500
       borderColor: '#F97316',
       data: data,
@@ -407,7 +407,7 @@ const chartDataByDayOfMonth = computed(() => {
   return {
     labels: labels.map(day => `Dia ${day}`),
     datasets: [{
-      label: 'Vendas por Dia do Mês',
+      label: 'Vendas por dia do mês',
       backgroundColor: 'rgba(59, 130, 246, 0.5)', // blue-500 com opacidade
       borderColor: '#3B82F6', // blue-500
       data: data,
@@ -432,7 +432,7 @@ const chartDataByMonth = computed(() => {
   return {
     labels: labels.map(label => label.charAt(0).toUpperCase() + label.slice(1)), // Capitaliza o nome do mês
     datasets: [{
-      label: 'Vendas por Mês',
+      label: 'Vendas por mês',
       backgroundColor: 'rgba(139, 92, 246, 0.5)', // purple-500 com opacidade
       borderColor: '#8B5CF6', // purple-500
       data: data,

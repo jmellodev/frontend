@@ -1,8 +1,8 @@
 <template>
-  <AdminLayout>
-    <div class="space-y-8 p-4 md:p-8 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
+  <!-- <AdminLayout> -->
+  <!-- <div class="space-y-8 p-4 md:p-8 bg-white dark:bg-gray-900 rounded-lg shadow-xl">
       <div class="text-gray-700 dark:text-white flex flex-col items-start space-y-0">
-        <span class="text-2xl font-bold">Dashboard Administrativo</span><small
+        <span class="font-bold">Dashboard Administrativo</span><small
           class="text-gray-500 dark:text-gray-400 text-xs">Visão geral e estatísticas da sua plataforma.</small>
       </div>
 
@@ -20,11 +20,11 @@
           </div>
           <div class="space-y-2">
             <p><strong>Total de Pedidos:</strong> <span class="text-lg">{{ dashboardData.totalOrders
-                }}</span></p>
+            }}</span></p>
             <p><strong>Pedidos Finalizados:</strong> <span class="text-green-400 text-lg">{{
               dashboardData.completedOrders }}</span></p>
             <p><strong>Pedidos Pendentes:</strong> <span class="text-yellow-400 text-lg">{{ dashboardData.pendingOrders
-                }}</span></p>
+            }}</span></p>
             <p><strong>Receita Total:</strong> <span class=" text-lg">{{
               $formatPrice(dashboardData.totalRevenue) }}</span></p>
           </div>
@@ -38,9 +38,9 @@
           </div>
           <div class="space-y-2 ">
             <p><strong>Total de Produtos:</strong> <span class="text-lg">{{ dashboardData.totalProducts
-                }}</span></p>
+            }}</span></p>
             <p><strong>Total de Categorias:</strong> <span class="text-lg">{{ dashboardData.totalCategories
-                }}</span></p>
+            }}</span></p>
             <p><strong>Produtos Mais Vendidos:</strong></p>
             <ul class="list-disc list-inside ml-4">
               <li v-for="(product, index) in dashboardData.topSellingProducts" :key="index" class="text-sm">
@@ -60,7 +60,7 @@
           </div>
           <div class="space-y-2">
             <p><strong>Total de Clientes:</strong> <span class="text-lg">{{ dashboardData.totalClients
-                }}</span></p>
+            }}</span></p>
             <p><strong>Novos Clientes (Últimos 30 dias):</strong> <span class="text-lg">{{
               dashboardData.newClientsLast30Days }}</span></p>
             <p><strong>Clientes Mais Ativos:</strong></p>
@@ -81,9 +81,9 @@
           </div>
           <div class="space-y-2">
             <p><strong>Pedidos para Delivery:</strong> <span class="text-lg">{{ dashboardData.deliveryOrders
-                }}</span></p>
+            }}</span></p>
             <p><strong>Pedidos para Retirada:</strong> <span class="text-lg">{{ dashboardData.pickupOrders
-                }}</span></p>
+            }}</span></p>
             <p><strong>Taxa Média de Entrega:</strong> <span class="text-lg">{{
               $formatPrice(dashboardData.averageDeliveryFee) }}</span></p>
           </div>
@@ -106,8 +106,49 @@
         </div>
 
       </div>
+    </div> -->
+
+
+  <div class="grid min-h-screen grid-cols-1 gap-0 md:grid-cols-3 lg:grid-cols-6 relative">
+    <RouterLink to="/admin/orders"
+      class="col-span-1 flex items-center justify-center bg-sky-400 text-white md:col-span-2 lg:col-span-5 cursor-pointer"
+      @click="closeMenu">
+      <h3>Gerenciar pedidos</h3>
+    </RouterLink>
+    <div class="grid grid-col">
+      <RouterLink to="/admin/categories"
+        class="flex flex-col items-center justify-center bg-orange-400 text-orange-800 cursor-pointer">
+        <i class="fa-duotone fa-truck fa-2x"></i>
+        <span>Gerenciar entregadores</span>
+      </RouterLink>
+      <RouterLink to="/admin/products"
+        class="flex items-center justify-center bg-green-500 text-green-800 cursor-pointer relative overflow-hidden">
+        <span>Gerenciar produtos</span>
+        <i class="fa-duotone fa-box fa-4x absolute -bottom-6 -right-4 z-50 text-green-800/60 -rotate-12"></i>
+      </RouterLink>
+      <RouterLink to="/admin/categories"
+        class="flex flex-col items-center justify-center bg-yellow-500 text-yellow-800 cursor-pointer">
+        <i class="fa-duotone fa-list fa-2x"></i>
+        Gerenciar categorias
+      </RouterLink>
+      <RouterLink to="/admin/settings" class="flex flex-col items-center justify-center bg-purple-400 text-white">
+        <i class="fa-duotone fa-cogs fa-2x"></i>
+        Configurações
+      </RouterLink>
     </div>
-  </AdminLayout>
+
+    <div @click="showMenu"
+      class="absolute top-2 left-2 flex h-10 w-10 cursor-pointer items-center justify-center bg-gray-100/60">
+      <i class="fa-duotone fa-solid fa-bars-sort"></i>
+    </div>
+
+    <div :class="openMenu ? 'translate-x-0' : '-translate-x-full'"
+      class="absolute top-0 left-0 min-h-svh w-64 transform rounded-r-md bg-gray-200 p-4 shadow-lg duration-200 ease-in">
+      MENU
+    </div>
+  </div>
+
+  <!-- </AdminLayout> -->
 </template>
 
 <script setup>
@@ -115,7 +156,13 @@ import { ref, onMounted } from 'vue';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import api from '@/services/httpClient';
 
+const openMenu = ref(false);
 const isLoading = ref(true);
+
+function showMenu() {
+  openMenu.value = true;
+}
+function closeMenu() { openMenu.value = false; }
 const dashboardData = ref({
   totalOrders: 0,
   completedOrders: 0,
