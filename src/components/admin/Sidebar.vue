@@ -1,144 +1,87 @@
 <template>
-  <nav :class="shortMenu ? 'w-20' : 'w-52'"
-    class="hidden md:block bg-gray-800 dark:bg-gray-800 rounded-lg ml-2 shadow-lg fixed left-0 top-2 bottom-4 h-[calc(100vh-1rem)] transition-all duration-300 z-50">
+  <nav :class="shortMenu ? 'w-18' : 'w-44'"
+    class="hidden md:block bg-sky-950 dark:bg-gray-800 shadow-lg fixed left-0 top-0 h-[calc(100vh)] transition-all duration-200 z-50">
     <div class="space-y-3 h-full flex flex-col justify-between">
-      <div class="flex items-center justify-center bg-gray-900 text-gray-200 p-2 rounded-t-md">PN</div>
+      <div class="flex items-center justify-center bg-sky-900 text-gray-200 p-2 rounded-t-md">PN</div>
 
       <!-- Menu items container with scroll if needed -->
-      <div class="flex-1 space-y-3 p-4 ">
-        <RouterLink to="/admin" active-class="active__class"
-          class="active__class__hover flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-400 hover:bg-gray-900 hover:text-orange-200 dark:hover:bg-gray-700 transition-colors duration-300 relative group">
-          <div class="w-5 h-5 flex items-center"><i class="fa-duotone fa-chart-line fa-fw"></i></div>
-          <span class="overflow-hidden transition-all duration-300"
-            :class="shortMenu ? 'opacity-0 w-0' : 'ml-3 opacity-100'">Dashboard</span>
+      <div class="flex-1 space-y-2">
+        <RouterLink to="/admin" class="item__menu group">
+          <i class="fa-duotone fa-chart-line fa-fw"></i>
+          <span class="grow text-sm text-ellipsis line-clamp-1 pr-1" :class="shortMenu ? 'hidden' : ''">Dashboard</span>
           <!-- Tooltip personalizado -->
-          <div v-if="shortMenu"
-            class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] transform translate-x-2 group-hover:-translate-x-2">
-            Dashboard
-            <!-- Seta do tooltip -->
-            <div
-              class="absolute top-1/2 left-[2px] transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-transparent border-r-gray-900">
-            </div>
+          <div v-if="shortMenu" class="tooltip">
+            <i class="arrow__tooltip"></i>Dashboard
           </div>
         </RouterLink>
 
-        <RouterLink to="/admin/orders" active-class="active__class"
-          class="active__class__hover flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-400 hover:bg-gray-900 hover:text-orange-200 dark:hover:bg-gray-700 transition-colors duration-300 relative group">
-          <div class="flex items-center w-6 h-6"><i class="fa-duotone fa-book fa-fw" aria-hidden="true"></i></div>
-          <span class="ml-3 overflow-hidden transition-all duration-300"
-            :class="shortMenu ? 'opacity-0 w-0 hidden' : 'opacity-100'">Pedidos</span>
-          <!-- Tooltip personalizado -->
-          <div v-if="shortMenu"
-            class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] transform translate-x-2 group-hover:-translate-x-2">
-            Pedidos
-            <!-- Seta do tooltip -->
-            <div
-              class="absolute top-1/2 left-[2px] transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-transparent border-r-gray-900">
-            </div>
+        <RouterLink to="/admin/orders" class="item__menu group">
+          <i class="fa-duotone fa-book fa-fw" aria-hidden="true"></i>
+          <span class="grow text-sm text-ellipsis line-clamp-1 pr-1" :class="shortMenu ? 'hidden' : ''">Pedidos</span>
+
+          <div v-if="shortMenu" class="tooltip">
+            <i class="arrow__tooltip"></i>Pedidos
           </div>
         </RouterLink>
 
-        <RouterLink to="/admin/products" active-class="active__class"
-          class="active__class__hover flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors duration-200 relative group">
-          <div class="w-6 h-6 flex items-center"><i class="fa-duotone fa-box-open  fa-fw" aria-hidden="true"></i></div>
-          <span class="ml-3 overflow-hidden transition-all duration-300"
-            :class="shortMenu ? 'opacity-0 w-0' : 'opacity-100'">Produtos</span>
-          <!-- Tooltip personalizado -->
-          <div v-if="shortMenu"
-            class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] transform translate-x-2 group-hover:-translate-x-2">
-            Produtos
-            <!-- Seta do tooltip -->
-            <div
-              class="absolute top-1/2 left-[2px] transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-transparent border-r-gray-900">
-            </div>
+        <RouterLink to="/admin/products" class="item__menu group">
+          <i class="fa-duotone fa-box-open  fa-fw" aria-hidden="true"></i>
+          <span class="grow text-sm text-ellipsis line-clamp-1 pr-1" :class="shortMenu ? 'hidden' : ''">Produtos</span>
+          <div v-if="shortMenu" class="tooltip">
+            <i class="arrow__tooltip"></i>Produtos
           </div>
         </RouterLink>
 
-        <RouterLink to="/admin/categories" active-class="active__class"
-          class="active__class__hover flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors duration-200 relative group">
-          <div class="w-6 h-6 flex items-center"><i class="fa-duotone fa-tags  fa-fw" aria-hidden="true"></i></div>
-          <span class="ml-3 overflow-hidden transition-all duration-300"
-            :class="shortMenu ? 'opacity-0 w-0' : 'opacity-100'">Categorias</span>
-          <!-- Tooltip personalizado -->
-          <div v-if="shortMenu"
-            class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] transform translate-x-2 group-hover:-translate-x-2">
-            Categorias
-            <!-- Seta do tooltip -->
-            <div
-              class="absolute top-1/2 left-[2px] transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-transparent border-r-gray-900">
-            </div>
+        <RouterLink to="/admin/categories" class="item__menu group">
+          <i class="fa-duotone fa-tags  fa-fw" aria-hidden="true"></i>
+          <span class="grow text-sm text-ellipsis line-clamp-1 pr-1"
+            :class="shortMenu ? 'hidden' : ''">Categorias</span>
+          <div v-if="shortMenu" class="tooltip">
+            <i class="arrow__tooltip"></i>Categorias
           </div>
         </RouterLink>
 
-        <RouterLink to="/admin/whatsapp-qr" active-class="active__class"
-          class="active__class__hover flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors duration-200 relative group">
-          <div class="w-6 h-6 flex items-center"><i class="fab fa-whatsapp  fa-fw" aria-hidden="true"></i></div>
-          <span class="ml-3 overflow-hidden transition-all duration-300"
-            :class="shortMenu ? 'opacity-0 w-0' : 'opacity-100'">Whatsapp</span>
-          <!-- Tooltip personalizado -->
-          <div v-if="shortMenu"
-            class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] transform translate-x-2 group-hover:-translate-x-2">
-            Conectar WhatsApp
-            <!-- Seta do tooltip -->
-            <div
-              class="absolute top-1/2 left-[2px] transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-transparent border-r-gray-900">
-            </div>
+        <RouterLink to="/admin/whatsapp-qr" class="item__menu group">
+          <i class="fab fa-whatsapp  fa-fw" aria-hidden="true"></i>
+          <span class="grow text-sm text-ellipsis line-clamp-1 pr-1" :class="shortMenu ? 'hidden' : ''">Whatsapp</span>
+          <div v-if="shortMenu" class="tooltip">
+            <i class="arrow__tooltip"></i>WhatsApp
           </div>
         </RouterLink>
 
-        <RouterLink to="/admin/settings" active-class="active__class"
-          class="active__class__hover flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors duration-200 relative group">
-          <div class="w-6 h-6 flex items-center"><i class="fa-duotone fa-tools  fa-fw" aria-hidden="true"></i></div>
-          <span class="ml-3 overflow-hidden transition-all duration-300"
-            :class="shortMenu ? 'opacity-0 w-0' : 'opacity-100'">Configurações</span>
-          <!-- Tooltip personalizado -->
-          <div v-if="shortMenu"
-            class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] transform translate-x-2 group-hover:-translate-x-2">
-            Configurações
-            <!-- Seta do tooltip -->
-            <div
-              class="absolute top-1/2 left-[2px] transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-transparent border-r-gray-900">
-            </div>
+        <RouterLink to="/admin/settings" class="item__menu group">
+          <i class="fa-duotone fa-tools  fa-fw" aria-hidden="true"></i>
+          <span class="grow text-sm text-ellipsis line-clamp-1 pr-1"
+            :class="shortMenu ? 'hidden' : ''">Configurações</span>
+          <div v-if="shortMenu" class="tooltip">
+            <i class="arrow__tooltip"></i>Configurações
           </div>
         </RouterLink>
 
-        <RouterLink to="/admin/manage-users" active-class="active__class"
-          class="active__class__hover flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors duration-200 relative group">
-          <div class="w-6 h-6 flex items-center"><i class="fa-duotone fa-users-gear  fa-fw" aria-hidden="true"></i>
-          </div>
-          <span class="ml-3 overflow-hidden transition-all duration-300"
-            :class="shortMenu ? 'opacity-0 w-0' : 'opacity-100'">Usuários</span>
-          <!-- Tooltip personalizado -->
-          <div v-if="shortMenu"
-            class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] transform translate-x-2 group-hover:-translate-x-2">
-            Gerenciamento de Usuários
-            <!-- Seta do tooltip -->
-            <div
-              class="absolute top-1/2 left-[2px] transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-transparent border-r-gray-900">
-            </div>
+        <RouterLink to="/admin/manage-users" class="item__menu group">
+          <i class="fa-duotone fa-users-gear  fa-fw" aria-hidden="true"></i>
+          <span class="grow text-sm text-ellipsis line-clamp-1 pr-1" :class="shortMenu ? 'hidden' : ''">Usuários</span>
+          <div v-if="shortMenu" class="tooltip">
+            <i class="arrow__tooltip"></i>Usuários
           </div>
         </RouterLink>
-        <RouterLink to="/admin/reports" active-class="active__class"
-          class="active__class__hover flex w-full text-left px-3 py-2 rounded-md items-center text-base font-medium text-gray-400 hover:bg-gray-900 hover:text-orange-200 dark:hover:bg-gray-700 transition-colors duration-300 relative group">
-          <div class="flex items-center w-6 h-6"><i class="fa-duotone fa-chart-pie fa-fw" aria-hidden="true"></i></div>
-          <span class="ml-3 overflow-hidden transition-all duration-300"
-            :class="shortMenu ? 'opacity-0 w-0 hidden' : 'opacity-100'">Relatórios</span>
-          <div v-if="shortMenu"
-            class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] transform translate-x-2 group-hover:-translate-x-2">
-            Relatórios de Vendas
-            <div
-              class="absolute top-1/2 left-[2px] transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-transparent border-r-gray-900">
-            </div>
+
+        <RouterLink to="/admin/reports" class="item__menu group">
+          <i class="fa-duotone fa-chart-pie fa-fw" aria-hidden="true"></i>
+          <span class="grow text-sm text-ellipsis line-clamp-1 pr-1"
+            :class="shortMenu ? 'hidden' : ''">Relatórios</span>
+          <div v-if="shortMenu" class="tooltip">
+            <i class="arrow__tooltip"></i>Relatórios
           </div>
         </RouterLink>
       </div>
       <!-- Botão para expandir/contrair menu -->
       <div
-        class="p-3 hidden md:flex text-gray-300 relative cursor-pointer hover:text-white transition-colors group bg-sky-600 hover:bg-sky-700 rounded-b-md h-12 space-x-2 justify-center items-center"
+        class="p-2 flex text-gray-300 relative cursor-pointer hover:text-white transition-colors group bg-sky-600 hover:bg-sky-700 h-10 space-x-2 justify-center items-center"
         @click="toggleShortMenu">
-        <i :class="shortMenu ? 'fa-light fa-circle-arrow-right' : 'fa-light fa-circle-arrow-left'" class="fa-fw"
+        <i :class="shortMenu ? 'fa-circle-arrow-right' : 'fa-circle-arrow-left'" class="fa-light fa-fw"
           aria-hidden="true"></i>
-        <span class="grow text-ellipsis line-clamp-1 pr-1" :class="shortMenu ? 'hidden' : ''">Recolher
+        <span class="grow text-sm text-ellipsis line-clamp-1 pr-1" :class="shortMenu ? 'hidden' : ''">Recolher
           menu</span>
         <!-- Tooltip personalizado -->
         <div v-if="shortMenu"
@@ -237,12 +180,6 @@ const toggleShortMenu = () => {
 .slide-enter-from,
 .slide-leave-to {
   translate: -100% 0;
-}
-
-.active__class,
-.active__class__hover:hover {
-  color: var(--color-orange-200);
-  background-color: color-mix(in oklab, var(--color-gray-900) 50%, transparent);
 }
 
 /* Customização do scrollbar para o menu */

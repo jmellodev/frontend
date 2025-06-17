@@ -118,6 +118,14 @@
                         class="font-light">{{ formatDate(order.created_at)
                         }}</span>
                     </p>
+                    <p><!-- Botões de Ação para Pedidos Em Preparo -->
+                      <button @click.stop="openAssignModal(order)"
+                        :disabled="order.assigned_delivery_man_id || ['on_the_way', 'delivered', 'cancelled'].includes(order.delivery_status)"
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-4 rounded-full text-xs transition duration-300 ease-in-out focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
+                        Atribuir entregador
+                      </button>
+                    </p>
+
                   </div>
                 </div>
                 <p v-if="preparingOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum
@@ -156,6 +164,14 @@
                         class="font-light">{{ formatDate(order.created_at)
                         }}</span>
                     </p>
+                  </div>
+                  <!-- Botões de Ação para Pedidos A Caminho -->
+                  <div class="flex items-center justify-center space-x-2">
+                    <button @click.stop="openCompleteModal(order)"
+                      :disabled="!order.assigned_delivery_man_id || order.delivery_status === 'delivered'"
+                      class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-xs transition duration-300 ease-in-out focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
+                      Entregue
+                    </button>
                   </div>
                 </div>
                 <p v-if="onTheWayOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum
@@ -239,7 +255,7 @@
 
     <BaseModal v-if="selectedOrder" v-model:open="showDetails">
       <div class="text-gray-900 dark:text-white relative">
-        <button @click="closeModal"
+        <button @click="closeModals"
           class="absolute -top-5 -right-5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
           &times;
         </button>
@@ -266,6 +282,17 @@
             getStatusPayment(selectedOrder.payment_status) }}</div>
           <div><span class="font-semibold text-gray-600 dark:text-gray-400">Data do Pedido:</span> {{
             formatDate(selectedOrder.created_at) }}</div>
+
+          <!-- Novo campo para Entregador Designado -->
+          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Entregador:</span>
+            {{ selectedOrder.assigned_delivery_man_name || (selectedOrder.assigned_delivery_man_id ?
+              selectedOrder.assigned_delivery_man_id.substring(0, 8) + '...' : 'Não atribuído') }}
+          </div>
+          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Status Entrega:</span>
+            <span :class="getStatusBadgeClass(selectedOrder.delivery_status)">
+              {{ selectedOrder.delivery_status || 'pendente' }}
+            </span>
+          </div>
 
           <div class="col-span-full">
             <span class="font-semibold text-gray-600 dark:text-gray-400">Endereço:</span>
@@ -309,18 +336,81 @@
             class="px-5 py-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white text-md rounded-md transition-colors duration-200">
             {{ isUpdatingStatus ? 'Salvando...' : 'Salvar' }}
           </button>
-          <button @click="closeModal"
+          <button @click="closeModals"
             class="px-5 py-1 bg-red-600 hover:bg-red-800 text-white text-md rounded-md transition-colors duration-200">
             Cancelar
           </button>
         </div>
       </div>
     </BaseModal>
+
+    <!-- Assign Delivery Man Modal -->
+    <div v-if="showAssignModal"
+      class="fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Atribuir entregador ao pedido <span
+            class="text-md text-orange-500">{{ selectedOrder?.id }}</span></h2>
+        <div v-if="availableDeliveryMen.length">
+          <label for="deliveryManSelect" class="block text-gray-700 text-sm font-bold mb-2">
+            Selecione um entregador disponível:
+          </label>
+          <select id="deliveryManSelect" v-model="selectedDeliveryManId"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <option value="">-- Selecione --</option>
+            <option v-for="dm in availableDeliveryMen" :key="dm.id" :value="dm.id">
+              {{ dm.name }} ({{ dm.vehicle_type }})
+            </option>
+          </select>
+        </div>
+        <div v-else class="text-red-600 text-center py-4">
+          Nenhum entregador disponível no momento.
+        </div>
+        <div class="flex justify-end mt-6 space-x-3">
+          <button @click="closeModals"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+            Cancelar
+          </button>
+          <button @click="assignOrder" :disabled="!selectedDeliveryManId || assignLoading"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ assignLoading ? 'Atribuindo...' : 'Atribuir pedido' }}
+          </button>
+        </div>
+        <div v-if="assignError" class="text-red-500 text-sm mt-4">{{ assignError }}</div>
+      </div>
+    </div>
+
+    <!-- Complete Delivery Modal -->
+    <div v-if="showCompleteModal"
+      class="fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 text-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Confirmar entrega</h2>
+        <p class="text-gray-700 mb-6">Tem certeza que deseja marcar o pedido <span class="font-semibold">{{
+          selectedOrder?.id }}</span> como entregue?</p>
+        <div class="flex justify-center space-x-3">
+          <button @click="closeModals"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+            Cancelar
+          </button>
+          <button @click="completeDelivery" :disabled="completeLoading"
+            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ completeLoading ? 'Finalizando...' : 'Confirmar entrega' }}
+          </button>
+        </div>
+        <div v-if="completeError" class="text-red-500 text-sm mt-4">{{ completeError }}</div>
+      </div>
+    </div>
+
+    <!-- Success Message Toast -->
+    <div v-if="successMessage"
+      class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-300 ease-in-out transform"
+      :class="{ 'translate-x-0 opacity-100': successMessage, 'translate-x-full opacity-0': !successMessage }">
+      {{ successMessage }}
+    </div>
   </div>
 </template>
 
 <script setup>
-import api from "@/services/httpClient";
+import api from "@/services/httpClient"; // <-- AGORA USAMOS A INSTÂNCIA 'api'
 import { app } from '@/firebase/firebaseClient';
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import BaseModal from "@/components/modals/BaseModal.vue";
@@ -337,6 +427,17 @@ const connectionError = ref('');
 const lastUpdate = ref('');
 const isUpdatingStatus = ref(false);
 const newOrderIds = ref(new Set()); // Para controlar quais pedidos são "novos" visualmente (badge)
+
+// NOVOS ESTADOS PARA GERENCIAMENTO DE ENTREGADORES
+const availableDeliveryMen = ref([]);
+const showAssignModal = ref(false);
+const showCompleteModal = ref(false);
+const selectedDeliveryManId = ref('');
+const assignLoading = ref(false);
+const assignError = ref(null);
+const completeLoading = ref(false);
+const completeError = ref(null);
+const successMessage = ref(null); // Para mensagens de sucesso
 
 // Instância do Firestore
 const db = getFirestore(app);
@@ -433,20 +534,20 @@ const getStatusPayment = (status) => {
 const getStatusBadgeClass = (status) => {
   switch (status) {
     case 'em processamento':
-      return 'rounded-full px-2 py-0.5 text-xs font-medium bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-500';
+      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-500';
     case 'recebido':
-      return 'rounded-full px-2 py-0.5 text-xs font-medium bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-500';
+      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-500';
     case 'em_preparo':
-      return 'rounded-full px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-500';
+      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-500';
     case 'finalizado':
     case 'entregue':
-      return 'rounded-full px-2 py-0.5 text-xs font-medium bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500';
+      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500';
     case 'a_caminho': // Adicionado para a legenda
-      return 'rounded-full px-2 py-0.5 text-xs font-medium bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-500';
+      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-500';
     case 'cancelado':
-      return 'rounded-full px-2 py-0.5 text-xs font-medium bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-500';
+      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-500';
     default:
-      return 'rounded-full px-2 py-0.5 text-xs font-medium bg-gray-50 text-gray-600 dark:bg-gray-500/15 dark:text-gray-500';
+      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-gray-50 text-gray-600 dark:bg-gray-500/15 dark:text-gray-500';
   }
 };
 
@@ -472,9 +573,15 @@ function view(order) {
   }
 }
 
-function closeModal() {
+// NOVO: Função para fechar todos os modais e resetar estados
+function closeModals() {
   selectedOrder.value = null;
   showDetails.value = false;
+  showAssignModal.value = false;
+  showCompleteModal.value = false;
+  selectedDeliveryManId.value = '';
+  assignError.value = null;
+  completeError.value = null;
   isUpdatingStatus.value = false; // Garante que o estado seja resetado
 
   // Limpa erros relacionados à atualização quando fechar
@@ -522,6 +629,7 @@ async function updateStatus() {
 
     // Também atualiza via API se necessário (fallback)
     try {
+      // Usando seu httpClient 'api' aqui, se ele já tem o token
       await api.put(`/orders/${orderId}`, {
         status: newStatus,
       });
@@ -534,7 +642,7 @@ async function updateStatus() {
     // A atualização local será tratada pelo listener do Firestore
     // que detectará a modificação e atualizará `orders.value`
 
-    closeModal();
+    closeModals(); // Alterado para closeModals
     console.log(`Status do pedido ${orderId} atualizado para: ${newStatus}`);
 
   } catch (error) {
@@ -558,6 +666,94 @@ async function updateStatus() {
   }
 }
 
+// NOVO: Função para buscar entregadores disponíveis
+async function fetchAvailableDeliveryMen() {
+  try {
+    const response = await api.get(`/delivery-men?available=true`);
+    availableDeliveryMen.value = response.data;
+  } catch (err) {
+    console.error('Erro ao buscar entregadores disponíveis:', err);
+    // Não define error globalmente para não sobrescrever erro principal de pedidos
+  }
+}
+
+// NOVO: Abre o modal de atribuição
+function openAssignModal(order) {
+  selectedOrder.value = order;
+  selectedDeliveryManId.value = ''; // Reseta a seleção
+  assignError.value = null;
+  showAssignModal.value = true;
+}
+
+// NOVO: Abre o modal de conclusão
+function openCompleteModal(order) {
+  selectedOrder.value = order;
+  completeError.value = null;
+  showCompleteModal.value = true;
+}
+
+// NOVO: Atribui um pedido a um entregador
+async function assignOrder() {
+  if (!selectedOrder.value || !selectedDeliveryManId.value) {
+    assignError.value = 'Por favor, selecione um pedido e um entregador.';
+    return;
+  }
+
+  assignLoading.value = true;
+  assignError.value = null;
+  try {
+    // Não precisamos mais do localStorage.getItem('authToken')
+    await api.post(`/delivery-men/${selectedDeliveryManId.value}/assign-order`, {
+      orderId: selectedOrder.value.id
+    });
+    showSuccessMessage('Pedido atribuído com sucesso!');
+    closeModals();
+    // Não precisa chamar fetchOrders e fetchAvailableDeliveryMen aqui
+    // pois o listener do Firestore já vai atualizar orders.value.
+    // fetchAvailableDeliveryMen será chamado no mounted ou quando necessário.
+  } catch (err) {
+    assignError.value = 'Falha ao atribuir pedido. ' + (err.response?.data?.error || err.message);
+    console.error('Erro ao atribuir pedido:', err);
+  } finally {
+    assignLoading.value = false;
+  }
+}
+
+// NOVO: Marca um pedido como entregue
+async function completeDelivery() {
+  if (!selectedOrder.value) {
+    completeError.value = 'Nenhum pedido selecionado para finalizar.';
+    return;
+  }
+  if (!selectedOrder.value.assigned_delivery_man_id) {
+    completeError.value = 'Este pedido não está atribuído a um entregador.';
+    return;
+  }
+
+  completeLoading.value = true;
+  completeError.value = null;
+  try {
+    await api.post(`/delivery-men/${selectedOrder.value.assigned_delivery_man_id}/complete-delivery`, {
+      orderId: selectedOrder.value.id
+    });
+    showSuccessMessage('Entrega finalizada com sucesso!');
+    closeModals();
+  } catch (err) {
+    completeError.value = 'Falha ao finalizar entrega. ' + (err.response?.data?.error || err.message);
+    console.error('Erro ao finalizar entrega:', err);
+  } finally {
+    completeLoading.value = false;
+  }
+}
+
+// NOVO: Exibe uma mensagem de sucesso temporariamente
+function showSuccessMessage(message) {
+  successMessage.value = message;
+  setTimeout(() => {
+    successMessage.value = null;
+  }, 3000); // Mensagem desaparece após 3 segundos
+}
+
 function setupRealtimeListener() {
   try {
     const ordersQuery = query(
@@ -567,12 +763,25 @@ function setupRealtimeListener() {
 
     unsubscribe = onSnapshot(
       ordersQuery,
-      (snapshot) => {
+      async (snapshot) => { // Adicionado async aqui para await
         const currentOrderIds = new Set(orders.value.map(o => o.id)); // IDs que já estão no array orders.value
 
-        snapshot.docChanges().forEach((change) => {
+        for (const change of snapshot.docChanges()) { // Usar for...of para await
           const orderData = { id: change.doc.id, ...change.doc.data() };
           const isNewStatus = ['recebido', 'em processamento'].includes(orderData.status) && orderData.payment_status !== 'cancelled' && orderData.payment_status !== 'pending';
+
+          // NOVO: Buscar nome do entregador aqui para refletir em tempo real
+          if (orderData.assigned_delivery_man_id && !orderData.assigned_delivery_man_name) {
+            try {
+              // Usamos 'api' aqui também
+              const deliveryManResponse = await api.get(`/delivery-men/${orderData.assigned_delivery_man_id}`);
+              orderData.assigned_delivery_man_name = deliveryManResponse.data.name;
+            } catch (dmError) {
+              console.error(`Erro ao buscar nome do entregador ${orderData.assigned_delivery_man_id} no listener:`, dmError);
+              orderData.assigned_delivery_man_name = 'Entregador desconhecido';
+            }
+          }
+
 
           if (change.type === 'added') {
             // Se o pedido NÃO está na lista local (verdadeiramente novo para esta sessão)
@@ -590,7 +799,7 @@ function setupRealtimeListener() {
                 });
               }
             } else {
-              // Caso o pedido já exista na lista (ex: listener reconectou), 
+              // Caso o pedido já exista na lista (ex: listener reconectou),
               // garantir que o newOrderIds reflita o status atual
               if (isNewStatus) {
                 newOrderIds.value.add(orderData.id);
@@ -622,12 +831,16 @@ function setupRealtimeListener() {
             }
             newOrderIds.value.delete(orderData.id); // Garante que seja removido do set de IDs "novos"
           }
-        });
+        } // Fim do forEach
 
         isConnected.value = true;
         connectionError.value = '';
         lastUpdate.value = new Date().toLocaleTimeString();
         isLoading.value = false;
+
+        // NOVO: Atualizar lista de entregadores disponíveis após cada mudança nos pedidos
+        // (porque a disponibilidade pode mudar se um entregador pegou/largou um pedido)
+        await fetchAvailableDeliveryMen();
       },
       (error) => {
         console.error("Erro no listener Firestore:", error);
@@ -667,6 +880,21 @@ async function loadOrdersFromAPI() {
     const res = await api.get('/orders');
     orders.value = Array.isArray(res.data) ? res.data : [];
     console.log("Pedidos carregados via API como fallback");
+
+    // NOVO: Para cada pedido carregado via API, buscar o nome do entregador
+    orders.value = await Promise.all(orders.value.map(async order => {
+      if (order.assigned_delivery_man_id) {
+        try {
+          // Usamos 'api' aqui também
+          const deliveryManResponse = await api.get(`/delivery-men/${order.assigned_delivery_man_id}`);
+          order.assigned_delivery_man_name = deliveryManResponse.data.name;
+        } catch (dmError) {
+          console.error(`Erro ao buscar nome do entregador ${order.assigned_delivery_man_id} no fallback API:`, dmError);
+          order.assigned_delivery_man_name = 'Entregador desconhecido';
+        }
+      }
+      return order;
+    }));
   } catch (error) {
     console.error("Erro ao carregar pedidos via API:", error);
   }
@@ -680,6 +908,7 @@ onMounted(async () => {
   }
 
   setupRealtimeListener();
+  await fetchAvailableDeliveryMen(); // Carrega entregadores disponíveis na montagem
 
   setTimeout(() => {
     if (!isConnected.value && orders.value.length === 0) {

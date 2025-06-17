@@ -13,33 +13,30 @@ const api = axios.create({
 // Interceptor de Requisição: Adiciona o token de autenticação (ID Token)
 api.interceptors.request.use(async config => {
   // Verifica se a requisição é para uma rota que precisa de autenticação admin
-  // Assumimos que todas as rotas que começam com '/admin/' precisam do ID Token
+  // Ou se é para as novas rotas de delivery-men
   const isAdminRoute = config.url.includes('/admin/');
+  const isDeliveryMenRoute = config.url.includes('/delivery-men/'); // <-- NOVO: Verifica rotas de entregadores
   const isAuthRoute = config.url.includes('/auth/'); // Rotas de login/google não devem ter token
 
-  if (isAdminRoute && auth.currentUser) {
+  // Se for uma rota de administração OU uma rota de entregadores, e houver um usuário logado
+  if ((isAdminRoute || isDeliveryMenRoute) && auth.currentUser) { // <-- NOVO: Condição atualizada
     try {
       // Obtém o ID Token mais recente do usuário Firebase autenticado.
       // O 'true' força a atualização do token se ele estiver prestes a expirar.
       const idToken = await auth.currentUser.getIdToken(true);
       config.headers.Authorization = `Bearer ${idToken}`;
-      console.log('httpClient: ID Token anexado à requisição admin.');
+      console.log('httpClient: ID Token anexado à requisição admin/delivery-men.');
     } catch (error) {
-      console.error('httpClient: Erro ao obter ID Token para requisição admin:', error);
-      // Se houver um erro ao obter o ID Token (ex: usuário deslogado, token expirado no cliente),
-      // o token não será anexado, e a requisição provavelmente resultará em 401 no backend.
-      // O interceptor de resposta lidará com isso.
+      console.error('httpClient: Erro ao obter ID Token para requisição admin/delivery-men:', error);
       delete config.headers.Authorization; // Garante que não envie um token inválido
     }
-  } else if (!isAdminRoute && !isAuthRoute) {
-    // Para rotas que não são admin e não são auth, podemos limpar o header Authorization
-    // para evitar enviar tokens desnecessariamente ou para rotas públicas.
+  } else if (!isAdminRoute && !isDeliveryMenRoute && !isAuthRoute) { // <-- NOVO: Condição atualizada
+    // Para rotas que não são admin, nem de entregadores, e nem auth, limpamos o header Authorization
     delete config.headers.Authorization;
   }
 
   return config;
 }, error => {
-  // Lida com erros antes da requisição ser enviada (ex: erro de rede)
   return Promise.reject(error);
 });
 

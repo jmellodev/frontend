@@ -117,7 +117,7 @@
     </RouterLink>
     <div class="grid grid-col">
       <RouterLink to="/admin/categories"
-        class="flex flex-col items-center justify-center bg-orange-400 text-orange-800 cursor-pointer relative overflow-hidden group">
+        class="flex flex-col items-center justify-center bg-orange-400 text-orange-800 cursor-pointer relative overflow-hiddn group before:absolute before:content-[''] before:-bottom-[20px] before:right-0 before:w-0 before:h-0 before:border-t-[60px] before:border-t-gray-400 before:border-b-[60px] before:border-b-transparent before:border-r-[100vw] before:border-r-transparent">
         <span>Gerenciar entregadores</span>
         <div
           class="absolute -bottom-2 -right-2 z-50 text-green-800/60 -rotate-12 group-hover:bottom-0 group-hover:rotate-0 transition-all duration-200 ease-in">
