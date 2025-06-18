@@ -42,7 +42,6 @@
 
         <div v-else class="flex flex-col lg:flex-row gap-4">
           <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-x-4 flex-grow">
-            <!-- Novos -->
             <div class="bg-green-700/10 rounded-lg ">
               <h3
                 class="p-2 text-white mb-4 border-b border-green-900/30 rounded-t-md bg-green-700 bg-linear from-green-800 via-green-700 to-green-500">
@@ -53,40 +52,13 @@
                 </span>
               </h3>
               <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
-                <div v-for="order in newOrders" :key="order.id" @click="view(order)" :class="[
-                  'p-2 rounded-md border border-green-200/40 dark:border-green-700/40 bg-green-200 dark:bg-green-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300',
-                  newOrderIds.has(order.id) ? 'bg-green-50 dark:bg-green-900/20' : ''
-                ]">
-                  <div class="flex-shrink-0 space-y-1 text-xs">
-                    <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-                    <p><i class="fa-duotone fa-solid fa-user"></i> <span class="font-light">
-                        {{ order.client }}</span>
-                    </p>
-                    <div class="flex items-center justify-between space-x-4">
-                      <div>
-                        <i class="fa-duotone fa-solid fa-money-bill-wave mr-2"></i>
-                        <span class="font-light">
-                          {{ $formatPrice(order.total) }}
-                        </span>
-                      </div>
-                      <div>Pagamento: {{ getStatusPayment(order.payment_status) }}</div>
-                    </div>
-                    <p class="font-semibold hidden">Status:
-                      <span class="font-light" :class="getStatusBadgeClass(order.status)">
-                        {{ formatText(order.status) }}
-                      </span>
-                    </p>
-                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-calendar-days"></i> <span
-                        class="font-light">{{ formatDate(order.created_at)
-                        }}</span>
-                    </p>
-                  </div>
-                </div>
+                <OrderCard v-for="order in newOrders" :key="order.id" :order="order" :newOrderIds="newOrderIds"
+                  @view-order="openDetailsModal" @assign-order="openAssignModal"
+                  @complete-delivery="openCompleteModal" />
                 <p v-if="newOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum pedido
                   novo.</p>
               </div>
             </div>
-            <!-- Em preparo -->
             <div class="bg-sky-700/10 rounded-lg">
               <h3
                 class="text-white rounded-t-md mb-4 border-b p-2 border-gray-300 dark:border-gray-700 bg-sky-700 bg-linear from-sky-800 via-sky-700 to-sky-500">
@@ -96,43 +68,13 @@
                     preparingOrders.length }}</span>
               </h3>
               <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
-                <div v-for="order in preparingOrders" :key="order.id" @click="view(order)" :class="[
-                  'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
-                ]">
-                  <div class="flex-shrink-0 mr-4 space-y-1 text-xs">
-                    <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-user"></i> <span class="font-light">{{
-                      order.client }}</span></p>
-                    <p class="font-semibold">
-                      <i class="fa-duotone fa-solid fa-money-bill-wave mr-2"></i>
-                      <span class="font-light">
-                        {{ $formatPrice(order.total) }}
-                      </span>
-                    </p>
-                    <p class="font-semibold hidden">Status:
-                      <span class="font-light" :class="getStatusBadgeClass(order.status)">
-                        {{ formatText(order.status) }}
-                      </span>
-                    </p>
-                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-calendar-days"></i> <span
-                        class="font-light">{{ formatDate(order.created_at)
-                        }}</span>
-                    </p>
-                    <p><!-- Botões de Ação para Pedidos Em Preparo -->
-                      <button @click.stop="openAssignModal(order)"
-                        :disabled="order.assigned_delivery_man_id || ['on_the_way', 'delivered', 'cancelled'].includes(order.delivery_status)"
-                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-4 rounded-full text-xs transition duration-300 ease-in-out focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
-                        Atribuir entregador
-                      </button>
-                    </p>
-
-                  </div>
-                </div>
+                <OrderCard v-for="order in preparingOrders" :key="order.id" :order="order" :newOrderIds="newOrderIds"
+                  @view-order="openDetailsModal" @assign-order="openAssignModal"
+                  @complete-delivery="openCompleteModal" />
                 <p v-if="preparingOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum
                   pedido em preparo.</p>
               </div>
             </div>
-            <!-- A caminho -->
             <div class="bg-purple-700/10 rounded-lg">
               <h3
                 class="bg-purple-700 bg-linear from-purple-800 via-purple-700 to-purple-500 p-2 mb-4 rounded-t-md text-white">
@@ -142,44 +84,14 @@
                     onTheWayOrders.length }}</span>
               </h3>
               <div class="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
-                <div v-for="order in onTheWayOrders" :key="order.id" @click="view(order)" :class="[
-                  'p-2 rounded-md border border-purple-200/40 dark:border-purple-700/40 bg-purple-200 dark:bg-purple-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
-                ]">
-                  <div class="flex-shrink-0 mr-4 space-y-1 text-xs">
-                    <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-user"></i> <span class="font-light">{{
-                      order.client }}</span></p>
-                    <p class="font-semibold">
-                      <i class="fa-duotone fa-solid fa-money-bill-wave mr-2"></i>
-                      <span class="font-light">
-                        {{ $formatPrice(order.total) }}
-                      </span>
-                    </p>
-                    <p class="font-semibold hidden">Status:
-                      <span class="font-light" :class="getStatusBadgeClass(order.status)">
-                        {{ formatText(order.status) }}
-                      </span>
-                    </p>
-                    <p class="font-semibold"><i class="fa-duotone fa-solid fa-calendar-days"></i> <span
-                        class="font-light">{{ formatDate(order.created_at)
-                        }}</span>
-                    </p>
-                  </div>
-                  <!-- Botões de Ação para Pedidos A Caminho -->
-                  <div class="flex items-center justify-center space-x-2">
-                    <button @click.stop="openCompleteModal(order)"
-                      :disabled="!order.assigned_delivery_man_id || order.delivery_status === 'delivered'"
-                      class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-xs transition duration-300 ease-in-out focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
-                      Entregue
-                    </button>
-                  </div>
-                </div>
+                <OrderCard v-for="order in onTheWayOrders" :key="order.id" :order="order" :newOrderIds="newOrderIds"
+                  @view-order="openDetailsModal" @assign-order="openAssignModal"
+                  @complete-delivery="openCompleteModal" />
                 <p v-if="onTheWayOrders.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">Nenhum
                   pedido a caminho.</p>
               </div>
             </div>
           </div>
-          <!-- Legenda -->
           <div class="lg:w-52 bg-gray-200 dark:bg-gray-900 p-4 rounded-lg flex-shrink-0">
             <h3
               class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
@@ -203,11 +115,6 @@
               <li>
                 <span :class="getStatusBadgeClass('cancelado')">Cancelado</span>
               </li>
-              <li class="flex flex-col space-y-1.5">
-                <span class="px-2 py-1 bg-green-500 text-green-700 text-xs rounded-full w-14">Novo</span>
-                <span class="dark:text-gray-400 text-xs">Pedido que acaba de ser marcado como "recebido" ou "em
-                  processamento" e ainda não foi visualizado.</span>
-              </li>
             </ul>
           </div>
         </div>
@@ -221,21 +128,8 @@
                 finishedOrders.length }}</span>
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <div v-for="order in finishedOrders" :key="order.id" @click="view(order)" :class="[
-              'p-2 rounded-md border border-gray-200/40 dark:border-gray-700/40 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white text-sm flex items-end justify-between shadow-md cursor-pointer hover:shadow-lg transition-all duration-300'
-            ]">
-              <div class="flex-shrink-0 mr-4 space-y-1">
-                <p class="font-semibold">Pedido: <span class="font-light">{{ order.id }}</span></p>
-                <p class="font-semibold">Cliente: <span class="font-light">{{ order.client }}</span></p>
-                <p class="font-semibold">Total: <span class="font-light">{{ $formatPrice(order.total) }}</span></p>
-                <p class="font-semibold">Status:
-                  <span class="font-light" :class="getStatusBadgeClass(order.status)">
-                    {{ formatText(order.status) }}
-                  </span>
-                </p>
-                <p class="font-semibold">Data: <span class="font-light">{{ formatDate(order.created_at) }}</span></p>
-              </div>
-            </div>
+            <OrderCard v-for="order in finishedOrders" :key="order.id" :order="order" :newOrderIds="newOrderIds"
+              @view-order="openDetailsModal" @assign-order="openAssignModal" @complete-delivery="openCompleteModal" />
           </div>
         </div>
         <div v-else-if="!isLoading && orders.length > 0" class="mt-8 text-center text-gray-500 dark:text-gray-400 py-4">
@@ -244,163 +138,27 @@
 
         <div v-if="connectionError"
           class="bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded relative">
-          <strong class="font-bold">Erro de Conexão!</strong>
+          <strong class="font-bold">Erro de conexão!</strong>
           <span class="block sm:inline"> {{ connectionError }}</span>
           <button @click="reconnect" class="ml-2 underline hover:no-underline">
-            Tentar Reconectar
+            Tentar reconectar
           </button>
         </div>
       </div>
     </AdminLayout>
 
-    <BaseModal v-if="selectedOrder" v-model:open="showDetails">
-      <div class="text-gray-900 dark:text-white relative">
-        <button @click="closeModals"
-          class="absolute -top-5 -right-5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl">
-          &times;
-        </button>
-        <h3 class="md:text-2xl font-bold mb-4 border-b border-gray-300 dark:border-gray-900 pb-2">
-          Detalhes do Pedido <span class="text-orange-500 italic font-normal">#{{ selectedOrder.id }}</span>
-        </h3>
+    <OrderDetailsModal :open="showDetails" :order="selectedOrder" :statusOptions="statusOptions"
+      :isUpdatingStatus="isUpdatingStatus" @update:open="showDetails = $event" @update-status="handleUpdateStatus"
+      @close="closeModals" />
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 text-gray-700 dark:text-gray-300 text-md">
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Cliente:</span> {{ selectedOrder.client }}
-          </div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Telefone:</span> {{ selectedOrder.telefone
-            || selectedOrder.phone }}</div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Total:</span> {{
-            $formatPrice(selectedOrder.total) }}</div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Subtotal:</span> {{
-            $formatPrice(selectedOrder.subtotal) }}</div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Taxa de Entrega:</span> {{
-            $formatPrice(selectedOrder.taxaEntrega || selectedOrder.fee) }}</div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Tipo de Entrega:</span> {{
-            selectedOrder.tipoEntrega || selectedOrder.delivery_type }}</div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Método de Pagamento:</span> {{
-            getPaymentType(selectedOrder.metodoPagamento || selectedOrder.payment_method) }}</div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Status do Pagamento:</span> {{
-            getStatusPayment(selectedOrder.payment_status) }}</div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Data do Pedido:</span> {{
-            formatDate(selectedOrder.created_at) }}</div>
+    <AssignDeliveryModal :open="showAssignModal" :order="selectedOrder" :availableDeliveryMen="availableDeliveryMen"
+      :assignLoading="assignLoading" :assignError="assignError" @update:open="showAssignModal = $event"
+      @assign-confirmed="handleAssignConfirmed" @close="closeModals" />
 
-          <!-- Novo campo para Entregador Designado -->
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Entregador:</span>
-            {{ selectedOrder.assigned_delivery_man_name || (selectedOrder.assigned_delivery_man_id ?
-              selectedOrder.assigned_delivery_man_id.substring(0, 8) + '...' : 'Não atribuído') }}
-          </div>
-          <div><span class="font-semibold text-gray-600 dark:text-gray-400">Status Entrega:</span>
-            <span :class="getStatusBadgeClass(selectedOrder.delivery_status)">
-              {{ selectedOrder.delivery_status || 'pendente' }}
-            </span>
-          </div>
+    <CompleteDeliveryModal :open="showCompleteModal" :order="selectedOrder" :completeLoading="completeLoading"
+      :completeError="completeError" @update:open="showCompleteModal = $event"
+      @complete-confirmed="handleCompleteConfirmed" @close="closeModals" />
 
-          <div class="col-span-full">
-            <span class="font-semibold text-gray-600 dark:text-gray-400">Endereço:</span>
-            <div v-if="selectedOrder.address && selectedOrder.address.length > 0">
-              <p v-for="(addr, idx) in selectedOrder.address" :key="idx">
-                {{ addr.street }}, {{ addr.neighborhood }}
-                <span v-if="addr.reference"> (Ref: {{ addr.reference }})</span>
-              </p>
-            </div>
-            <div v-else>Nenhum endereço fornecido.</div>
-          </div>
-
-          <div class="col-span-full">
-            <span class="font-semibold text-gray-600 dark:text-gray-400">Status do Pedido:</span>
-            <select v-model="selectedOrder.status"
-              class="p-2 bg-gray-200 dark:bg-gray-700 border border-gray-400 dark:border-gray-600 rounded-md text-gray-800 dark:text-white focus:ring-blue-500 focus:border-blue-500 ml-2 mt-2">
-              <option v-for="status in statusOptions" :key="status" :value="status">
-                {{ formatText(status) }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div v-if="selectedOrder.itens && selectedOrder.itens.length">
-          <h4
-            class="font-semibold mt-6 mb-2 text-gray-700 dark:text-gray-300 border-t border-gray-300 dark:border-gray-900 pt-4">
-            Itens do Pedido:
-          </h4>
-          <ul class="text-sm space-y-1">
-            <li v-for="(item, idx) in selectedOrder.itens" :key="idx" class="text-gray-700 dark:text-gray-300">
-              <p class="font-semibold">{{ item.item.replaceAll('r$', 'R$') }}</p>
-              <p v-if="item.adicionais" class="text-xs text-gray-600 dark:text-gray-400">
-                <span class="italic">Adicionais:</span> {{ item.adicionais.replaceAll('r$', 'R$') }}
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div class="mt-6 flex justify-end space-x-4 border-t border-gray-300 dark:border-gray-900 pt-4">
-          <button @click="updateStatus" :disabled="isUpdatingStatus || !selectedOrder?.id || !selectedOrder?.status"
-            class="px-5 py-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white text-md rounded-md transition-colors duration-200">
-            {{ isUpdatingStatus ? 'Salvando...' : 'Salvar' }}
-          </button>
-          <button @click="closeModals"
-            class="px-5 py-1 bg-red-600 hover:bg-red-800 text-white text-md rounded-md transition-colors duration-200">
-            Cancelar
-          </button>
-        </div>
-      </div>
-    </BaseModal>
-
-    <!-- Assign Delivery Man Modal -->
-    <div v-if="showAssignModal"
-      class="fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Atribuir entregador ao pedido <span
-            class="text-md text-orange-500">{{ selectedOrder?.id }}</span></h2>
-        <div v-if="availableDeliveryMen.length">
-          <label for="deliveryManSelect" class="block text-gray-700 text-sm font-bold mb-2">
-            Selecione um entregador disponível:
-          </label>
-          <select id="deliveryManSelect" v-model="selectedDeliveryManId"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            <option value="">-- Selecione --</option>
-            <option v-for="dm in availableDeliveryMen" :key="dm.id" :value="dm.id">
-              {{ dm.name }} ({{ dm.vehicle_type }})
-            </option>
-          </select>
-        </div>
-        <div v-else class="text-red-600 text-center py-4">
-          Nenhum entregador disponível no momento.
-        </div>
-        <div class="flex justify-end mt-6 space-x-3">
-          <button @click="closeModals"
-            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
-            Cancelar
-          </button>
-          <button @click="assignOrder" :disabled="!selectedDeliveryManId || assignLoading"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
-            {{ assignLoading ? 'Atribuindo...' : 'Atribuir pedido' }}
-          </button>
-        </div>
-        <div v-if="assignError" class="text-red-500 text-sm mt-4">{{ assignError }}</div>
-      </div>
-    </div>
-
-    <!-- Complete Delivery Modal -->
-    <div v-if="showCompleteModal"
-      class="fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 text-center">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Confirmar entrega</h2>
-        <p class="text-gray-700 mb-6">Tem certeza que deseja marcar o pedido <span class="font-semibold">{{
-          selectedOrder?.id }}</span> como entregue?</p>
-        <div class="flex justify-center space-x-3">
-          <button @click="closeModals"
-            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
-            Cancelar
-          </button>
-          <button @click="completeDelivery" :disabled="completeLoading"
-            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed">
-            {{ completeLoading ? 'Finalizando...' : 'Confirmar entrega' }}
-          </button>
-        </div>
-        <div v-if="completeError" class="text-red-500 text-sm mt-4">{{ completeError }}</div>
-      </div>
-    </div>
-
-    <!-- Success Message Toast -->
     <div v-if="successMessage"
       class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-300 ease-in-out transform"
       :class="{ 'translate-x-0 opacity-100': successMessage, 'translate-x-full opacity-0': !successMessage }">
@@ -410,17 +168,26 @@
 </template>
 
 <script setup>
-import api from "@/services/httpClient"; // <-- AGORA USAMOS A INSTÂNCIA 'api'
+import api from "@/services/httpClient";
+// Importe 'app' como um objeto diretamente do seu firebaseClient
 import { app } from '@/firebase/firebaseClient';
 import AdminLayout from "@/layouts/AdminLayout.vue";
-import BaseModal from "@/components/modals/BaseModal.vue";
+// Importar os novos componentes (se você os moveu)
+import OrderCard from '@/components/orders/OrderCard.vue';
+import OrderDetailsModal from '@/components/orders/OrderDetailsModal.vue';
+import AssignDeliveryModal from '@/components/orders/AssignDeliveryModal.vue';
+import CompleteDeliveryModal from '@/components/orders/CompleteDeliveryModal.vue';
+
+// Importar todas as funções de utilidade do formatters.js
+import { formatText, getStatusBadgeClass, getTimestamp } from '@/utils/formatters';
+
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { getFirestore, collection, onSnapshot, doc, updateDoc, query, orderBy } from 'firebase/firestore';
 
-// Estados reativos
+// --- Estados Reativos Principais ---
 const orders = ref([]);
 const selectedOrder = ref(null);
-const showDetails = ref(false);
+const showDetails = ref(false); // Para o modal de detalhes do pedido
 const isLoading = ref(true);
 const isConnected = ref(false);
 const connectionError = ref('');
@@ -428,49 +195,32 @@ const lastUpdate = ref('');
 const isUpdatingStatus = ref(false);
 const newOrderIds = ref(new Set()); // Para controlar quais pedidos são "novos" visualmente (badge)
 
-// NOVOS ESTADOS PARA GERENCIAMENTO DE ENTREGADORES
-const availableDeliveryMen = ref([]);
+// --- Estados para Gerenciamento de Entregadores ---
+const availableDeliveryMen = ref([]); // Lista de entregadores disponíveis para o modal de atribuição
+const deliveryMenMap = ref(new Map()); // Mapa para buscar nomes de entregadores por ID rapidamente
 const showAssignModal = ref(false);
 const showCompleteModal = ref(false);
-const selectedDeliveryManId = ref('');
 const assignLoading = ref(false);
 const assignError = ref(null);
 const completeLoading = ref(false);
 const completeError = ref(null);
-const successMessage = ref(null); // Para mensagens de sucesso
+const successMessage = ref(null);
+
 
 // Instância do Firestore
-const db = getFirestore(app);
+// CORREÇÃO AQUI: Certifique-se de que 'app' está definido quando getFirestore é chamado.
+// Isso geralmente significa que firebaseClient.js deve exportar a instância 'app'
+// e ela deve ser importada aqui.
+const db = getFirestore(app); // 'app' deve ser a instância inicializada do Firebase app
 let unsubscribe = null;
 
 const statusOptions = ["recebido", "em_preparo", "a_caminho", "entregue", "cancelado", "em processamento"];
 
-// Função auxiliar para extrair timestamp para ordenação
-function getTimestamp(ts) {
-  if (!ts) return 0;
-  if (ts && typeof ts.toDate === 'function') {
-    return ts.toDate().getTime();
-  }
-  if (ts && typeof ts._seconds !== 'undefined') {
-    return ts._seconds * 1000;
-  }
-  if (ts instanceof Date) {
-    return ts.getTime();
-  }
-  if (typeof ts === 'string') {
-    return new Date(ts).getTime();
-  }
-  if (typeof ts === 'number') {
-    return ts > 1000000000000 ? ts : ts * 1000;
-  }
-  return 0;
-}
-
-// --- Computed Properties para as Colunas ---
+// --- Computed Properties para Filtragem e Ordenação de Pedidos ---
 const newOrders = computed(() => {
   return orders.value
     .filter(order => ['recebido', 'em processamento'].includes(order.status) && order.payment_status !== 'cancelled' && order.payment_status !== 'pending')
-    .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at)); // Mais recentes primeiro
+    .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at));
 });
 
 const preparingOrders = computed(() => {
@@ -490,252 +240,106 @@ const finishedOrders = computed(() => {
     .filter(order => ['entregue', 'cancelado'].includes(order.status))
     .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at));
 });
-// --- Fim das Computed Properties para Colunas ---
 
-function formatText(text) {
-  let formattedText = text.replace(/_/g, ' ');
-  formattedText = formattedText.charAt(0).toUpperCase() + formattedText.slice(1);
-  return formattedText;
-}
+// --- Funções de Abertura/Fechamento de Modais ---
 
-function formatDate(ts) {
-  if (!ts) return "";
-  // Se é um timestamp do Firestore
-  if (ts && typeof ts.toDate === 'function') {
-    return ts.toDate().toLocaleString('pt-BR');
-  }
-
-  return "";
-}
-
-const getPaymentType = (type) => {
-  switch (type) {
-    case 'credit_card': return 'Cartão de Crédito';
-    case 'debit_card': return 'Cartão de Débito';
-    case 'bank_transfer':
-    case 'pix': return 'Pix';
-    case 'cash': return 'Dinheiro';
-    default: return 'Outro';
-  }
-};
-
-const getStatusPayment = (status) => {
-  switch (status) {
-    case 'paid':
-    case 'approved': return 'Aprovado';
-    case 'pending': return 'Pendente';
-    case 'failed': return 'Falhou';
-    case 'refunded': return 'Reembolsado';
-    case 'cancelled': return 'Cancelado';
-    default: return 'Desconhecido';
-  }
-};
-
-const getStatusBadgeClass = (status) => {
-  switch (status) {
-    case 'em processamento':
-      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-500';
-    case 'recebido':
-      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-500';
-    case 'em_preparo':
-      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-500';
-    case 'finalizado':
-    case 'entregue':
-      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500';
-    case 'a_caminho': // Adicionado para a legenda
-      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-500';
-    case 'cancelado':
-      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-500';
-    default:
-      return 'px-2 py-0.5 text-xs font-medium rounded-full bg-gray-50 text-gray-600 dark:bg-gray-500/15 dark:text-gray-500';
-  }
-};
-
-function view(order) {
-  if (!order) {
-    console.warn("Tentativa de visualizar pedido nulo");
+const openDetailsModal = (order) => {
+  if (!order || !order.id) {
+    console.warn("Tentativa de visualizar pedido nulo ou sem ID.");
+    connectionError.value = "Erro: Pedido sem ID válido para visualização.";
     return;
   }
-
-  if (!order.id) {
-    console.warn("Pedido sem ID:", order);
-    connectionError.value = "Erro: Pedido sem ID válido";
-    return;
-  }
-
-  console.log("Visualizando pedido:", order.id);
-  selectedOrder.value = JSON.parse(JSON.stringify(order));
+  selectedOrder.value = JSON.parse(JSON.stringify(order)); // Cópia para edição local
   showDetails.value = true;
-
-  // Remove o badge "novo" quando o pedido é visualizado
   if (newOrderIds.value.has(order.id)) {
-    newOrderIds.value.delete(order.id);
+    newOrderIds.value.delete(order.id); // Remove o badge "novo" ao visualizar
   }
-}
+};
 
-// NOVO: Função para fechar todos os modais e resetar estados
-function closeModals() {
+const openAssignModal = (order) => {
+  selectedOrder.value = order; // Usa a referência direta do pedido para a atribuição
+  showAssignModal.value = true;
+};
+
+const openCompleteModal = (order) => {
+  selectedOrder.value = order; // Usa a referência direta do pedido
+  showCompleteModal.value = true;
+};
+
+const closeModals = () => {
   selectedOrder.value = null;
   showDetails.value = false;
   showAssignModal.value = false;
   showCompleteModal.value = false;
-  selectedDeliveryManId.value = '';
   assignError.value = null;
   completeError.value = null;
-  isUpdatingStatus.value = false; // Garante que o estado seja resetado
-
-  // Limpa erros relacionados à atualização quando fechar
+  isUpdatingStatus.value = false;
   if (connectionError.value.includes('Erro ao atualizar pedido')) {
     connectionError.value = '';
   }
-}
+};
 
-async function updateStatus() {
-  // Validações mais robustas
-  if (!selectedOrder.value) {
-    console.warn("Nenhum pedido selecionado");
+// --- Funções de Ação de Pedidos (chamadas pelos modais) ---
+
+const handleUpdateStatus = async (orderId, newStatus) => {
+  if (!orderId || !newStatus) {
+    console.warn("Dados incompletos para atualizar status.");
+    connectionError.value = "Erro: ID do pedido ou novo status ausente.";
     return;
   }
-
-  if (!selectedOrder.value.id) {
-    console.warn("ID do pedido não encontrado");
-    connectionError.value = "Erro: ID do pedido não encontrado";
-    return;
-  }
-
-  if (!selectedOrder.value.status) {
-    console.warn("Status do pedido não definido");
-    connectionError.value = "Erro: Status do pedido não definido";
-    return;
-  }
-
+  isUpdatingStatus.value = true;
+  connectionError.value = '';
   try {
-    isUpdatingStatus.value = true;
-    connectionError.value = ''; // Limpa erros anteriores
-
-    const orderId = selectedOrder.value.id;
-    const newStatus = selectedOrder.value.status;
-
-    console.log(`Atualizando pedido ${orderId} para status: ${newStatus}`);
-
-    // Atualiza no Firestore
     const orderRef = doc(db, 'orders', orderId);
     await updateDoc(orderRef, {
       status: newStatus,
       updated_at: new Date()
     });
 
-    console.log("Status atualizado no Firestore com sucesso");
-
-    // Também atualiza via API se necessário (fallback)
     try {
-      // Usando seu httpClient 'api' aqui, se ele já tem o token
-      await api.put(`/orders/${orderId}`, {
-        status: newStatus,
-      });
-      console.log("Status atualizado na API com sucesso");
+      await api.put(`/orders/${orderId}`, { status: newStatus });
     } catch (apiError) {
-      console.warn("Erro ao atualizar via API (mas Firestore foi atualizado):", apiError);
-      // Não é um erro crítico, continua o fluxo
+      console.warn("Erro ao atualizar via API (Firestore foi atualizado):", apiError);
     }
 
-    // A atualização local será tratada pelo listener do Firestore
-    // que detectará a modificação e atualizará `orders.value`
-
-    closeModals(); // Alterado para closeModals
-    console.log(`Status do pedido ${orderId} atualizado para: ${newStatus}`);
-
+    showSuccessMessage(`Status do pedido ${orderId} atualizado para: ${formatText(newStatus)}`);
+    closeModals();
   } catch (error) {
     console.error("Erro ao atualizar status do pedido:", error);
-
-    // Mensagem de erro mais específica
-    let errorMessage = "Erro desconhecido";
-    if (error.code === 'permission-denied') {
-      errorMessage = "Sem permissão para atualizar este pedido";
-    } else if (error.code === 'not-found') {
-      errorMessage = "Pedido não encontrado no banco de dados";
-    } else if (error.code === 'unavailable') {
-      errorMessage = "Serviço temporariamente indisponível";
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-
-    connectionError.value = `Erro ao atualizar pedido: ${errorMessage}`;
+    connectionError.value = `Erro ao atualizar pedido: ${error.message}`;
   } finally {
     isUpdatingStatus.value = false;
   }
-}
+};
 
-// NOVO: Função para buscar entregadores disponíveis
-async function fetchAvailableDeliveryMen() {
-  try {
-    const response = await api.get(`/delivery-men?available=true`);
-    availableDeliveryMen.value = response.data;
-  } catch (err) {
-    console.error('Erro ao buscar entregadores disponíveis:', err);
-    // Não define error globalmente para não sobrescrever erro principal de pedidos
-  }
-}
-
-// NOVO: Abre o modal de atribuição
-function openAssignModal(order) {
-  selectedOrder.value = order;
-  selectedDeliveryManId.value = ''; // Reseta a seleção
-  assignError.value = null;
-  showAssignModal.value = true;
-}
-
-// NOVO: Abre o modal de conclusão
-function openCompleteModal(order) {
-  selectedOrder.value = order;
-  completeError.value = null;
-  showCompleteModal.value = true;
-}
-
-// NOVO: Atribui um pedido a um entregador
-async function assignOrder() {
-  if (!selectedOrder.value || !selectedDeliveryManId.value) {
+const handleAssignConfirmed = async (orderId, deliveryManId) => {
+  if (!orderId || !deliveryManId) {
     assignError.value = 'Por favor, selecione um pedido e um entregador.';
     return;
   }
-
   assignLoading.value = true;
   assignError.value = null;
   try {
-    // Não precisamos mais do localStorage.getItem('authToken')
-    await api.post(`/delivery-men/${selectedDeliveryManId.value}/assign-order`, {
-      orderId: selectedOrder.value.id
-    });
+    await api.post(`/delivery-men/${deliveryManId}/assign-order`, { orderId });
     showSuccessMessage('Pedido atribuído com sucesso!');
     closeModals();
-    // Não precisa chamar fetchOrders e fetchAvailableDeliveryMen aqui
-    // pois o listener do Firestore já vai atualizar orders.value.
-    // fetchAvailableDeliveryMen será chamado no mounted ou quando necessário.
   } catch (err) {
     assignError.value = 'Falha ao atribuir pedido. ' + (err.response?.data?.error || err.message);
     console.error('Erro ao atribuir pedido:', err);
   } finally {
     assignLoading.value = false;
   }
-}
+};
 
-// NOVO: Marca um pedido como entregue
-async function completeDelivery() {
-  if (!selectedOrder.value) {
-    completeError.value = 'Nenhum pedido selecionado para finalizar.';
+const handleCompleteConfirmed = async (deliveryManId, orderId) => {
+  if (!orderId || !deliveryManId) {
+    completeError.value = 'Nenhum pedido ou entregador selecionado para finalizar.';
     return;
   }
-  if (!selectedOrder.value.assigned_delivery_man_id) {
-    completeError.value = 'Este pedido não está atribuído a um entregador.';
-    return;
-  }
-
   completeLoading.value = true;
   completeError.value = null;
   try {
-    await api.post(`/delivery-men/${selectedOrder.value.assigned_delivery_man_id}/complete-delivery`, {
-      orderId: selectedOrder.value.id
-    });
+    await api.post(`/delivery-men/${deliveryManId}/complete-delivery`, { orderId });
     showSuccessMessage('Entrega finalizada com sucesso!');
     closeModals();
   } catch (err) {
@@ -744,16 +348,41 @@ async function completeDelivery() {
   } finally {
     completeLoading.value = false;
   }
-}
+};
 
-// NOVO: Exibe uma mensagem de sucesso temporariamente
-function showSuccessMessage(message) {
+// --- Funções Auxiliares ---
+const showSuccessMessage = (message) => {
   successMessage.value = message;
   setTimeout(() => {
     successMessage.value = null;
-  }, 3000); // Mensagem desaparece após 3 segundos
-}
+  }, 3000);
+};
 
+// Função para buscar todos os entregadores (para o mapa de nomes)
+const fetchAllDeliveryMen = async () => {
+  try {
+    const response = await api.get('/delivery-men');
+    deliveryMenMap.value.clear();
+    response.data.forEach(dm => {
+      deliveryMenMap.value.set(dm.id, dm.name);
+    });
+  } catch (err) {
+    console.error('Erro ao buscar todos os entregadores para o mapa:', err);
+  }
+};
+
+// Função para buscar apenas os entregadores disponíveis (para o dropdown)
+const fetchAvailableDeliveryMen = async () => {
+  try {
+    const response = await api.get('/delivery-men?available=true');
+    availableDeliveryMen.value = response.data;
+  } catch (err) {
+    console.error('Erro ao buscar entregadores disponíveis:', err);
+  }
+};
+
+
+// --- Listener de Tempo Real do Firestore ---
 function setupRealtimeListener() {
   try {
     const ordersQuery = query(
@@ -763,65 +392,55 @@ function setupRealtimeListener() {
 
     unsubscribe = onSnapshot(
       ordersQuery,
-      async (snapshot) => { // Adicionado async aqui para await
-        const currentOrderIds = new Set(orders.value.map(o => o.id)); // IDs que já estão no array orders.value
+      async (snapshot) => {
+        const currentOrderIdsInView = new Set(orders.value.map(o => o.id));
 
-        for (const change of snapshot.docChanges()) { // Usar for...of para await
-          const orderData = { id: change.doc.id, ...change.doc.data() };
-          const isNewStatus = ['recebido', 'em processamento'].includes(orderData.status) && orderData.payment_status !== 'cancelled' && orderData.payment_status !== 'pending';
+        const updatedOrders = [];
+        for (const change of snapshot.docChanges()) {
+          let orderData = { id: change.doc.id, ...change.doc.data() };
 
-          // NOVO: Buscar nome do entregador aqui para refletir em tempo real
           if (orderData.assigned_delivery_man_id && !orderData.assigned_delivery_man_name) {
-            try {
-              // Usamos 'api' aqui também
-              const deliveryManResponse = await api.get(`/delivery-men/${orderData.assigned_delivery_man_id}`);
-              orderData.assigned_delivery_man_name = deliveryManResponse.data.name;
-            } catch (dmError) {
-              console.error(`Erro ao buscar nome do entregador ${orderData.assigned_delivery_man_id} no listener:`, dmError);
-              orderData.assigned_delivery_man_name = 'Entregador desconhecido';
+            orderData.assigned_delivery_man_name = deliveryMenMap.value.get(orderData.assigned_delivery_man_id) || 'Carregando...';
+            if (orderData.assigned_delivery_man_name === 'Carregando...') {
+              try {
+                const dmResponse = await api.get(`/delivery-men/${orderData.assigned_delivery_man_id}`);
+                deliveryMenMap.value.set(orderData.assigned_delivery_man_id, dmResponse.data.name);
+                orderData.assigned_delivery_man_name = dmResponse.data.name;
+              } catch (dmError) {
+                console.error(`Falha ao buscar nome do entregador ${orderData.assigned_delivery_man_id}:`, dmError);
+                orderData.assigned_delivery_man_name = 'Entregador desconhecido';
+              }
             }
           }
 
-
           if (change.type === 'added') {
-            // Se o pedido NÃO está na lista local (verdadeiramente novo para esta sessão)
-            if (!currentOrderIds.has(orderData.id)) {
-              if (isNewStatus) { // E se o status dele for "novo"
-                newOrderIds.value.add(orderData.id); // Adiciona ao Set de IDs "novos" para o badge visual
-              }
-              orders.value.unshift(orderData); // Adiciona o pedido à lista principal
-
-              // Notificação sonora ou visual APENAS se for um novo pedido E com status "novo"
-              if (isNewStatus && 'Notification' in window && Notification.permission === 'granted') {
-                new Notification('Novo Pedido!', {
-                  body: `Pedido #${orderData.id} de ${orderData.client}`,
-                  icon: '/assets/image/old_nonna.png'
-                });
-              }
-            } else {
-              // Caso o pedido já exista na lista (ex: listener reconectou),
-              // garantir que o newOrderIds reflita o status atual
+            const isNewStatus = ['recebido', 'em processamento'].includes(orderData.status) && orderData.payment_status !== 'cancelled' && orderData.payment_status !== 'pending';
+            if (!currentOrderIdsInView.has(orderData.id)) {
               if (isNewStatus) {
                 newOrderIds.value.add(orderData.id);
-              } else {
-                newOrderIds.value.delete(orderData.id); // Remove de "novo" se o status mudou
+                if ('Notification' in window && Notification.permission === 'granted') {
+                  new Notification('Novo Pedido!', {
+                    body: `Pedido #${orderData.id} de ${orderData.client}`,
+                    icon: '/assets/image/old_nonna.png'
+                  });
+                }
               }
-              // Atualiza o item existente caso tenha sido 'added' mas já esteja na lista
-              const index = orders.value.findIndex(o => o.id === orderData.id);
-              if (index !== -1) {
-                orders.value[index] = { ...orders.value[index], ...orderData };
+              updatedOrders.unshift(orderData);
+            } else {
+              const existingIndex = orders.value.findIndex(o => o.id === orderData.id);
+              if (existingIndex !== -1) {
+                orders.value[existingIndex] = orderData;
               }
             }
           } else if (change.type === 'modified') {
             const index = orders.value.findIndex(o => o.id === orderData.id);
             if (index !== -1) {
-              orders.value[index] = { ...orders.value[index], ...orderData }; // Atualiza dados
-
-              // Reavalia o estado "novo" com base no status atualizado
+              orders.value[index] = orderData;
+              const isNewStatus = ['recebido', 'em processamento'].includes(orderData.status) && orderData.payment_status !== 'cancelled' && orderData.payment_status !== 'pending';
               if (isNewStatus) {
                 newOrderIds.value.add(orderData.id);
               } else {
-                newOrderIds.value.delete(orderData.id); // Remove de "novo" se o status mudou
+                newOrderIds.value.delete(orderData.id);
               }
             }
           } else if (change.type === 'removed') {
@@ -829,17 +448,20 @@ function setupRealtimeListener() {
             if (index !== -1) {
               orders.value.splice(index, 1);
             }
-            newOrderIds.value.delete(orderData.id); // Garante que seja removido do set de IDs "novos"
+            newOrderIds.value.delete(orderData.id);
           }
-        } // Fim do forEach
+        }
+
+        if (updatedOrders.length > 0) {
+          orders.value = [...updatedOrders, ...orders.value.filter(o => !updatedOrders.some(uo => uo.id === o.id))];
+          orders.value.sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at));
+        }
 
         isConnected.value = true;
         connectionError.value = '';
         lastUpdate.value = new Date().toLocaleTimeString();
         isLoading.value = false;
 
-        // NOVO: Atualizar lista de entregadores disponíveis após cada mudança nos pedidos
-        // (porque a disponibilidade pode mudar se um entregador pegou/largou um pedido)
         await fetchAvailableDeliveryMen();
       },
       (error) => {
@@ -847,7 +469,6 @@ function setupRealtimeListener() {
         connectionError.value = `Erro de conexão: ${error.message}`;
         isConnected.value = false;
         isLoading.value = false;
-
         setTimeout(() => {
           if (!isConnected.value) {
             reconnect();
@@ -867,11 +488,9 @@ function reconnect() {
   console.log("Tentando reconectar...");
   connectionError.value = '';
   isLoading.value = true;
-
   if (unsubscribe) {
     unsubscribe();
   }
-
   setupRealtimeListener();
 }
 
@@ -881,25 +500,30 @@ async function loadOrdersFromAPI() {
     orders.value = Array.isArray(res.data) ? res.data : [];
     console.log("Pedidos carregados via API como fallback");
 
-    // NOVO: Para cada pedido carregado via API, buscar o nome do entregador
     orders.value = await Promise.all(orders.value.map(async order => {
       if (order.assigned_delivery_man_id) {
-        try {
-          // Usamos 'api' aqui também
-          const deliveryManResponse = await api.get(`/delivery-men/${order.assigned_delivery_man_id}`);
-          order.assigned_delivery_man_name = deliveryManResponse.data.name;
-        } catch (dmError) {
-          console.error(`Erro ao buscar nome do entregador ${order.assigned_delivery_man_id} no fallback API:`, dmError);
-          order.assigned_delivery_man_name = 'Entregador desconhecido';
+        let dmName = deliveryMenMap.value.get(order.assigned_delivery_man_id);
+        if (!dmName) {
+          try {
+            const dmResponse = await api.get(`/delivery-men/${order.assigned_delivery_man_id}`);
+            dmName = dmResponse.data.name;
+            deliveryMenMap.value.set(order.assigned_delivery_man_id, dmName);
+          } catch (dmError) {
+            console.error(`Erro ao buscar nome do entregador ${order.assigned_delivery_man_id} no fallback API:`, dmError);
+            dmName = 'Entregador desconhecido';
+          }
         }
+        order.assigned_delivery_man_name = dmName;
       }
       return order;
     }));
+
   } catch (error) {
     console.error("Erro ao carregar pedidos via API:", error);
   }
 }
 
+// --- Ciclo de Vida ---
 onMounted(async () => {
   console.log("Iniciando conexão em tempo real com Firestore...");
 
@@ -907,8 +531,10 @@ onMounted(async () => {
     await Notification.requestPermission();
   }
 
+  await fetchAllDeliveryMen();
+  await fetchAvailableDeliveryMen();
+
   setupRealtimeListener();
-  await fetchAvailableDeliveryMen(); // Carrega entregadores disponíveis na montagem
 
   setTimeout(() => {
     if (!isConnected.value && orders.value.length === 0) {
