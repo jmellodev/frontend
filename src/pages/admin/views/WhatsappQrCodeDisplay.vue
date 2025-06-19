@@ -1,3 +1,4 @@
+// WhatsAppQrCodeDisplay
 <template>
   <AdminLayout>
     <div class="whatsapp-qr-container p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center">

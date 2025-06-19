@@ -88,7 +88,7 @@ const router = createRouter({
       name: 'AdminSalesReports',
       component: SalesReports,
       meta: { requiresAuth: true, requiresAdmin: true } // Proteja esta rota!
-    },
+    }
   ],
 })
 
